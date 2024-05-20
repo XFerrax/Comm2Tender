@@ -60,7 +60,13 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Table1.sql" />
+    <Build Include="Dict_Claims.sql" />
+    <Build Include="Dict_Contragent.sql" />
+    <Build Include="Economic_effect.sql" />
+    <Build Include="List_Claims.sql" />
+    <Build Include="Log_Tender.sql" />
+    <Build Include="Pos_Tender.sql" />
+    <Build Include="Var_Contragent_Of_Tenders.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Comm2TenderDataBase.publish.xml" />
