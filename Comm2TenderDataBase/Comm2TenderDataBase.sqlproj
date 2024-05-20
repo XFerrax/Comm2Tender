@@ -67,6 +67,10 @@
     <Build Include="Log_Tender.sql" />
     <Build Include="Pos_Tender.sql" />
     <Build Include="Var_Contragent_Of_Tenders.sql" />
+    <Build Include="Economic_effect_Var.sql" />
+    <Build Include="Interest_rate.sql" />
+    <Build Include="Additional_Сonditions.sql" />
+    <Build Include="Сustoms_duty.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Comm2TenderDataBase.publish.xml" />
