@@ -13,10 +13,12 @@ namespace Comm2Tender.Repositories
             this.dataBaseContext = dataBaseContext;
         }
 
-        public async Task AddVarContragentOfTenderAsync(VarContragentOfTender varContragentOfTender)
+        public int? AddVarContragentOfTender(VarContragentOfTender varContragentOfTender)
         {
-            await dataBaseContext.VarContragentOfTenders.AddAsync(varContragentOfTender);
-            await dataBaseContext.SaveChangesAsync();
+            var dbVarContragentOfTender = dataBaseContext.VarContragentOfTenders.Add(varContragentOfTender);
+            dataBaseContext.SaveChanges();
+
+            return dbVarContragentOfTender.Entity.IdTenders;
         }
     }
 }

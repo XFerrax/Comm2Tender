@@ -5,7 +5,7 @@ namespace Comm2Tender.Repositories
 {
     public interface IVarContragentOfTenderRepository
     {
-        Task AddVarContragentOfTenderAsync(VarContragentOfTender varContragentOfTender);
+        int? AddVarContragentOfTender(VarContragentOfTender varContragentOfTender);
 
     }
 }

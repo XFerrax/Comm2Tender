@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Comm2Tender.Models;
 
-public class LogTender
+public partial class LogTender
 {
     public int Id { get; set; }
 
@@ -21,13 +21,13 @@ public class LogTender
 
     public DateOnly? DateTender { get; set; }
 
-    public  ICollection<EconomicEffect> EconomicEffects { get; set; }
+    public virtual ICollection<EconomicEffect> EconomicEffects { get; set; } = new List<EconomicEffect>();
 
-    public  DictContragent IdCounterpartyNavigation { get; set; }
+    public virtual DictContragent IdCounterpartyNavigation { get; set; }
 
-    public  InterestRate IdInterestRateNavigation { get; set; }
+    public virtual InterestRate IdInterestRateNavigation { get; set; }
 
-    public  СustomsDuty IdСustomsDutyNavigation { get; set; }
+    public virtual СustomsDuty IdСustomsDutyNavigation { get; set; }
 
-    public  ICollection<PosTender> PosTenders { get; set; }
+    public virtual ICollection<PosTender> PosTenders { get; set; } = new List<PosTender>();
 }

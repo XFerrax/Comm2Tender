@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace Comm2Tender.Repositories
 {
-    public interface IDictContragentRepository
+    public interface IContragentRepository
     {
-        //Task AddContractorAsync(DictContragent dict_Contragent);
-        Task AddContractorAsync(ContractorDto contractorDto);
+        int AddContractor(DictContragent dict_Contragent);
         IQueryable<DictContragent> GetAllContractors();
     }
 }

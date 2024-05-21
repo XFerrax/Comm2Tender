@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Comm2Tender.Models;
 
-public class PosTender
+public partial class PosTender
 {
     public int Id { get; set; }
 
@@ -23,7 +23,7 @@ public class PosTender
 
     public int? CountDayDelivery { get; set; }
 
-    public LogTender IdTenderNavigation { get; set; }
+    public virtual LogTender IdTenderNavigation { get; set; }
 
-    public ICollection<ListClaim> ListClaims { get; set; }
+    public virtual ICollection<ListClaim> ListClaims { get; set; } = new List<ListClaim>();
 }

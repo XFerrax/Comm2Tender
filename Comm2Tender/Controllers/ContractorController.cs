@@ -1,6 +1,9 @@
 ﻿using Comm2Tender.Dtos;
 using Comm2Tender.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -12,11 +15,11 @@ namespace Comm2Tender.Controllers
     [Route("api/contragents")]
     public class ContractorController : ControllerBase
     {
-        private readonly IDictContragentRepository contragentRepository;
+        private readonly IContragentRepository contragentRepository;
         private readonly IVarContragentOfTenderRepository varContragentOfTenderRepository;
         private readonly IEconomicEffectVarRepository economicEffectVarRepository;
 
-        public ContractorController(IDictContragentRepository contragentRepository,
+        public ContractorController(IContragentRepository contragentRepository,
             IVarContragentOfTenderRepository varContragentOfTenderRepository,
             IEconomicEffectVarRepository economicEffectVarRepository)
         {
@@ -26,9 +29,21 @@ namespace Comm2Tender.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllContractors()
+        public async Task GetAllContractors()
         {
-            return NotFound();
+            var _mainPageDtos = new List<MainPageDto>();
+
+            var _contragents = contragentRepository.GetAllContractors().ToList();
+            foreach (var _contragent in _contragents)
+            {
+                var _mainPageDto = new MainPageDto();
+                _mainPageDto.Counterparty = _contragent.Counterparty;
+
+
+                _mainPageDtos.Add(_mainPageDto);
+            }
+
+            await HttpContext.Response.WriteAsJsonAsync(_mainPageDtos);
         }
 
 
@@ -37,15 +52,13 @@ namespace Comm2Tender.Controllers
         {
             var _contractorDto = JsonSerializer.Deserialize<ContractorDto>(body.ToString());
 
-            //_contractorDto.VarContragentOfTender.EconomicEffectVar = _contractorDto.EconomicEffectVar;
+            var _contragentId = contragentRepository.AddContractor(_contractorDto.DictContragent);
 
-            await contragentRepository.AddContractorAsync(_contractorDto);
-            //await varContragentOfTenderRepository.AddVarContragentOfTenderAsync(_contractorDto.VarContragentOfTender);
+            _contractorDto.VarContragentOfTender.IdContragent = _contragentId;
 
-            //await economicEffectVarRepository.AddEconomicEffectVarAsync(_contractorDto.EconomicEffectVar);
+            varContragentOfTenderRepository.AddVarContragentOfTender(_contractorDto.VarContragentOfTender);
 
-
+            economicEffectVarRepository.AddEconomicEffectVar(_contractorDto.EconomicEffectVar);
         }
-
     }
 }
