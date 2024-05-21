@@ -5,7 +5,6 @@ namespace Comm2Tender.Repositories
 {
     public interface IVarContragentOfTenderRepository
     {
-        int? AddVarContragentOfTender(VarContragentOfTender varContragentOfTender);
 
     }
 }
