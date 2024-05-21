@@ -1,5 +1,6 @@
-﻿create table dbo.Economic_effect (
-   ID                   int                  identity,
+﻿CREATE TABLE [dbo].[Economic_effect_Var]
+(
+	ID                   int                  identity,
    Prepaid_expense      float                null,
    Period_of_execution  int                  null,
    Postpayment          int                  null,
@@ -16,7 +17,7 @@
    IsAccredetive        bit                  null,
    IsCustoms_duty       bit                  null,
    IsCustoms_fee        bit                  null,
-   IsBank_guarantee     bit                  null
-   constraint PK_ECONOMIC_EFFECT primary key (ID),
-    CONSTRAINT [FK_ECONOMIC_REFERENCE_LOG_TEND] FOREIGN KEY (ID_Tendes) REFERENCES Log_Tender(Id)
+   IsBank_guarantee     bit                  null,
+   constraint PK_Economic_effect_Var primary key (ID),
+   constraint FK_ECONOMIC_REFERENCE_VAR_CONT foreign key (ID) references Var_Contragent_Of_Tenders (ID_Economic_effect)
 )
