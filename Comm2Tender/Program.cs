@@ -28,6 +28,13 @@ builder.Services.AddTransient<IPosTenderRepository, PosTenderRepository>();
 builder.Services.AddTransient<IVarContragentOfTenderRepository, VarContragentOfTenderRepository>();
 
 builder.Services.AddTransient<ICalculationService, CalculationService>();
+builder.Services.AddCors(options => 
+options.AddPolicy(name: "FrontSite", 
+                builder => builder
+                    .SetIsOriginAllowed(isOriginAllowed: _ => true)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()));
 
 var app = builder.Build();
 
@@ -39,6 +46,8 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseCors("FrontSite");
 
 //app.UseAuthorization();
 
