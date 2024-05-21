@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Comm2Tender.Contexts;
 
-public class Comm2TenderDataBaseContext : DbContext
+public partial class Comm2TenderDataBaseContext : DbContext
 {
     public Comm2TenderDataBaseContext(DbContextOptions<Comm2TenderDataBaseContext> options)
         : base(options)
@@ -35,4 +35,229 @@ public class Comm2TenderDataBaseContext : DbContext
     public virtual DbSet<VarContragentOfTender> VarContragentOfTenders { get; set; }
 
     public virtual DbSet<СustomsDuty> СustomsDuties { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<AdditionalСondition>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_ADDITIONAL_СONDITIONS");
+
+            entity.ToTable("Additional_Сonditions");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.DateInsert).HasColumnName("Date_Insert");
+            entity.Property(e => e.InventoryCount).HasColumnName("Inventory_Count");
+            entity.Property(e => e.IsDirectCounterparty).HasColumnName("IsDirect_Counterparty");
+        });
+
+        modelBuilder.Entity<DictClaim>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_DICT_CLAIMS");
+
+            entity.ToTable("Dict_Claims");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.NameClaim)
+                .HasMaxLength(100)
+                .HasColumnName("Name_Claim");
+            entity.Property(e => e.WeightClaim).HasColumnName("Weight_Claim");
+        });
+
+        modelBuilder.Entity<DictContragent>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_DICT_CONTRAGENT");
+
+            entity.ToTable("Dict_Contragent");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Counterparty).HasMaxLength(100);
+            entity.Property(e => e.DateContract)
+                .HasColumnType("datetime")
+                .HasColumnName("Date_Contract");
+            entity.Property(e => e.DatePartnership)
+                .HasColumnType("datetime")
+                .HasColumnName("Date_Partnership");
+            entity.Property(e => e.DateRegContragent)
+                .HasColumnType("datetime")
+                .HasColumnName("Date_Reg_Contragent");
+            entity.Property(e => e.IsDirectCounterparty).HasColumnName("IsDirect_Counterparty");
+            entity.Property(e => e.SystemNum).HasColumnName("System_Num");
+        });
+
+        modelBuilder.Entity<EconomicEffect>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_ECONOMIC_EFFECT");
+
+            entity.ToTable("Economic_effect");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.IdTendes).HasColumnName("ID_Tendes");
+            entity.Property(e => e.IsBankGuarantee).HasColumnName("IsBank_guarantee");
+            entity.Property(e => e.IsCustomsDuty).HasColumnName("IsCustoms_duty");
+            entity.Property(e => e.IsCustomsFee).HasColumnName("IsCustoms_fee");
+            entity.Property(e => e.PeriodOfExecution).HasColumnName("Period_of_execution");
+            entity.Property(e => e.PeriodOfExecution2).HasColumnName("Period_of_execution2");
+            entity.Property(e => e.PeriodOfExecution3).HasColumnName("Period_of_execution3");
+            entity.Property(e => e.PostpaymentPeriod).HasColumnName("Postpayment_period");
+            entity.Property(e => e.PostpaymentPeriod2).HasColumnName("Postpayment_period2");
+            entity.Property(e => e.PostpaymentPeriod3).HasColumnName("Postpayment_period3");
+            entity.Property(e => e.PrepaidExpense).HasColumnName("Prepaid_expense");
+            entity.Property(e => e.PrepaidExpense2).HasColumnName("Prepaid_expense2");
+            entity.Property(e => e.PrepaidExpense3).HasColumnName("Prepaid_expense3");
+
+            entity.HasOne(d => d.IdTendesNavigation).WithMany(p => p.EconomicEffects)
+                .HasForeignKey(d => d.IdTendes)
+                .HasConstraintName("FK_ECONOMIC_REFERENCE_LOG_TEND");
+        });
+
+        modelBuilder.Entity<EconomicEffectVar>(entity =>
+        {
+            entity.ToTable("Economic_effect_Var");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("ID");
+            entity.Property(e => e.IdTendes).HasColumnName("ID_Tendes");
+            entity.Property(e => e.IsBankGuarantee).HasColumnName("IsBank_guarantee");
+            entity.Property(e => e.IsCustomsDuty).HasColumnName("IsCustoms_duty");
+            entity.Property(e => e.IsCustomsFee).HasColumnName("IsCustoms_fee");
+            entity.Property(e => e.MissingDeadlines).HasColumnName("Missing_deadlines");
+            entity.Property(e => e.NormsViolated).HasColumnName("Norms_violated");
+            entity.Property(e => e.PeriodOfExecution).HasColumnName("Period_of_execution");
+            entity.Property(e => e.PeriodOfExecution2).HasColumnName("Period_of_execution2");
+            entity.Property(e => e.PeriodOfExecution3).HasColumnName("Period_of_execution3");
+            entity.Property(e => e.PoorQuality).HasColumnName("Poor_quality");
+            entity.Property(e => e.PostpaymentPeriod).HasColumnName("Postpayment_period");
+            entity.Property(e => e.PostpaymentPeriod2).HasColumnName("Postpayment_period2");
+            entity.Property(e => e.PostpaymentPeriod3).HasColumnName("Postpayment_period3");
+            entity.Property(e => e.PrepaidExpense).HasColumnName("Prepaid_expense");
+            entity.Property(e => e.PrepaidExpense2).HasColumnName("Prepaid_expense2");
+            entity.Property(e => e.PrepaidExpense3).HasColumnName("Prepaid_expense3");
+
+            entity.HasOne(d => d.IdNavigation).WithOne(p => p.EconomicEffectVar)
+                .HasForeignKey<EconomicEffectVar>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ECONOMIC_REFERENCE_VAR_CONT");
+        });
+
+        modelBuilder.Entity<InterestRate>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_INTEREST_RATE");
+
+            entity.ToTable("Interest_rate");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.PersBank).HasColumnName("Pers_Bank");
+            entity.Property(e => e.PersBillOfCreadit).HasColumnName("Pers_Bill_of_Creadit");
+            entity.Property(e => e.PersCustoms).HasColumnName("Pers_Customs");
+            entity.Property(e => e.PersDiscount).HasColumnName("Pers_Discount");
+            entity.Property(e => e.PersTmk).HasColumnName("Pers_TMK");
+            entity.Property(e => e.RateCb).HasColumnName("Rate_CB");
+        });
+
+        modelBuilder.Entity<ListClaim>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_LIST_CLAIMS");
+
+            entity.ToTable("List_Claims");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.DateCorrection).HasColumnName("Date_Correction");
+            entity.Property(e => e.IdClaim).HasColumnName("ID_Claim");
+            entity.Property(e => e.IdPosTender).HasColumnName("ID_Pos_Tender");
+            entity.Property(e => e.IsFMaejuere).HasColumnName("Is_F_Maejuere");
+
+            entity.HasOne(d => d.IdClaimNavigation).WithMany(p => p.ListClaims)
+                .HasForeignKey(d => d.IdClaim)
+                .HasConstraintName("FK_LIST_CLA_REFERENCE_DICT_CLA");
+
+            entity.HasOne(d => d.IdPosTenderNavigation).WithMany(p => p.ListClaims)
+                .HasForeignKey(d => d.IdPosTender)
+                .HasConstraintName("FK_LIST_CLA_REFERENCE_POS_TEND");
+        });
+
+        modelBuilder.Entity<LogTender>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_LOG_TENDER");
+
+            entity.ToTable("Log_Tender");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.DateTender).HasColumnName("Date_Tender");
+            entity.Property(e => e.IdCounterparty).HasColumnName("ID_Counterparty");
+            entity.Property(e => e.IdInterestRate).HasColumnName("ID_Interest_rate");
+            entity.Property(e => e.IdСustomsDuty).HasColumnName("ID_Сustoms_duty");
+            entity.Property(e => e.NumTender)
+                .HasMaxLength(100)
+                .HasColumnName("Num_tender");
+            entity.Property(e => e.ReliabilityAssessment).HasColumnName("Reliability_Assessment");
+
+            entity.HasOne(d => d.IdCounterpartyNavigation).WithMany(p => p.LogTenders)
+                .HasForeignKey(d => d.IdCounterparty)
+                .HasConstraintName("FK_LOG_TEND_REFERENCE_DICT_CON");
+
+            entity.HasOne(d => d.IdInterestRateNavigation).WithMany(p => p.LogTenders)
+                .HasForeignKey(d => d.IdInterestRate)
+                .HasConstraintName("FK_LOG_TEND_REFERENCE_INTEREST");
+
+            entity.HasOne(d => d.IdСustomsDutyNavigation).WithMany(p => p.LogTenders)
+                .HasForeignKey(d => d.IdСustomsDuty)
+                .HasConstraintName("FK_LOG_TEND_REFERENCE_СUSTOMS_");
+        });
+
+        modelBuilder.Entity<PosTender>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_POS_TENDER");
+
+            entity.ToTable("Pos_Tender");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CountDayDelivery).HasColumnName("Count_Day_Delivery");
+            entity.Property(e => e.CountPos).HasColumnName("Count_Pos");
+            entity.Property(e => e.DateDelivery).HasColumnName("Date_Delivery");
+            entity.Property(e => e.DatePlanDelivery).HasColumnName("Date_Plan_Delivery");
+            entity.Property(e => e.DeliveryCost).HasColumnName("Delivery_Cost");
+            entity.Property(e => e.IdTender).HasColumnName("ID_Tender");
+            entity.Property(e => e.PositionPrice).HasColumnName("Position_Price");
+
+            entity.HasOne(d => d.IdTenderNavigation).WithMany(p => p.PosTenders)
+                .HasForeignKey(d => d.IdTender)
+                .HasConstraintName("FK_POS_TEND_REFERENCE_LOG_TEND");
+        });
+
+        modelBuilder.Entity<VarContragentOfTender>(entity =>
+        {
+            entity.HasKey(e => e.IdEconomicEffect);
+
+            entity.ToTable("Var_Contragent_Of_Tenders");
+
+            entity.Property(e => e.IdEconomicEffect).HasColumnName("ID_Economic_effect");
+            entity.Property(e => e.CountDayDelivery).HasColumnName("Count_Day_Delivery");
+            entity.Property(e => e.CountPos).HasColumnName("Count_Pos");
+            entity.Property(e => e.DeliveryCost).HasColumnName("Delivery_Cost");
+            entity.Property(e => e.IdContragent).HasColumnName("ID_Contragent");
+            entity.Property(e => e.IdInterestRate).HasColumnName("ID_Interest_rate");
+            entity.Property(e => e.IdTenders).HasColumnName("ID_Tenders");
+            entity.Property(e => e.IdСustomsDuty).HasColumnName("ID_Сustoms_duty");
+            entity.Property(e => e.IsTmk).HasColumnName("IsTMK");
+            entity.Property(e => e.PositionPrice).HasColumnName("Position_Price");
+            entity.Property(e => e.ReliabilityAssessment).HasColumnName("Reliability_Assessment");
+        });
+
+        modelBuilder.Entity<СustomsDuty>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_СUSTOMS_DUTY");
+
+            entity.ToTable("Сustoms_duty");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.MaxPrice).HasColumnName("Max_Price");
+            entity.Property(e => e.MinPrice).HasColumnName("Min_Price");
+            entity.Property(e => e.SumСustomsDuty).HasColumnName("Sum_Сustoms_duty");
+        });
+
+        OnModelCreatingPartial(modelBuilder);
+    }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
