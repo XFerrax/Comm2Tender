@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Comm2Tender.Models;
 
-public class DictClaim
+public partial class DictClaim
 {
     public int Id { get; set; }
 
@@ -13,5 +13,5 @@ public class DictClaim
 
     public double? WeightClaim { get; set; }
 
-    public ICollection<ListClaim> ListClaims { get; set; }
+    public virtual ICollection<ListClaim> ListClaims { get; set; } = new List<ListClaim>();
 }

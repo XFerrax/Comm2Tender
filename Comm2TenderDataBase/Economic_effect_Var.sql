@@ -22,5 +22,5 @@
    Poor_quality			bit					 null,
    Norms_violated		bit					 null,
    constraint PK_Economic_effect_Var primary key (ID),
-   constraint FK_ECONOMIC_REFERENCE_VAR_CONT foreign key (ID) references Var_Contragent_Of_Tenders (ID_Economic_effect)
+   --constraint FK_ECONOMIC_REFERENCE_VAR_CONT foreign key (ID) references Var_Contragent_Of_Tenders (ID_Economic_effect)
 )

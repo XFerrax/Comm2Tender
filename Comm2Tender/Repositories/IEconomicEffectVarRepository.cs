@@ -5,6 +5,6 @@ namespace Comm2Tender.Repositories
 {
     public interface IEconomicEffectVarRepository
     {
-        Task AddEconomicEffectVarAsync(EconomicEffectVar economicEffectVar);
+        int AddEconomicEffectVar(EconomicEffectVar economicEffectVar);
     }
 }

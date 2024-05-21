@@ -114,9 +114,7 @@ public partial class Comm2TenderDataBaseContext : DbContext
         {
             entity.ToTable("Economic_effect_Var");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("ID");
+            entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IdTendes).HasColumnName("ID_Tendes");
             entity.Property(e => e.IsBankGuarantee).HasColumnName("IsBank_guarantee");
             entity.Property(e => e.IsCustomsDuty).HasColumnName("IsCustoms_duty");
@@ -133,11 +131,6 @@ public partial class Comm2TenderDataBaseContext : DbContext
             entity.Property(e => e.PrepaidExpense).HasColumnName("Prepaid_expense");
             entity.Property(e => e.PrepaidExpense2).HasColumnName("Prepaid_expense2");
             entity.Property(e => e.PrepaidExpense3).HasColumnName("Prepaid_expense3");
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.EconomicEffectVar)
-                .HasForeignKey<EconomicEffectVar>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ECONOMIC_REFERENCE_VAR_CONT");
         });
 
         modelBuilder.Entity<InterestRate>(entity =>

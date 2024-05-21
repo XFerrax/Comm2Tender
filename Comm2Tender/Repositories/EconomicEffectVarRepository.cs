@@ -13,10 +13,12 @@ namespace Comm2Tender.Repositories
             this.dataBaseContext = dataBaseContext;
         }
 
-        public async Task AddEconomicEffectVarAsync(EconomicEffectVar economicEffectVar)
+        public int AddEconomicEffectVar(EconomicEffectVar economicEffectVar)
         {
-            await dataBaseContext.EconomicEffectVars.AddAsync(economicEffectVar);
-            await dataBaseContext.SaveChangesAsync();
+             var _dbEconomicEffectVar = dataBaseContext.EconomicEffectVars.Add(economicEffectVar);
+             dataBaseContext.SaveChanges();
+
+            return _dbEconomicEffectVar.Entity.Id;
         }
     }
 }

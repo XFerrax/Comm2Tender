@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Comm2Tender.Models;
 
-public class СustomsDuty
+public partial class СustomsDuty
 {
     public int Id { get; set; }
 
@@ -15,5 +15,5 @@ public class СustomsDuty
 
     public double? SumСustomsDuty { get; set; }
 
-    public ICollection<LogTender> LogTenders { get; set; }
+    public virtual ICollection<LogTender> LogTenders { get; set; } = new List<LogTender>();
 }

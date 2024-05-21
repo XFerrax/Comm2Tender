@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Comm2Tender.Models;
 
-public class InterestRate
+public partial class InterestRate
 {
     public int Id { get; set; }
 
@@ -21,5 +21,5 @@ public class InterestRate
 
     public double? PersBillOfCreadit { get; set; }
 
-    public virtual ICollection<LogTender> LogTenders { get; set; }
+    public virtual ICollection<LogTender> LogTenders { get; set; } = new List<LogTender>();
 }

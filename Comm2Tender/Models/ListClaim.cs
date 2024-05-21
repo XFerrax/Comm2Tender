@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Comm2Tender.Models;
 
-public class ListClaim
+public partial class ListClaim
 {
     public int Id { get; set; }
 
