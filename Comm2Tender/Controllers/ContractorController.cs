@@ -38,6 +38,7 @@ namespace Comm2Tender.Controllers
             {
                 var _mainPageDto = new MainPageDto();
                 _mainPageDto.Counterparty = _contragent.Counterparty;
+                //Добавить расчетные поля для Dto _mainPageDto
 
 
                 _mainPageDtos.Add(_mainPageDto);
