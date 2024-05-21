@@ -1,0 +1,86 @@
+﻿{
+   "CodeGenerationMode": 4,
+   "ContextClassName": "Comm2TenderDataBaseContext",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "Comm2Tender",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[Сustoms_duty]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Additional_Сonditions]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Dict_Claims]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Dict_Contragent]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Economic_effect]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Economic_effect_Var]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Interest_rate]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[List_Claims]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Log_Tender]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Pos_Tender]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Var_Contragent_Of_Tenders]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": true,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}

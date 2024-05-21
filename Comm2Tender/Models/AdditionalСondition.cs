@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Comm2Tender.Models;
 
-public class AdditionalСondition
+public partial class AdditionalСondition
 {
     public int Id { get; set; }
 

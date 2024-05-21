@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Comm2Tender.Models;
 
-public class EconomicEffect
+public partial class EconomicEffect
 {
     public int Id { get; set; }
 

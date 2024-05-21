@@ -18,6 +18,9 @@
    IsCustoms_duty       bit                  null,
    IsCustoms_fee        bit                  null,
    IsBank_guarantee     bit                  null,
+   Missing_deadlines    bit					 null,
+   Poor_quality			bit					 null,
+   Norms_violated		bit					 null,
    constraint PK_Economic_effect_Var primary key (ID),
-   constraint FK_ECONOMIC_REFERENCE_VAR_CONT foreign key (ID) references Var_Contragent_Of_Tenders (ID_Economic_effect)
+   --constraint FK_ECONOMIC_REFERENCE_VAR_CONT foreign key (ID) references Var_Contragent_Of_Tenders (ID_Economic_effect)
 )

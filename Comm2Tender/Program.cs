@@ -18,7 +18,7 @@ builder.Services.AddDbContext<Comm2TenderDataBaseContext>(options => options.Use
 builder.Services.AddTransient<IAdditionalConditionRepository, AdditionalConditionRepostory>();
 builder.Services.AddTransient<IÑustomsDutyRepository, ÑustomsDutyRepository>();
 builder.Services.AddTransient<IDictClaimRepository, DictClaimRepository>();
-builder.Services.AddTransient<IDictContragentRepository, DictContragentRepository>();
+builder.Services.AddTransient<IContragentRepository, ContragentRepository>();
 builder.Services.AddTransient<IEconomicEffectRepository, EconomicEffectRepository>();
 builder.Services.AddTransient<IEconomicEffectVarRepository, EconomicEffectVarRepository>();
 builder.Services.AddTransient<IInterestRateRepository, InterestRateRepository>();
