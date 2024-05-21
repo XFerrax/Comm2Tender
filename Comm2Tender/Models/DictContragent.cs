@@ -3,6 +3,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Comm2Tender.Models;
 
@@ -10,7 +11,7 @@ public class DictContragent
 {
     public int Id { get; set; }
 
-    [JsonProperty(PropertyName = "Counterparty")]
+    [JsonPropertyName("Counterparty")]
     public string Counterparty { get; set; }
 
     public int? SystemNum { get; set; }
