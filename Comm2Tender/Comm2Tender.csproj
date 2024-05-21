@@ -29,12 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
     <None Include="efpt.config.json.user" />
-=======
     <Folder Include="Models\" />
     <Folder Include="Services\" />
->>>>>>> 42e36fa852da6838294f908ca298db9af00d4659
   </ItemGroup>
 
 </Project>
