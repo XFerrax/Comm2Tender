@@ -13,6 +13,6 @@
         private float Norms_violated = 0.025F;
         private float Poor_quality = 0.05583F;
 
-        public float Value { get; private set; }
+        public double Value { get; private set; }
     }
 }

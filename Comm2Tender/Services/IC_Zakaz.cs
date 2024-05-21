@@ -2,6 +2,6 @@
 {
     public interface IC_Zakaz
     {
-        float Value { get; }
+        double Value { get; }
     }
 }

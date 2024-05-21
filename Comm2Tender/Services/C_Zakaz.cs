@@ -2,11 +2,11 @@
 {
     public class C_Zakaz : IC_Zakaz
     {
-        public C_Zakaz(int countTovar, float Amount1, float AmountDelivery)
+        public C_Zakaz(int countToVar, float amount1, float amountDelivery)
         {
-            Value = (countTovar * Amount1) + AmountDelivery;
+            Value = (countToVar * amount1) + amountDelivery;
         }
 
-        public float Value { get; private set; }
+        public double Value { get; private set; }
     }
 }

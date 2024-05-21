@@ -2,6 +2,6 @@
 {
     public interface IReliabilityAssessment
     {
-        float Value { get; }
+        double Value { get; }
     }
 }
