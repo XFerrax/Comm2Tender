@@ -3,7 +3,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace Comm2Tender.Models;
 
@@ -25,16 +24,16 @@ public class VarContragentOfTender
 
     public double? ReliabilityAssessment { get; set; }
 
-    [JsonPropertyName("CountPos")]
+    [JsonProperty(PropertyName = "CountPos")]
     public int? CountPos { get; set; }
 
-    [JsonPropertyName("PositionPrice")]
+    [JsonProperty(PropertyName = "PositionPrice")]
     public double? PositionPrice { get; set; }
 
-    [JsonPropertyName("DeliveryCost")]
+    [JsonProperty(PropertyName = "DeliveryCost")]
     public double? DeliveryCost { get; set; }
 
-    [JsonPropertyName("DeliveryCount")]
+    [JsonProperty(PropertyName = "DeliveryCount")]
     public int? CountDayDelivery { get; set; }
 
     public EconomicEffectVar EconomicEffectVar { get; set; }

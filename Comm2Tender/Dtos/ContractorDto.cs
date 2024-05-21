@@ -1,18 +1,17 @@
 ﻿using Comm2Tender.Models;
 using Newtonsoft.Json;
-using System.Text.Json.Serialization;
 
 namespace Comm2Tender.Dtos
 {
     public class ContractorDto
     {
-        [JsonPropertyName("Dict_Contragent")]
+        [JsonProperty(PropertyName = "Dict_Contragent")]
         public DictContragent DictContragent { get; set; }
         
-        [JsonPropertyName("Var_Contragent_Of_Tenders")]
+        [JsonProperty(PropertyName = "Var_Contragent_Of_Tenders")]
         public VarContragentOfTender VarContragentOfTender { get; set; }
 
-        [JsonPropertyName("Economic_effect_Var")]
+        [JsonProperty(PropertyName = "Economic_effect_Var")]
         public EconomicEffectVar EconomicEffectVar { get; set; }
     }
 }
@@ -27,7 +26,7 @@ Var_Contragent_Of_Tenders:
                 DeliveryCost: Number,//(float)
                 DeliveryCount:Number,//(int)
 
-Economic_effect_Var:l
+Economic_effect_Var:
                 PrepaidExpense1:Number,//(float)
                 PrepaidExpense2:Number,//(float)
                 PrepaidExpense3:Number,//(float)

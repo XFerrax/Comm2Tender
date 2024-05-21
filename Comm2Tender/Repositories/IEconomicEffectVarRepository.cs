@@ -1,10 +1,6 @@
-﻿using Comm2Tender.Models;
-using System.Threading.Tasks;
-
-namespace Comm2Tender.Repositories
+﻿namespace Comm2Tender.Repositories
 {
     public interface IEconomicEffectVarRepository
     {
-        Task AddEconomicEffectVarAsync(EconomicEffectVar economicEffectVar);
     }
 }

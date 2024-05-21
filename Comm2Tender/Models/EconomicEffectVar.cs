@@ -3,7 +3,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace Comm2Tender.Models;
 
@@ -11,61 +10,55 @@ public class EconomicEffectVar
 {
     public int Id { get; set; }
 
-    [JsonPropertyName("PrepaidExpense1")]
+    [JsonProperty(PropertyName = "PrepaidExpense1")]
     public double? PrepaidExpense { get; set; }
 
-    [JsonPropertyName("PeriodOfExecution1")]
+    [JsonProperty(PropertyName = "PeriodOfExecution1")]
     public int? PeriodOfExecution { get; set; }
 
-    [JsonPropertyName("PostPaymant1")]
+    [JsonProperty(PropertyName = "PostPaymant1")]
     public int? Postpayment { get; set; }
 
-    [JsonPropertyName("PostPaymantPeriod1")]
+    [JsonProperty(PropertyName = "PostPaymantPeriod1")]
     public int? PostpaymentPeriod { get; set; }
 
     public int? IdTendes { get; set; }
 
-    [JsonPropertyName("PrepaidExpense2")]
+    [JsonProperty(PropertyName = "PrepaidExpense2")]
     public double? PrepaidExpense2 { get; set; }
 
-    [JsonPropertyName("PeriodOfExecution2")]
+    [JsonProperty(PropertyName = "PeriodOfExecution2")]
     public int? PeriodOfExecution2 { get; set; }
 
-    [JsonPropertyName("PostPaymant2")]
+    [JsonProperty(PropertyName = "PostPaymant2")]
     public int? Postpayment2 { get; set; }
 
-    [JsonPropertyName("PostPaymantPeriod2")]
+    [JsonProperty(PropertyName = "PostPaymantPeriod2")]
     public int? PostpaymentPeriod2 { get; set; }
 
-    [JsonPropertyName("PrepaidExpense3")]
+    [JsonProperty(PropertyName = "PrepaidExpense3")]
     public double? PrepaidExpense3 { get; set; }
 
-    [JsonPropertyName("PeriodOfExecution3")]
+    [JsonProperty(PropertyName = "PeriodOfExecution3")]
     public int? PeriodOfExecution3 { get; set; }
 
-    [JsonPropertyName("PostPaymant3")]
+    [JsonProperty(PropertyName = "PostPaymant3")]
     public int? Postpayment3 { get; set; }
 
-    [JsonPropertyName("PostPaymantPeriod3")]
+    [JsonProperty(PropertyName = "PostPaymantPeriod3")]
     public int? PostpaymentPeriod3 { get; set; }
 
-    [JsonPropertyName("Accreditive")]
+    [JsonProperty(PropertyName = "Accreditive")]
     public bool? IsAccredetive { get; set; }
 
-    [JsonPropertyName("CustomDuty")]
+    [JsonProperty(PropertyName = "CustomDuty")]
     public bool? IsCustomsDuty { get; set; }
 
-    [JsonPropertyName("CustomFee")]
+    [JsonProperty(PropertyName = "CustomFee")]
     public bool? IsCustomsFee { get; set; }
 
-    [JsonPropertyName("BankGuarantee")]
+    [JsonProperty(PropertyName = "BankGuarantee")]
     public bool? IsBankGuarantee { get; set; }
-
-    public bool? MissingDeadlines { get; set; }
-
-    public bool? PoorQuality { get; set; }
-
-    public bool? NormsViolated { get; set; }
 
     public VarContragentOfTender IdNavigation { get; set; }
 }
