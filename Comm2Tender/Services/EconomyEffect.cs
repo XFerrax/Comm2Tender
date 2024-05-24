@@ -4,21 +4,20 @@ using System;
 
 namespace Comm2Tender.Services
 {
-    public class EconomyEffect
+    public class EconomyEffect : IEconomyEffect
     {
         public EconomyEffect(
             IC_Zakaz zakaz,
             InterestRate interest,
-            СustomsDuty сustomsDuty, 
             EconomicEffectVar economicEffectVar,
             VarContragentOfTender varContragentOfTender,
-            double sumCustom
+            double? sumCustom
             )
         {
 
-            double oldCashflowink = 0, oldcashflowdiscontink = 0;
-            int p = 1;
-            for (int i = 0; i <= 730; i = i + 5)
+            double? oldCashflowink = 0, oldcashflowdiscontink = 0;
+            int p = 0;
+            for (int i = 5; i <= 730; i = i + 5)
             {
                 double pay1 = 0, pay2 = 0, pay3 = 0;
                 if (i == (varContragentOfTender.CountDayDelivery - economicEffectVar.PeriodOfExecution + 5))
@@ -38,7 +37,7 @@ namespace Comm2Tender.Services
                     intPay2 = pay2 < 0 ? 1 : 0,
                     intPay3 = pay3 < 0 ? 1 : 0;
 
-                double post = i == varContragentOfTender.CountDayDelivery ? zakaz.Value : 0;
+                double? post = i == varContragentOfTender.CountDayDelivery ? zakaz.Value : 0;
 
                 int intPay4 = post > 0 ? 1 : 0;
 
@@ -89,13 +88,17 @@ namespace Comm2Tender.Services
                     payposh = zakaz.Value * interest.PersCustoms ?? 0;
                 }
 
-                double paysbor = sumCustom;
-                if (economicEffectVar.IsCustomsFee ?? false && post == 0)
+                double? paysbor = 0;
+                if (economicEffectVar.IsCustomsFee ?? true && post == 0)
                 {
                     paysbor = 0;
                 }
+                else
+                {
+                    paysbor = sumCustom;
+                }
 
-                double totalloss = pay + pospay + payacc + payposh + paysbor;
+                double? totalloss = pay + pospay + payacc + payposh + paysbor;
 
                 int intPay5 = post > 0?1:0, 
                     intPay6 = postPay1 < 0?1:0, 
@@ -116,17 +119,17 @@ namespace Comm2Tender.Services
                 }
 
                 double paygarant = 0;
-                if (economicEffectVar.IsBankGuarantee ?? false)
+                if (economicEffectVar.IsBankGuarantee ?? false && i == 5)
                 {
                     paygarant = zakaz.Value * interest.PersBank ?? 0
                         * (economicEffectVar.PrepaidExpense ?? 0 + economicEffectVar.PrepaidExpense2 ?? 0 + economicEffectVar.PrepaidExpense3 ?? 0)
                         / 100;
                 }
 
-                double totalprofit = post + profit1 + profit2 + profit3 + paygarant;
+                double? totalprofit = post + profit1 + profit2 + profit3 + paygarant;
 
 
-                double cashflow = totalloss + totalprofit,
+                double? cashflow = totalloss + totalprofit,
                     cashflowink = cashflow + oldCashflowink,
                     
                     discountraid = Math.Pow((1 / (1 + (interest.RateCb ?? 0 + interest.PersTmk ?? 0) / 73)), p),
@@ -140,6 +143,6 @@ namespace Comm2Tender.Services
             Value = oldcashflowdiscontink;
         }
 
-        public double Value { get; private set; }
+        public double? Value { get; private set; }
     }
 }

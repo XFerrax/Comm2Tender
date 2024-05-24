@@ -71,9 +71,10 @@
     <Build Include="Interest_rate.sql" />
     <Build Include="Additional_Сonditions.sql" />
     <Build Include="Сustoms_duty.sql" />
+    <PostDeploy Include="scriptDicts.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Comm2TenderDataBase.publish.xml" />
-    <None Include="tender.drawio" />
+    <None Include="Выбор контрагента.pdm" />
   </ItemGroup>
 </Project>

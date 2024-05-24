@@ -1,6 +1,6 @@
 ﻿namespace Comm2Tender.Services
 {
-    public interface IReliabilityAssessment
+    public interface IEconomyEffect
     {
         double? Value { get; }
     }

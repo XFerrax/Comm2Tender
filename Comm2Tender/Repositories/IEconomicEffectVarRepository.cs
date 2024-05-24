@@ -6,5 +6,6 @@ namespace Comm2Tender.Repositories
     public interface IEconomicEffectVarRepository
     {
         int AddEconomicEffectVar(EconomicEffectVar economicEffectVar);
+        EconomicEffectVar GetEconomicEffectVar(int contractorId);
     }
 }

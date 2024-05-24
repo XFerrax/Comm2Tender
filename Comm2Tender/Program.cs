@@ -27,7 +27,6 @@ builder.Services.AddTransient<ILogTenderRepository, LogTenderRepostory>();
 builder.Services.AddTransient<IPosTenderRepository, PosTenderRepository>();
 builder.Services.AddTransient<IVarContragentOfTenderRepository, VarContragentOfTenderRepository>();
 
-builder.Services.AddTransient<ICalculationService, CalculationService>();
 builder.Services.AddCors(options => 
 options.AddPolicy(name: "FrontSite", 
                 builder => builder
@@ -48,8 +47,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseCors("FrontSite");
-
-//app.UseAuthorization();
 
 app.MapControllers();
 
