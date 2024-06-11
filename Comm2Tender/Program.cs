@@ -6,30 +6,48 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Comm2Tender.Logic;
+using System.IdentityModel.Tokens.Jwt;
+using Comm2Tender.Logic.Enum;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Comm2Tender.Data;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(
+        options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                //ValidateIssuer = true,
+                //ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                //ValidateAudience = true,
+                //ValidAudience = "TenderSelectionClient",
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+            };
+        }
+    ) ;
 var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
-
+builder.Services.AddAuthorization();
 // Add services to the container.
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IDataService, DataService>();
+builder.Services.AddSingleton<ILogicService, LogicService>();
+
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<Comm2TenderDataBaseContext>(options => options.UseSqlServer(connectionString));
+//builder.Services.AddDbContext<Comm2TenderDataBaseContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddTransient<IAdditionalConditionRepository, AdditionalConditionRepostory>();
-builder.Services.AddTransient<IÑustomsDutyRepository, ÑustomsDutyRepository>();
-builder.Services.AddTransient<IDictClaimRepository, DictClaimRepository>();
-builder.Services.AddTransient<IContragentRepository, ContragentRepository>();
-builder.Services.AddTransient<IEconomicEffectRepository, EconomicEffectRepository>();
-builder.Services.AddTransient<IEconomicEffectVarRepository, EconomicEffectVarRepository>();
-builder.Services.AddTransient<IInterestRateRepository, InterestRateRepository>();
-builder.Services.AddTransient<IListClaimRepository, ListClaimRepository>();
-builder.Services.AddTransient<ILogTenderRepository, LogTenderRepostory>();
-builder.Services.AddTransient<IPosTenderRepository, PosTenderRepository>();
-builder.Services.AddTransient<IVarContragentOfTenderRepository, VarContragentOfTenderRepository>();
-
-builder.Services.AddTransient<ICalculationService, CalculationService>();
 builder.Services.AddCors(options => 
-options.AddPolicy(name: "FrontSite", 
+    options.AddPolicy(name: "FrontSite", 
                 builder => builder
                     .SetIsOriginAllowed(isOriginAllowed: _ => true)
                     .AllowAnyHeader()
@@ -37,6 +55,8 @@ options.AddPolicy(name: "FrontSite",
                     .AllowCredentials()));
 
 var app = builder.Build();
+
+app.UseAuthentication();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -47,10 +67,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthorization();
+
 app.UseCors("FrontSite");
 
-//app.UseAuthorization();
-
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();

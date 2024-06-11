@@ -2,6 +2,6 @@
 {
     public interface IReliabilityAssessment
     {
-        double Value { get; }
+        double? Value { get; }
     }
 }

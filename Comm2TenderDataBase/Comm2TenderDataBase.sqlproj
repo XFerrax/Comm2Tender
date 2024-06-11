@@ -60,20 +60,23 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Dict_Claims.sql" />
-    <Build Include="Dict_Contragent.sql" />
-    <Build Include="Economic_effect.sql" />
-    <Build Include="List_Claims.sql" />
-    <Build Include="Log_Tender.sql" />
-    <Build Include="Pos_Tender.sql" />
-    <Build Include="Var_Contragent_Of_Tenders.sql" />
-    <Build Include="Economic_effect_Var.sql" />
-    <Build Include="Interest_rate.sql" />
-    <Build Include="Additional_Сonditions.sql" />
-    <Build Include="Сustoms_duty.sql" />
+    <PostDeploy Include="scriptDicts.sql" />
+    <Build Include="User.sql" />
+    <Build Include="Role.sql" />
+    <Build Include="Agent.sql" />
+    <Build Include="Proposal.sql" />
+    <Build Include="Tender.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Comm2TenderDataBase.publish.xml" />
-    <None Include="tender.drawio" />
+    <None Include="Выбор контрагента.pdm" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Comm2TenderDataBase.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="UserToken.sql" />
+    <Build Include="PercentsDictionary.sql" />
+    <Build Include="CustomFeeDictionary.sql" />
   </ItemGroup>
 </Project>
