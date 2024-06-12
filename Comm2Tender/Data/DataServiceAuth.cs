@@ -62,10 +62,10 @@ namespace Comm2Tender.Data
             return true;
         }
 
-        public bool DeleteUserToken(int userTokenId)
+        public bool DeleteUserToken(int userId)
         {
             using var db = GetDatabase();
-            return db.UserToken.Where(a => a.UserTokenId == userTokenId).Delete() == 1;
+            return db.UserToken.Where(a => a.UserId == userId).Delete() == 1;
         }
 
         public Logic.Models.Dto.UserView GetUserView(int userId)

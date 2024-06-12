@@ -3,9 +3,6 @@ using Comm2Tender.Logic.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using NuGet.Protocol.Plugins;
-using System;
 
 namespace Comm2Tender.Controllers
 {
@@ -27,13 +24,14 @@ namespace Comm2Tender.Controllers
         public ActionResult<string> Login([FromBody] LoginRequest model)
         {
             var response = LogicService.Login(model);
-            switch (response.HttpCode)
+
+            if (response.HttpCode == StatusCodes.Status200OK)
             {
-                case StatusCodes.Status200OK:
-                    return Ok(response.Tokens);
-                default: 
-                    return StatusCode(response.HttpCode, new { response.Message });
+                return Ok(response.Tokens);
             }
+
+            return StatusCode(response.HttpCode, new { response.Message });
+
         }
 
         //[HttpGet("User")]
@@ -58,6 +56,7 @@ namespace Comm2Tender.Controllers
         //}
 
         [HttpGet("[action]")]
+        [Authorize]
         // GET auth/logout
         public ActionResult Logout()
         {

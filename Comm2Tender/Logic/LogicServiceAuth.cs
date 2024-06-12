@@ -120,6 +120,7 @@ namespace Comm2Tender.Logic
 
         private string CreateToken(SigningCredentials creds, string userId, string tokenId, string tokenType, DateTimeOffset expires)
         {
+
             var claims = new[]
             {
                 new Claim("sub", userId),
@@ -128,7 +129,8 @@ namespace Comm2Tender.Logic
             };
 
             return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
-                //issuer: Configuration["Jwt:Issuer"],
+                issuer: Configuration["Jwt:Issuer"],
+                audience: Configuration["Jwt:Audience"],
                 expires: expires.DateTime,
                 claims: claims,
                 signingCredentials: creds

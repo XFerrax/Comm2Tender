@@ -7,6 +7,5 @@ namespace Comm2Tender.Repositories
     {
         int? AddVarContragentOfTender(VarContragentOfTender varContragentOfTender);
 
-        VarContragentOfTender GetVarContragentOfTender(int contractorId);
     }
 }

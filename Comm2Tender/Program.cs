@@ -1,50 +1,55 @@
-using Comm2Tender.Contexts;
-using Comm2Tender.Repositories;
-using Comm2Tender.Services;
+using Comm2Tender.Data;
+using Comm2Tender.Logic;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Comm2Tender.Logic;
 using System.IdentityModel.Tokens.Jwt;
-using Comm2Tender.Logic.Enum;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Comm2Tender.Data;
-using Microsoft.AspNetCore.Http;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddAuthentication("Bearer")
+
+
+// Add services to the container.
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<IDataService, DataService>();
+builder.Services.AddScoped<ILogicService, LogicService>();
+
+
+builder.Services.AddControllers();
+
+builder.Services.AddAuthentication("Bearer") //"Bearer"
     .AddJwtBearer(
         options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                //ValidateIssuer = true,
-                //ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                //ValidateAudience = true,
-                //ValidAudience = "TenderSelectionClient",
+                ////ValidateIssuer = true,
+                ////ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ////ValidateAudience = true,
+                ////ValidAudience = "TenderSelectionClient",
+                //ValidateLifetime = true,
+                //ValidateIssuerSigningKey = true,
+
+                ValidateIssuer = true,
+                ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
             };
         }
-    ) ;
-var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
+    );
+
+
+
 builder.Services.AddAuthorization();
-// Add services to the container.
-
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddSingleton<IDataService, DataService>();
-builder.Services.AddSingleton<ILogicService, LogicService>();
-
-builder.Services.AddControllers();
-
-//builder.Services.AddDbContext<Comm2TenderDataBaseContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddCors(options => 
     options.AddPolicy(name: "FrontSite", 
@@ -56,8 +61,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseAuthentication();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -66,6 +69,10 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

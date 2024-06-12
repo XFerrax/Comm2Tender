@@ -1,6 +1,5 @@
 ﻿using Comm2Tender.Contexts;
 using Comm2Tender.Models;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Comm2Tender.Repositories
@@ -20,11 +19,6 @@ namespace Comm2Tender.Repositories
             dataBaseContext.SaveChanges();
 
             return dbVarContragentOfTender.Entity.IdTenders;
-        }
-
-        public VarContragentOfTender GetVarContragentOfTender(int contractorId)
-        {
-           return dataBaseContext.VarContragentOfTenders.FirstOrDefault(x => x.IdContragent ==  contractorId);
         }
     }
 }
