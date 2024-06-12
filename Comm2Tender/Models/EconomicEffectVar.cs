@@ -60,9 +60,9 @@ public partial class EconomicEffectVar
     [JsonPropertyName("BankGuarantee")]
     public bool? IsBankGuarantee { get; set; }
 
-    public bool? MissingDeadlines { get; set; }
+    public bool MissingDeadlines { get; set; }
 
-    public bool? PoorQuality { get; set; }
+    public bool PoorQuality { get; set; }
 
-    public bool? NormsViolated { get; set; }
+    public bool NormsViolated { get; set; }
 }
