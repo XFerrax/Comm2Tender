@@ -27,5 +27,19 @@ namespace Comm2Tender.Data
         (List<Logic.Models.Dto.PercentsDictionary> listRequest, int total) SearchPercentsDictionary(ListRequest listRequest);
         bool UpdatePercentsDictionary(PercentsDictionary model);
         #endregion PercentsDictionary
+
+        #region Proposal
+        int AddProposal(Proposal model);
+        bool DeleteProposal(int id);
+        (List<Logic.Models.Dto.Proposal> listRequest, int total) SearchProposal(ListRequest listRequest);
+        bool UpdateProposal(Proposal model);
+        #endregion Proposal
+
+        #region User
+        int AddUser(User model);
+        bool DeleteUser(int id);
+        (List<Logic.Models.Dto.User> listRequest, int total) SearchUser(ListRequest listRequest);
+        bool UpdateUser(User model);
+        #endregion User
     }
 }

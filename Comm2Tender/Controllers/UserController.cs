@@ -9,46 +9,46 @@ namespace Comm2Tender.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class AgentController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
 
-        public AgentController(ILogicService logicService)
+        public UserController(ILogicService logicService)
         {
             LogicService = (ILogicServiceCrud)logicService;
         }
 
-        // POST Agent/Search
+        // POST User/Search
         [HttpPost("[action]")]
         public ActionResult<string> Search([FromBody] ListRequest listRequest)
         {
-            return Ok(LogicService.SearchAgent(listRequest));
+            return Ok(LogicService.SearchUser(listRequest));
         }
 
-        // POST Agent
+        // POST User
         [HttpPost]
-        public ActionResult<string> Post([FromBody] Agent model)
+        public ActionResult<string> Post([FromBody] User model)
         {
-            return Ok(LogicService.AddAgent(model));
+            return Ok(LogicService.AddUser(model));
         }
 
-        // PUT Agent/5
+        // PUT User/5
         [HttpPut("{id:int:min(1)}")]
-        public ActionResult<string> Put([FromBody] Agent model, int id)
+        public ActionResult<string> Put([FromBody] User model, int id)
         {
-            model.AgentId = id;
-            if (LogicService.UpdateAgent(model))
+            model.UserId = id;
+            if (LogicService.UpdateUser(model))
             {
                 return Ok();
             }
             return new NotFoundResult();
         }
 
-        // DELETE Agent/5
+        // DELETE User/5
         [HttpDelete("{id:int:min(1)}")]
         public ActionResult<string> Delete(int id)
         {
-            if (LogicService.DeleteAgent(id))
+            if (LogicService.DeleteUser(id))
             {
                 return Ok();
             }

@@ -11,11 +11,11 @@ namespace Comm2Tender.Controllers
     [Authorize]
     public class AuthController : ControllerBase
     {
-        ILogicService LogicService { get; set; }
+        ILogicServiceAuth LogicService { get; set; }
 
         public AuthController(ILogicService logicService)
         {
-            LogicService = logicService;
+            LogicService = (ILogicServiceAuth)logicService;
         }
 
         [AllowAnonymous]

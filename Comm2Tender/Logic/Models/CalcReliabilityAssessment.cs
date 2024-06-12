@@ -1,4 +1,4 @@
-﻿using Comm2Tender.Data;
+﻿using Comm2Tender.Logic.Models.Dto;
 
 namespace Comm2Tender.Logic.Models
 {
@@ -13,8 +13,8 @@ namespace Comm2Tender.Logic.Models
 
         public CalcReliabilityAssessment(CalcOrder order, Proposal proposal, PercentsDictionary percentsDictionary) 
         {
-            Missing_deadlines = (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) / 24;
-            Poor_quality = (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) / 42 + 0.015M;
+            Missing_deadlines = (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) / 12m * 2m;
+            Poor_quality = (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) / 12m * 3.5m + 0.015M;
 
             Value = ((proposal.MissingDeadlines ? (-1) : (1)) * order.Value * Missing_deadlines)
                     + ((proposal.PoorQuality ? (-1) : (1)) * order.Value * Poor_quality)

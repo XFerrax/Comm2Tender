@@ -10,11 +10,11 @@ namespace Comm2Tender.Controllers
     [Authorize]
     public class RoleController : ControllerBase
     {
-        private readonly ILogicService LogicService;
+        private readonly ILogicServiceCrud LogicService;
 
         public RoleController(ILogicService logicService)
         {
-            LogicService = logicService;
+            LogicService = (ILogicServiceCrud)logicService;
         }
 
         // POST Role/Search

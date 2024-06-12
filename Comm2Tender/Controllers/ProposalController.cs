@@ -9,46 +9,46 @@ namespace Comm2Tender.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class AgentController : ControllerBase
+    public class ProposalController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
 
-        public AgentController(ILogicService logicService)
+        public ProposalController(ILogicService logicService)
         {
             LogicService = (ILogicServiceCrud)logicService;
         }
 
-        // POST Agent/Search
+        // POST Proposal/Search
         [HttpPost("[action]")]
         public ActionResult<string> Search([FromBody] ListRequest listRequest)
         {
-            return Ok(LogicService.SearchAgent(listRequest));
+            return Ok(LogicService.SearchProposal(listRequest));
         }
 
-        // POST Agent
+        // POST Proposal
         [HttpPost]
-        public ActionResult<string> Post([FromBody] Agent model)
+        public ActionResult<string> Post([FromBody] Proposal model)
         {
-            return Ok(LogicService.AddAgent(model));
+            return Ok(LogicService.AddProposal(model));
         }
 
-        // PUT Agent/5
+        // PUT Proposal/5
         [HttpPut("{id:int:min(1)}")]
-        public ActionResult<string> Put([FromBody] Agent model, int id)
+        public ActionResult<string> Put([FromBody] Proposal model, int id)
         {
-            model.AgentId = id;
-            if (LogicService.UpdateAgent(model))
+            model.ProposalId = id;
+            if (LogicService.UpdateProposal(model))
             {
                 return Ok();
             }
             return new NotFoundResult();
         }
 
-        // DELETE Agent/5
+        // DELETE Proposal/5
         [HttpDelete("{id:int:min(1)}")]
         public ActionResult<string> Delete(int id)
         {
-            if (LogicService.DeleteAgent(id))
+            if (LogicService.DeleteProposal(id))
             {
                 return Ok();
             }

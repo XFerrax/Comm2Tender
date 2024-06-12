@@ -1,4 +1,4 @@
-﻿using Comm2Tender.Data;
+﻿using Comm2Tender.Logic.Models.Dto;
 using System;
 
 namespace Comm2Tender.Logic.Models

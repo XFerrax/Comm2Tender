@@ -11,11 +11,11 @@ namespace Comm2Tender.Controllers
     [Authorize]
     public class PercentsDictionaryController : ControllerBase
     {
-        private readonly ILogicService LogicService;
+        private readonly ILogicServiceCrud LogicService;
 
         public PercentsDictionaryController(ILogicService logicService)
         {
-            LogicService = logicService;
+            LogicService = (ILogicServiceCrud)logicService;
         }
 
         // POST PercentsDictionary/Search

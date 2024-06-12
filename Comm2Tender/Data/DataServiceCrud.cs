@@ -140,5 +140,87 @@ namespace Comm2Tender.Data
             return true;
         }
         #endregion PercentsDictionary
+
+        #region Proposal
+        public int AddProposal(Proposal model)
+        {
+            using var db = GetDatabase();
+            return db.InsertWithInt32Identity<Proposal>(model);
+        }
+
+        public bool DeleteProposal(int id)
+        {
+            using var db = GetDatabase();
+            return db.Proposal.Where(a => a.ProposalId == id).Delete() == 1;
+        }
+
+        public (List<Logic.Models.Dto.Proposal> listRequest, int total) SearchProposal(ListRequest listRequest)
+        {
+            using var db = GetDatabase();
+            var items = db.Proposal
+                .LoadWith(a => a.Agent)
+                .LoadWith(a => a.User)
+                .LoadWith(a => a.Tender)
+                .WhereDynamic(listRequest.Filter);
+            if (string.IsNullOrWhiteSpace(listRequest.Search) == false)
+            {
+                //items = items.Where(a => a.Name.Contains(listRequest.Search));
+            }
+            items = items.OrderByDynamic(listRequest.Sort);
+            var total = items.Count();
+            if (listRequest.Size > 0)
+            {
+                items = items.Skip((listRequest.Page - 1) * listRequest.Size).Take(listRequest.Size);
+            }
+            return (items.ToList().ConvertAll(a => (Logic.Models.Dto.Proposal)a), total);
+        }
+
+        public bool UpdateProposal(Proposal model)
+        {
+            using var db = GetDatabase();
+            db.Update<Proposal>(model);
+            return true;
+        }
+        #endregion Proposal
+
+        #region User
+        public int AddUser(User model)
+        {
+            using var db = GetDatabase();
+            return db.InsertWithInt32Identity<User>(model);
+        }
+
+        public bool DeleteUser(int id)
+        {
+            using var db = GetDatabase();
+            return db.User.Where(a => a.UserId == id).Delete() == 1;
+        }
+
+        public (List<Logic.Models.Dto.User> listRequest, int total) SearchUser(ListRequest listRequest)
+        {
+            using var db = GetDatabase();
+            var items = db.User
+                .LoadWith(a => a.Role)
+                .WhereDynamic(listRequest.Filter);
+            if (string.IsNullOrWhiteSpace(listRequest.Search) == false)
+            {
+                items = items.Where(a => a.Name.Contains(listRequest.Search));
+            }
+            items = items.OrderByDynamic(listRequest.Sort);
+            var total = items.Count();
+            if (listRequest.Size > 0)
+            {
+                items = items.Skip((listRequest.Page - 1) * listRequest.Size).Take(listRequest.Size);
+            }
+            return (items.ToList().ConvertAll(a => (Logic.Models.Dto.User)a), total);
+        }
+
+        public bool UpdateUser(User model)
+        {
+            using var db = GetDatabase();
+            db.Update<User>(model);
+            return true;
+        }
+        #endregion User
     }
 }

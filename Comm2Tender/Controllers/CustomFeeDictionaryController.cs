@@ -11,11 +11,11 @@ namespace Comm2Tender.Controllers
     [Authorize]
     public class CustomFeeDictionaryController : ControllerBase
     {
-        private readonly ILogicService LogicService;
+        private readonly ILogicServiceCrud LogicService;
 
         public CustomFeeDictionaryController(ILogicService logicService)
         {
-            LogicService = logicService;
+            LogicService = (ILogicServiceCrud)logicService;
         }
 
         // POST CustomFeeDictionary/Search

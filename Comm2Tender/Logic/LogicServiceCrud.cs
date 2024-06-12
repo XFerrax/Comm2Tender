@@ -1,15 +1,9 @@
 ﻿using Comm2Tender.Logic.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System.Configuration;
-using System;
-using System.Security.Claims;
-using Comm2Tender.Data;
-using Microsoft.Extensions.Configuration;
+using Comm2Tender.Logic.Models.Dto;
 
 namespace Comm2Tender.Logic
 {
-    public partial class LogicService : ILogicService
+    public partial class LogicService : ILogicServiceCrud
     {
         #region Role
         public ListResponse SearchRole(ListRequest listRequest)
@@ -95,5 +89,57 @@ namespace Comm2Tender.Logic
             return DataService.UpdatePercentsDictionary(model);
         }
         #endregion PercentsDictionary
+
+        #region Proposal
+        public AddResponse AddProposal(Proposal model)
+        {
+            return new AddResponse
+            {
+                Id = DataService.AddProposal(model),
+            };
+        }
+
+        public bool DeleteProposal(int id)
+        {
+            return DataService.DeleteProposal(id);
+        }
+
+        public ListResponse SearchProposal(ListRequest listRequest)
+        {
+            var respList = DataService.SearchProposal(listRequest);
+            return new ListResponse() { Items = respList.listRequest, Total = respList.total };
+        }
+
+        public bool UpdateProposal(Proposal model)
+        {
+            return DataService.UpdateProposal(model);
+        }
+        #endregion Proposal
+
+        #region User
+        public AddResponse AddUser(User model)
+        {
+            return new AddResponse
+            {
+                Id = DataService.AddUser(model),
+            };
+        }
+
+        public bool DeleteUser(int id)
+        {
+            return DataService.DeleteUser(id);
+        }
+
+        public ListResponse SearchUser(ListRequest listRequest)
+        {
+            var respList = DataService.SearchUser(listRequest);
+            return new ListResponse() { Items = respList.listRequest, Total = respList.total };
+        }
+
+        public bool UpdateUser(User model)
+        {
+            return DataService.UpdateUser(model);
+        }
+        #endregion User
     }
 }

@@ -1,20 +1,17 @@
-﻿using Comm2Tender.Logic.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System.Configuration;
-using System;
-using System.Security.Claims;
-using Comm2Tender.Data;
-using Microsoft.IdentityModel.Tokens;
+﻿using Comm2Tender.Logic.Enum;
+using Comm2Tender.Logic.Models;
 using Comm2Tender.Logic.Models.Dto;
-using System.Text;
-using Comm2Tender.Logic.Enum;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Comm2Tender.Logic
 {
-    public partial class LogicService : ILogicService
+    public partial class LogicService : ILogicServiceAuth
     {
 
         public LoginResponse Login(LoginRequest model)

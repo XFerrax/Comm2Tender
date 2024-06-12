@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace Comm2Tender.Logic
 {
-    public partial interface ILogicService
+    public partial interface ILogicServiceCrud : ILogicService
     {
         ListResponse SearchRole(ListRequest listRequest);
 
@@ -28,5 +28,19 @@ namespace Comm2Tender.Logic
         ListResponse SearchPercentsDictionary(ListRequest listRequest);
         bool UpdatePercentsDictionary(PercentsDictionary model);
         #endregion PercentsDictionary
+
+        #region Proposal
+        AddResponse AddProposal(Proposal model);
+        bool DeleteProposal(int id);
+        ListResponse SearchProposal(ListRequest listRequest);
+        bool UpdateProposal(Proposal model);
+        #endregion Proposal
+
+        #region User
+        AddResponse AddUser(User model);
+        bool DeleteUser(int id);
+        ListResponse SearchUser(ListRequest listRequest);
+        bool UpdateUser(User model);
+        #endregion User
     }
 }

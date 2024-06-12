@@ -20,7 +20,7 @@
                 Role = a.Role,
                 Name = a.Name,
                 Email = a.Email,
-                Password = a.Password,
+                Password = "Unknow String",
                 IsActive = a.IsActive,
             };
         }
