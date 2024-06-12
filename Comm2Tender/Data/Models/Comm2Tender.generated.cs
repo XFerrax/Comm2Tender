@@ -9,10 +9,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 using LinqToDB;
+using LinqToDB.Common;
 using LinqToDB.Configuration;
+using LinqToDB.Data;
 using LinqToDB.Mapping;
 
 namespace Comm2Tender.Data
@@ -68,6 +71,7 @@ namespace Comm2Tender.Data
 	public partial class Agent
 	{
 		[PrimaryKey, Identity] public int      AgentId                     { get; set; } // int
+		[Column,     NotNull ] public string   Name                        { get; set; } // varchar(100)
 		[Column,     NotNull ] public DateTime AgentRegistrationDate       { get; set; } // datetime
 		[Column,     NotNull ] public DateTime AgentSystemRegistrationDate { get; set; } // datetime
 		[Column,     NotNull ] public decimal  OGRN                        { get; set; } // decimal(15, 0)
@@ -402,6 +406,168 @@ namespace Comm2Tender.Data
 		#endregion
 	}
 
+	public static partial class Comm2TenderDBStoredProcedures
+	{
+		#region sp_alterdiagram
+
+		public static int sp_alterdiagram(this Comm2TenderDB dataConnection, string @diagramname, int? @ownerId, int? @version, byte[] @definition)
+		{
+			var parameters = new []
+			{
+				new DataParameter("@diagramname", @diagramname, LinqToDB.DataType.NVarChar)
+				{
+					Size = 128
+				},
+				new DataParameter("@owner_id",    @ownerId,     LinqToDB.DataType.Int32),
+				new DataParameter("@version",     @version,     LinqToDB.DataType.Int32),
+				new DataParameter("@definition",  @definition,  LinqToDB.DataType.VarBinary)
+				{
+					Size = -1
+				}
+			};
+
+			return dataConnection.ExecuteProc("[dbo].[sp_alterdiagram]", parameters);
+		}
+
+		#endregion
+
+		#region sp_creatediagram
+
+		public static int sp_creatediagram(this Comm2TenderDB dataConnection, string @diagramname, int? @ownerId, int? @version, byte[] @definition)
+		{
+			var parameters = new []
+			{
+				new DataParameter("@diagramname", @diagramname, LinqToDB.DataType.NVarChar)
+				{
+					Size = 128
+				},
+				new DataParameter("@owner_id",    @ownerId,     LinqToDB.DataType.Int32),
+				new DataParameter("@version",     @version,     LinqToDB.DataType.Int32),
+				new DataParameter("@definition",  @definition,  LinqToDB.DataType.VarBinary)
+				{
+					Size = -1
+				}
+			};
+
+			return dataConnection.ExecuteProc("[dbo].[sp_creatediagram]", parameters);
+		}
+
+		#endregion
+
+		#region sp_dropdiagram
+
+		public static int sp_dropdiagram(this Comm2TenderDB dataConnection, string @diagramname, int? @ownerId)
+		{
+			var parameters = new []
+			{
+				new DataParameter("@diagramname", @diagramname, LinqToDB.DataType.NVarChar)
+				{
+					Size = 128
+				},
+				new DataParameter("@owner_id",    @ownerId,     LinqToDB.DataType.Int32)
+			};
+
+			return dataConnection.ExecuteProc("[dbo].[sp_dropdiagram]", parameters);
+		}
+
+		#endregion
+
+		#region sp_helpdiagramdefinition
+
+		public static IEnumerable<sp_helpdiagramdefinitionResult> sp_helpdiagramdefinition(this Comm2TenderDB dataConnection, string @diagramname, int? @ownerId)
+		{
+			var parameters = new []
+			{
+				new DataParameter("@diagramname", @diagramname, LinqToDB.DataType.NVarChar)
+				{
+					Size = 128
+				},
+				new DataParameter("@owner_id",    @ownerId,     LinqToDB.DataType.Int32)
+			};
+
+			return dataConnection.QueryProc<sp_helpdiagramdefinitionResult>("[dbo].[sp_helpdiagramdefinition]", parameters);
+		}
+
+		public partial class sp_helpdiagramdefinitionResult
+		{
+			[Column("version")   ] public int?   Version    { get; set; }
+			[Column("definition")] public byte[] Definition { get; set; }
+		}
+
+		#endregion
+
+		#region sp_helpdiagrams
+
+		public static IEnumerable<sp_helpdiagramsResult> sp_helpdiagrams(this Comm2TenderDB dataConnection, string @diagramname, int? @ownerId)
+		{
+			var parameters = new []
+			{
+				new DataParameter("@diagramname", @diagramname, LinqToDB.DataType.NVarChar)
+				{
+					Size = 128
+				},
+				new DataParameter("@owner_id",    @ownerId,     LinqToDB.DataType.Int32)
+			};
+
+			return dataConnection.QueryProc<sp_helpdiagramsResult>("[dbo].[sp_helpdiagrams]", parameters);
+		}
+
+		public partial class sp_helpdiagramsResult
+		{
+			public string Database { get; set; }
+			public string Name     { get; set; }
+			public int    ID       { get; set; }
+			public string Owner    { get; set; }
+			public int    OwnerID  { get; set; }
+		}
+
+		#endregion
+
+		#region sp_renamediagram
+
+		public static int sp_renamediagram(this Comm2TenderDB dataConnection, string @diagramname, int? @ownerId, string @newDiagramname)
+		{
+			var parameters = new []
+			{
+				new DataParameter("@diagramname",     @diagramname,    LinqToDB.DataType.NVarChar)
+				{
+					Size = 128
+				},
+				new DataParameter("@owner_id",        @ownerId,        LinqToDB.DataType.Int32),
+				new DataParameter("@new_diagramname", @newDiagramname, LinqToDB.DataType.NVarChar)
+				{
+					Size = 128
+				}
+			};
+
+			return dataConnection.ExecuteProc("[dbo].[sp_renamediagram]", parameters);
+		}
+
+		#endregion
+
+		#region sp_upgraddiagrams
+
+		public static int sp_upgraddiagrams(this Comm2TenderDB dataConnection)
+		{
+			return dataConnection.ExecuteProc("[dbo].[sp_upgraddiagrams]");
+		}
+
+		#endregion
+	}
+
+	public static partial class SqlFunctions
+	{
+		#region fn_diagramobjects
+
+		[Sql.Function(Name="[dbo].[fn_diagramobjects]", ServerSideOnly=true)]
+		public static int? fn_diagramobjects()
+		{
+			throw new InvalidOperationException();
+		}
+
+		#endregion
+	}
+
 	public static partial class TableExtensions
 	{
 		public static Agent Find(this ITable<Agent> table, int AgentId)
@@ -453,4 +619,3 @@ namespace Comm2Tender.Data
 		}
 	}
 }
-

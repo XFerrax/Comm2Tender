@@ -30,7 +30,9 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "testwebapp", "..\testwebapp
 		SlnRelativePath = "..\testwebapp\"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comm2TenderTests", "Comm2TenderTests\Comm2TenderTests.csproj", "{63077EB4-EC57-41C8-918A-F634D17731E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Comm2TenderTests", "Comm2TenderTests\Comm2TenderTests.csproj", "{63077EB4-EC57-41C8-918A-F634D17731E5}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "TenderSelector", "TenderSelector\TenderSelector.njsproj", "{6683C461-AA2A-4828-ABFF-6C69F2B96470}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,12 +58,17 @@ Global
 		{63077EB4-EC57-41C8-918A-F634D17731E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63077EB4-EC57-41C8-918A-F634D17731E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63077EB4-EC57-41C8-918A-F634D17731E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6683C461-AA2A-4828-ABFF-6C69F2B96470}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6683C461-AA2A-4828-ABFF-6C69F2B96470}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6683C461-AA2A-4828-ABFF-6C69F2B96470}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6683C461-AA2A-4828-ABFF-6C69F2B96470}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6A94DA94-96D5-4310-B6B6-871C630CDB6B} = {47E454A5-A640-4F7F-88A0-67F22F00DDC2}
+		{6683C461-AA2A-4828-ABFF-6C69F2B96470} = {47E454A5-A640-4F7F-88A0-67F22F00DDC2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3AE81127-6FB4-4235-841B-C8BE692F7A9D}

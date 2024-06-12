@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Comm2Tender.Logic.Models;
+using System;
 
 namespace Comm2Tender.Data
 {
@@ -20,5 +21,6 @@ namespace Comm2Tender.Data
         bool DeleteUserToken(int userTokenId);
 
         Logic.Models.Dto.UserView GetUserView(int userId);
+        
     }
 }
