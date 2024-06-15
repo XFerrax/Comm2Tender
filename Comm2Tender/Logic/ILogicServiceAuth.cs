@@ -2,7 +2,7 @@
 
 namespace Comm2Tender.Logic
 {
-    public partial interface ILogicService
+    public partial interface ILogicServiceAuth : ILogicService
     {
         LoginResponse Login(LoginRequest model);
 

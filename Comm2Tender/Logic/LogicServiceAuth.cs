@@ -1,20 +1,18 @@
-﻿using Comm2Tender.Logic.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System.Configuration;
-using System;
-using System.Security.Claims;
-using Comm2Tender.Data;
-using Microsoft.IdentityModel.Tokens;
-using Comm2Tender.Logic.Models.Dto;
-using System.Text;
+﻿
 using Comm2Tender.Logic.Enum;
-using System.IdentityModel.Tokens.Jwt;
+using Comm2Tender.Logic.Models;
+using Comm2Tender.Logic.Models.Dto;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Comm2Tender.Logic
 {
-    public partial class LogicService : ILogicService
+    public partial class LogicService : ILogicServiceAuth
     {
 
         public LoginResponse Login(LoginRequest model)
@@ -27,13 +25,13 @@ namespace Comm2Tender.Logic
             // TODO: Необходимо проверить не слишком ли часто пользователь выполняет вход, так как при нормальной работе access-токен (токен доступа) обновляется за счет предоставления refresh-токена выдаваемого на длительный срок и действующего всего один раз    
 
             #region Пример успешно работающей аутентификации удерживающей региональный портал приема показаний и платежей.
-            var userId = DataService.CheckUser(model.Login, model.Password);
-            if (userId > 0)
+            var user = DataService.CheckUser(model.Login, model.Password);
+            if (user != null)
             {
-                if (DataService.CheckUserBlocking(userId) == false)
+                if (DataService.CheckUserBlocking(user.UserId) == false)
                 {
                     //Logger.LogDebug($"Логин и пароль верный {tail}");
-                    return AddToken(userId, ip, tail);
+                    return AddToken(user, ip, tail);
                 }
                 else
                 {
@@ -45,10 +43,10 @@ namespace Comm2Tender.Logic
             {
                 //Logger.LogDebug($"Не удалось выполнить вход в систему {tail}");
                 //DataService.AddUserAuthLog(userId, data, DateTimeOffset.Now, false);
-                if (userId > 0)
+                if (user != null)
                 {
                     //Logger.LogDebug($"Проверим блокировку пользователя {tail}");
-                    if (DataService.CheckUserBlocking(userId))
+                    if (DataService.CheckUserBlocking(user.UserId))
                     {
                         //Logger.LogDebug($"Пользователь не заблокирован, проверим не превышено ли количество попыток входа {tail}");
                         var maxLoginAttemptinterval = Configuration.GetValue<TimeSpan>("Auth:MaxLoginAttemptInterval");
@@ -59,7 +57,7 @@ namespace Comm2Tender.Logic
                         {
                             var message = $"Превышено количество попыток входа, временная блокировка на {Configuration.GetValue<TimeSpan>("Auth:TemporaryBlockingInterval"):HH\\:mm\\:ss}";
                             //Logger.LogWarning($"{message} {tail}");
-                            BlockUser(userId, message, Configuration.GetValue<TimeSpan>("Auth:TemporaryBlockingInterval"));
+                            BlockUser(user.UserId, message, Configuration.GetValue<TimeSpan>("Auth:TemporaryBlockingInterval"));
                             //SendingService.SendEmailAsync(
                             //    Frontend.Rubleexpress,
                             //    $"{Configuration["ItEmail"]},{Configuration["SupportEmail"]}",
@@ -92,20 +90,20 @@ namespace Comm2Tender.Logic
             return DataService.DeleteUserToken(GetUserTokenId());
         }
 
-        private LoginResponse AddToken(int userId, string ip, string tail)
+        private LoginResponse AddToken(User user, string ip, string tail)
         {
             var now = DateTime.Now;
             var accessExpires = now + Configuration.GetValue<TimeSpan>("Jwt:AccessTokenTTL");
             var refreshExpires = now + Configuration.GetValue<TimeSpan>("Jwt:RefreshTokenTTL");
             var response = new LoginResponse(StatusCodes.Status401Unauthorized);
-            var userTokenId = DataService.AddUserToken(userId, ip, now, accessExpires, refreshExpires);
+            var userTokenId = DataService.AddUserToken(user.UserId, ip, now, accessExpires, refreshExpires);
             if (userTokenId > 0)
             {
-                SigningCredentials creds = GetSigningCredentials();
+                var creds = GetSigningCredentials();
                 response.Tokens = new LoginResponseTokens()
                 {
-                    AccessToken = CreateToken(creds, userId.ToString(), userTokenId.ToString(), UserTokenType.Access.ToString(), accessExpires),
-                    RefreshToken = CreateToken(creds, userId.ToString(), userTokenId.ToString(), UserTokenType.Refresh.ToString(), refreshExpires)
+                    AccessToken = CreateToken(creds, user, userTokenId.ToString(), UserTokenType.Access.ToString(), accessExpires),
+                    RefreshToken = CreateToken(creds, user, userTokenId.ToString(), UserTokenType.Refresh.ToString(), refreshExpires)
                 };
                 response.HttpCode = StatusCodes.Status200OK;
 
@@ -118,14 +116,15 @@ namespace Comm2Tender.Logic
             return new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])), SecurityAlgorithms.HmacSha256); ;
         }
 
-        private string CreateToken(SigningCredentials creds, string userId, string tokenId, string tokenType, DateTimeOffset expires)
+        private string CreateToken(SigningCredentials creds, User user, string tokenId, string tokenType, DateTimeOffset expires)
         {
-
+            
             var claims = new[]
             {
-                new Claim("sub", userId),
+                new Claim("sub", user.UserId.ToString()),
                 new Claim("jti", tokenId),
                 new Claim("typ", tokenType),
+                new Claim(ClaimTypes.Role, user.Role.Name)
             };
 
             return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(

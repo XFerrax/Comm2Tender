@@ -1,20 +1,21 @@
-﻿using Comm2Tender.Logic.Models;
-using Comm2Tender.Logic;
-using Microsoft.AspNetCore.Http;
+﻿using Comm2Tender.Logic;
+using Comm2Tender.Logic.Constants;
+using Comm2Tender.Logic.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = RolesNames.ADMINISTRATOR_ROLE_NAME)]
     public class RoleController : ControllerBase
     {
-        private readonly ILogicService LogicService;
+        private readonly ILogicServiceCrud LogicService;
 
         public RoleController(ILogicService logicService)
         {
-            LogicService = logicService;
+            LogicService = (ILogicServiceCrud)logicService;
         }
 
         // POST Role/Search

@@ -10,46 +10,46 @@ namespace Comm2Tender.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = RolesNames.ECONOMIST_ROLE_NAME)]
-    public class PercentsDictionaryController : ControllerBase
+    public class CustomFeeDictionaryController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
 
-        public PercentsDictionaryController(ILogicService logicService)
+        public CustomFeeDictionaryController(ILogicService logicService)
         {
             LogicService = (ILogicServiceCrud)logicService;
         }
 
-        // POST PercentsDictionary/Search
+        // POST CustomFeeDictionary/Search
         [HttpPost("[action]")]
         public ActionResult<string> Search([FromBody] ListRequest listRequest)
         {
-            return Ok(LogicService.SearchPercentsDictionary(listRequest));
+            return Ok(LogicService.SearchCustomFeeDictionary(listRequest));
         }
 
-        // POST PercentsDictionary
+        // POST CustomFeeDictionary
         [HttpPost]
-        public ActionResult<string> Post([FromBody] PercentsDictionary model)
+        public ActionResult<string> Post([FromBody] CustomFeeDictionary model)
         {
-            return Ok(LogicService.AddPercentsDictionary(model));
+            return Ok(LogicService.AddCustomFeeDictionary(model));
         }
 
-        // PUT PercentsDictionary/5
+        // PUT CustomFeeDictionary/5
         [HttpPut("{id:int:min(1)}")]
-        public ActionResult<string> Put([FromBody] PercentsDictionary model, int id)
+        public ActionResult<string> Put([FromBody] CustomFeeDictionary model, int id)
         {
-            model.PercentsDictionaryId = id;
-            if (LogicService.UpdatePercentsDictionary(model))
+            model.CustomFeeDictionaryId = id;
+            if (LogicService.UpdateCustomFeeDictionary(model))
             {
                 return Ok();
             }
             return new NotFoundResult();
         }
 
-        // DELETE PercentsDictionary/5
+        // DELETE CustomFeeDictionary/5
         [HttpDelete("{id:int:min(1)}")]
         public ActionResult<string> Delete(int id)
         {
-            if (LogicService.DeletePercentsDictionary(id))
+            if (LogicService.DeleteCustomFeeDictionary(id))
             {
                 return Ok();
             }

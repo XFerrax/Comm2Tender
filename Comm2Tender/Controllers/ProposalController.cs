@@ -9,47 +9,47 @@ namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = RolesNames.ECONOMIST_ROLE_NAME)]
-    public class PercentsDictionaryController : ControllerBase
+    [Authorize(Roles = RolesNames.SPECIALIST_ROLE_NAME)]
+    public class ProposalController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
 
-        public PercentsDictionaryController(ILogicService logicService)
+        public ProposalController(ILogicService logicService)
         {
             LogicService = (ILogicServiceCrud)logicService;
         }
 
-        // POST PercentsDictionary/Search
+        // POST Proposal/Search
         [HttpPost("[action]")]
         public ActionResult<string> Search([FromBody] ListRequest listRequest)
         {
-            return Ok(LogicService.SearchPercentsDictionary(listRequest));
+            return Ok(LogicService.SearchProposal(listRequest));
         }
 
-        // POST PercentsDictionary
+        // POST Proposal
         [HttpPost]
-        public ActionResult<string> Post([FromBody] PercentsDictionary model)
+        public ActionResult<string> Post([FromBody] Proposal model)
         {
-            return Ok(LogicService.AddPercentsDictionary(model));
+            return Ok(LogicService.AddProposal(model));
         }
 
-        // PUT PercentsDictionary/5
+        // PUT Proposal/5
         [HttpPut("{id:int:min(1)}")]
-        public ActionResult<string> Put([FromBody] PercentsDictionary model, int id)
+        public ActionResult<string> Put([FromBody] Proposal model, int id)
         {
-            model.PercentsDictionaryId = id;
-            if (LogicService.UpdatePercentsDictionary(model))
+            model.ProposalId = id;
+            if (LogicService.UpdateProposal(model))
             {
                 return Ok();
             }
             return new NotFoundResult();
         }
 
-        // DELETE PercentsDictionary/5
+        // DELETE Proposal/5
         [HttpDelete("{id:int:min(1)}")]
         public ActionResult<string> Delete(int id)
         {
-            if (LogicService.DeletePercentsDictionary(id))
+            if (LogicService.DeleteProposal(id))
             {
                 return Ok();
             }

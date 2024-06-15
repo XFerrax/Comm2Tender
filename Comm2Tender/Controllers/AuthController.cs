@@ -1,4 +1,6 @@
 ﻿using Comm2Tender.Logic;
+using Comm2Tender.Logic.Constants;
+using Comm2Tender.Logic.Enum;
 using Comm2Tender.Logic.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,11 +13,11 @@ namespace Comm2Tender.Controllers
     [Authorize]
     public class AuthController : ControllerBase
     {
-        ILogicService LogicService { get; set; }
+        ILogicServiceAuth LogicService { get; set; }
 
         public AuthController(ILogicService logicService)
         {
-            LogicService = logicService;
+            LogicService = (ILogicServiceAuth)logicService;
         }
 
         [AllowAnonymous]
@@ -34,29 +36,8 @@ namespace Comm2Tender.Controllers
 
         }
 
-        //[HttpGet("User")]
-        //// GET auth/user
-        //public ActionResult<string> GetUser()
-        //{
-        //    //return Ok(LogicService.GetUser());
-        //}
-
-        //[HttpGet("[action]")]
-        //// GET auth/refresh
-        //public ActionResult<string> Refresh()
-        //{
-        //    //if (LogicService.RefreshUserToken(out dynamic response))
-        //    //{
-        //    //    return Ok(response);
-        //    //}
-        //    //else
-        //    //{
-        //    //    return Unauthorized();
-        //    //}
-        //}
 
         [HttpGet("[action]")]
-        [Authorize]
         // GET auth/logout
         public ActionResult Logout()
         {

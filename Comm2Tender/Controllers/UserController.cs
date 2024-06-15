@@ -9,47 +9,47 @@ namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = RolesNames.ECONOMIST_ROLE_NAME)]
-    public class PercentsDictionaryController : ControllerBase
+    [Authorize(Roles = RolesNames.ADMINISTRATOR_ROLE_NAME)]
+    public class UserController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
 
-        public PercentsDictionaryController(ILogicService logicService)
+        public UserController(ILogicService logicService)
         {
             LogicService = (ILogicServiceCrud)logicService;
         }
 
-        // POST PercentsDictionary/Search
+        // POST User/Search
         [HttpPost("[action]")]
         public ActionResult<string> Search([FromBody] ListRequest listRequest)
         {
-            return Ok(LogicService.SearchPercentsDictionary(listRequest));
+            return Ok(LogicService.SearchUser(listRequest));
         }
 
-        // POST PercentsDictionary
+        // POST User
         [HttpPost]
-        public ActionResult<string> Post([FromBody] PercentsDictionary model)
+        public ActionResult<string> Post([FromBody] User model)
         {
-            return Ok(LogicService.AddPercentsDictionary(model));
+            return Ok(LogicService.AddUser(model));
         }
 
-        // PUT PercentsDictionary/5
+        // PUT User/5
         [HttpPut("{id:int:min(1)}")]
-        public ActionResult<string> Put([FromBody] PercentsDictionary model, int id)
+        public ActionResult<string> Put([FromBody] User model, int id)
         {
-            model.PercentsDictionaryId = id;
-            if (LogicService.UpdatePercentsDictionary(model))
+            model.UserId = id;
+            if (LogicService.UpdateUser(model))
             {
                 return Ok();
             }
             return new NotFoundResult();
         }
 
-        // DELETE PercentsDictionary/5
+        // DELETE User/5
         [HttpDelete("{id:int:min(1)}")]
         public ActionResult<string> Delete(int id)
         {
-            if (LogicService.DeletePercentsDictionary(id))
+            if (LogicService.DeleteUser(id))
             {
                 return Ok();
             }

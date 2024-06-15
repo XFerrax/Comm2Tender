@@ -1,24 +1,22 @@
-﻿using Comm2Tender.Logic.Models;
+﻿using Comm2Tender.Data;
+using Comm2Tender.Logic.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Security.Claims;
-using Comm2Tender.Data;
-using Microsoft.Extensions.Configuration;
 
 namespace Comm2Tender.Logic
 {
     public partial class LogicService : ILogicService
     {
-        IHttpContextAccessor HttpContextAccessor { get; set; }
+        private readonly IHttpContextAccessor HttpContextAccessor;
         IDataService DataService { get; set; }
         IConfiguration Configuration { get; set; }
 
         public LogicService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IDataService dataService)
         {
-            HttpContextAccessor = httpContextAccessor ?? new HttpContextAccessor();
-            DataService = dataService ?? new DataService(Configuration);
+            HttpContextAccessor = httpContextAccessor;
+            DataService = dataService;
             Configuration = configuration;
         }
 
