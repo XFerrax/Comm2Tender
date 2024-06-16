@@ -193,7 +193,9 @@ namespace Comm2Tender.Data
         public bool DeleteUser(int id)
         {
             using var db = GetDatabase();
-            return db.User.Where(a => a.UserId == id).Delete() == 1;
+            var deletedTokens = db.UserToken.Where(x => x.UserId == id).Delete();
+            var deletedUsers = db.User.LoadWith(x => x.Role).Where(a => a.UserId == id).Delete();
+            return deletedUsers == 1;
         }
 
         public (List<Logic.Models.Dto.User> listRequest, int total) SearchUser(ListRequest listRequest)

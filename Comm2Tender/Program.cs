@@ -1,5 +1,6 @@
 using Comm2Tender.Data;
 using Comm2Tender.Logic;
+using Comm2Tender.Logic.Enum;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -9,10 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Add services to the container.
 
@@ -23,19 +24,12 @@ builder.Services.AddScoped<ILogicService, LogicService>();
 
 builder.Services.AddControllers();
 
-builder.Services.AddAuthentication("Bearer") //"Bearer"
+builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(
         options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ////ValidateIssuer = true,
-                ////ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                ////ValidateAudience = true,
-                ////ValidAudience = "TenderSelectionClient",
-                //ValidateLifetime = true,
-                //ValidateIssuerSigningKey = true,
-
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,

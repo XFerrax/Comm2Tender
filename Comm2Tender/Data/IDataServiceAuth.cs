@@ -1,11 +1,12 @@
 ﻿using Comm2Tender.Logic.Models;
+using Comm2Tender.Logic.Models.Dto;
 using System;
 
 namespace Comm2Tender.Data
 {
     public partial interface IDataService
     {
-        int CheckUser(string login, string password);
+        User CheckUser(string login, string password);
 
         /// <summary>
         /// Проверка блокировки пользователя

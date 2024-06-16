@@ -1,4 +1,5 @@
-﻿using LinqToDB;
+﻿using Comm2Tender.Logic.Models.Dto;
+using LinqToDB;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -7,13 +8,13 @@ namespace Comm2Tender.Data
 {
     public partial class DataService : IDataService
     {
-        public int CheckUser(string login, string password)
+        public User CheckUser(string login, string password)
         {
             using (var db = GetDatabase())
             {
-                var user = db.User.Where(a => a.Email == login).FirstOrDefault();
+                var user = db.User.LoadWith(x => x.Role).FirstOrDefault(x => x.Email == login);
 
-                return user?.Password == password ? user.UserId : 0;
+                return user?.Password == password ? user : null;
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Comm2Tender.Logic;
+using Comm2Tender.Logic.Constants;
 using Comm2Tender.Logic.Models;
 using Comm2Tender.Logic.Models.Dto;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,7 @@ namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = RolesNames.SPECIALIST_ROLE_NAME)]
     public class ProposalController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;

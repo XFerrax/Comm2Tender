@@ -1,6 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { PiniaVuePlugin } from 'pinia'
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
+  //ssr: false,
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: "http://localhost:5037/api",
+    }},
   //...
   build: {
     transpile: ['vuetify'],
@@ -13,6 +19,7 @@ export default defineNuxtConfig({
       })
     },
     //...
+    '@pinia/nuxt',
   ],
   vite: {
     vue: {
@@ -21,4 +28,7 @@ export default defineNuxtConfig({
       },
     },
   },
+  pinia: {
+		storesDirs: ['./store/**'],
+	},
 })

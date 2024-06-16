@@ -34,7 +34,7 @@
                 label="Сроки поставки, дн"
                 prepend-icon="mdi-timer-settings-outline"
                 variant="outlined"
-                v-model="contrAgent.Var_Contragent_Of_Tenders.DeliveryCount"
+                v-model="contrAgent.Var_Contragent_Of_Tenders.DeliveryTime"
             >
                 <v-tooltip 
                     activator="parent"
@@ -190,7 +190,7 @@ export default
                     CountPos: 0,
                     PositionPrice: 0,
                     DeliveryCost: 0,
-                    DeliveryCount: 0,
+                    DeliveryTime: 0,
                 },
                 Economic_effect_Var:
                 {
@@ -328,7 +328,7 @@ export default
             this.contrAgent.Var_Contragent_Of_Tenders.PositionPrice=parseFloat(this.contrAgent.Var_Contragent_Of_Tenders.PositionPrice.toString());
 
             this.contrAgent.Var_Contragent_Of_Tenders.DeliveryCost=parseFloat(this.contrAgent.Var_Contragent_Of_Tenders.DeliveryCost.toString());
-            this.contrAgent.Var_Contragent_Of_Tenders.DeliveryCount=parseFloat(this.contrAgent.Var_Contragent_Of_Tenders.DeliveryCost.toString());
+            this.contrAgent.Var_Contragent_Of_Tenders.DeliveryTime=parseFloat(this.contrAgent.Var_Contragent_Of_Tenders.DeliveryCost.toString());
             this.contrAgent.Economic_effect_Var.PrepaidExpense1=parseFloat(this.contrAgent.Economic_effect_Var.PrepaidExpense1.toString());
             this.contrAgent.Economic_effect_Var.PrepaidExpense2=parseFloat(this.contrAgent.Economic_effect_Var.PrepaidExpense2.toString());
             this.contrAgent.Economic_effect_Var.PrepaidExpense3=parseFloat(this.contrAgent.Economic_effect_Var.PrepaidExpense3.toString());
