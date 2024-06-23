@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -121,9 +123,9 @@ namespace Comm2Tender.Logic
             
             var claims = new[]
             {
-                new Claim("sub", user.UserId.ToString()),
-                new Claim("jti", tokenId),
-                new Claim("typ", tokenType),
+                new Claim(Configuration["Jwt:ClaimNameUser"], user.UserId.ToString()),
+                new Claim(Configuration["Jwt:ClaimNameToken"], tokenId),
+                new Claim(Configuration["Jwt:ClaimNameType"], tokenType),
                 new Claim(ClaimTypes.Role, user.Role.Name)
             };
 
@@ -152,6 +154,49 @@ namespace Comm2Tender.Logic
             //{
             //    return DataService.AddUserBlocking(userId, reason, DateTimeOffset.Now);
             //}
+        }
+
+        public AuthUserView GetUserView()
+        {
+            var req = new ListRequest();
+            req.Filter = new List<FilterItem>() { new FilterItem() { Prop = "userId", Value = GetUserId() } };
+            var roleId = DataService.SearchUser(req).listRequest.FirstOrDefault().Role.RoleId;
+            switch ((RolesType)roleId)
+            {
+                case RolesType.Administrator:
+                    return new AuthUserView()
+                    {
+                        MenuItems = new List<UserMenuItem>()
+                        {
+                            new UserMenuItem("Пользователи", "/users", "mdi-account-group"),
+                            new UserMenuItem("Контрагенты", "/agents", "mdi-briefcase-account"),
+                            new UserMenuItem("Заявки", "/proposals", "mdi-invoice-multiple"),
+                            new UserMenuItem("Процентные ставки", "/percents", "mdi-bank-plus"),
+                            new UserMenuItem("Таможенные пошлины", "/customsfee", "mdi-train-car-box-full"),
+                        }
+                    };
+                case RolesType.Economist:
+                    return new AuthUserView()
+                    {
+                        MenuItems = new List<UserMenuItem>()
+                        {
+                            new UserMenuItem("Контрагенты", "/agents", "mdi-briefcase-account"),
+                            new UserMenuItem("Процентные ставки", "/percents", "mdi-bank-plus"),
+                            new UserMenuItem("Таможенные пошлины", "/customsfee", "mdi-train-car-box-full"),
+                        }
+                    };
+                case RolesType.Specialist:
+                    return new AuthUserView()
+                    {
+                        MenuItems = new List<UserMenuItem>()
+                        {
+                            new UserMenuItem("Контрагенты", "/agents", "mdi-briefcase-account"),
+                            new UserMenuItem("Заявки", "/proposals", "mdi-invoice-multiple"),
+                        }
+                    };
+                default:
+                    return new AuthUserView();
+            }
         }
     }
 }

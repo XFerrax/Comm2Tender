@@ -7,5 +7,7 @@ namespace Comm2Tender.Logic
         LoginResponse Login(LoginRequest model);
 
         bool Logout();
+
+        AuthUserView GetUserView();
     }
 }

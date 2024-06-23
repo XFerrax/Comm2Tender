@@ -31,8 +31,8 @@ namespace Comm2Tender.Logic
             {
                 var httpContext = HttpContextAccessor.HttpContext;
                 var user = httpContext.User;
-                var result = user.HasClaim(a => a.Type == "sub") ?
-                    int.Parse(HttpContextAccessor.HttpContext.User.FindFirstValue("sub")) : 0;
+                var result = user.HasClaim(a => a.Type == Configuration["ClaimNameToken"]) ?
+                    int.Parse(HttpContextAccessor.HttpContext.User.FindFirstValue(Configuration["ClaimNameToken"])) : 0;
 
                 return result;
             }
@@ -43,8 +43,8 @@ namespace Comm2Tender.Logic
         {
             try
             {
-                return HttpContextAccessor.HttpContext.User.HasClaim(a => a.Type == ClaimTypes.NameIdentifier) ?
-                    int.Parse(HttpContextAccessor.HttpContext.User.FindFirst(a => a.Type == ClaimTypes.NameIdentifier).Value)
+                return HttpContextAccessor.HttpContext.User.HasClaim(a => a.Type == Configuration["Jwt:ClaimNameUser"]) ?
+                    int.Parse(HttpContextAccessor.HttpContext.User.FindFirst(a => a.Type == Configuration["Jwt:ClaimNameUser"]).Value)
                     : 0;
             }
             catch { return 0; }

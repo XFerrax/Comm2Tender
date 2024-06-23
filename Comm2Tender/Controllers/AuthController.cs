@@ -56,5 +56,13 @@ namespace Comm2Tender.Controllers
             //LogicService.Logout(); // выход делать не будем, возможно пользователь ошибся при вводе пароля
             return UnprocessableEntity();
         }
+
+        // GET auth/getUserView
+        [HttpGet("[action]")]
+        public ActionResult<string> GetUserView()
+        {
+            var response = LogicService.GetUserView();
+            return Ok(response);
+        }
     }
 }

@@ -65,6 +65,12 @@ namespace Comm2Tender.Data
             db.Update<Agent>(model);
             return true;
         }
+
+        public Agent GetAgent(int id)
+        {
+            using var db = GetDatabase();
+            return db.Agent.First(x => x.AgentId == id);
+        }
         #endregion Agent
 
         #region CustomFeeDictionary
@@ -111,7 +117,7 @@ namespace Comm2Tender.Data
             return db.InsertWithInt32Identity<PercentsDictionary>(model);
         }
 
-        public bool DeletePercentsDictionary(int id) 
+        public bool DeletePercentsDictionary(int id)
         {
             using var db = GetDatabase();
             return db.PercentsDictionary.Where(a => a.PercentsDictionaryId == id).Delete() == 1;
@@ -138,6 +144,12 @@ namespace Comm2Tender.Data
             using var db = GetDatabase();
             db.Update<PercentsDictionary>(model);
             return true;
+        }
+
+        public PercentsDictionary GetLastPercentsDictionary()
+        {
+            using var db = GetDatabase();
+            return db.PercentsDictionary.OrderByDescending(x => x.DateEnter).FirstOrDefault();
         }
         #endregion PercentsDictionary
 
@@ -223,6 +235,60 @@ namespace Comm2Tender.Data
             db.Update<User>(model);
             return true;
         }
+
+        public User GetUser(int id)
+        {
+            using var db = GetDatabase();
+            return db.User.First(x => x.UserId == id);
+        }
         #endregion User
+
+        #region Tender
+        public int AddTender(Tender model)
+        {
+            using var db = GetDatabase();
+            return db.InsertWithInt32Identity<Tender>(model);
+        }
+
+        public bool DeleteTender(int id)
+        {
+            using var db = GetDatabase();
+            var deletedTokens = db.Tender.Where(x => x.TenderId == id).Delete();
+            var deletedTenders = db.Tender.Where(a => a.TenderId == id).Delete();
+            return deletedTenders == 1;
+        }
+
+        public (List<Tender> listRequest, int total) SearchTender(ListRequest listRequest)
+        {
+            using var db = GetDatabase();
+            var items = db.Tender
+                .WhereDynamic(listRequest.Filter);
+            if (string.IsNullOrWhiteSpace(listRequest.Search) == false)
+            {
+                items = items.Where(a => a.Discription.Contains(listRequest.Search));
+            }
+            items = items.OrderByDynamic(listRequest.Sort);
+            var total = items.Count();
+            if (listRequest.Size > 0)
+            {
+                items = items.Skip((listRequest.Page - 1) * listRequest.Size).Take(listRequest.Size);
+            }
+            return (items.ToList().ConvertAll(a => (Tender)a), total);
+        }
+
+        public bool UpdateTender(Tender model)
+        {
+            using var db = GetDatabase();
+            var updatedTenders = db.Update<Tender>(model);
+            return updatedTenders == 1;
+        }
+
+        public Tender GetTender(int id)
+        {
+            using var db = GetDatabase();
+            return db.Tender.First(x => x.TenderId == id);
+
+        }
+        #endregion Tender
     }
 }
