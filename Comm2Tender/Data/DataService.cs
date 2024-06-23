@@ -1,5 +1,7 @@
-﻿using LinqToDB.Data;
+﻿using Comm2Tender.Logic.Models;
+using LinqToDB.Data;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 namespace Comm2Tender.Data
 {

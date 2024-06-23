@@ -4,7 +4,7 @@ using System;
 
 namespace Comm2Tender.Data
 {
-    public partial interface IDataService
+    public partial interface IDataService 
     {
         User CheckUser(string login, string password);
 

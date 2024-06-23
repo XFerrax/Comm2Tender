@@ -43,8 +43,8 @@ namespace Comm2Tender.Logic
         {
             try
             {
-                return HttpContextAccessor.HttpContext.User.HasClaim(a => a.Type == ClaimTypes.NameIdentifier) ?
-                    int.Parse(HttpContextAccessor.HttpContext.User.FindFirst(a => a.Type == ClaimTypes.NameIdentifier).Value)
+                return HttpContextAccessor.HttpContext.User.HasClaim(a => a.Type == "sub") ?
+                    int.Parse(HttpContextAccessor.HttpContext.User.FindFirst(a => a.Type == "sub").Value)
                     : 0;
             }
             catch { return 0; }

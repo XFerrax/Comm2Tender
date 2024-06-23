@@ -38,6 +38,8 @@ namespace Comm2Tender.Logic
 
         #region User
         AddResponse AddUser(User model);
+
+        User GetUser(int id);
         bool DeleteUser(int id);
         ListResponse SearchUser(ListRequest listRequest);
         bool UpdateUser(User model);

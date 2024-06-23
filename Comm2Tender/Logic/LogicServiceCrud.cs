@@ -1,5 +1,9 @@
-﻿using Comm2Tender.Logic.Models;
+﻿using ClosedXML.Excel;
+using Comm2Tender.Logic.Models;
 using Comm2Tender.Logic.Models.Dto;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Comm2Tender.Logic
 {
@@ -140,6 +144,14 @@ namespace Comm2Tender.Logic
         {
             return DataService.UpdateUser(model);
         }
+
+        public User GetUser(int id)
+        {
+            return DataService.GetUser(id);
+        }
+
         #endregion User
+
+        
     }
 }
