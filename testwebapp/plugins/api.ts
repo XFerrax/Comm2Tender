@@ -3,11 +3,12 @@ export default defineNuxtPlugin((app) => {
 })
 
 const BASE_API_URL = 'http://localhost:5037/api';
-export async function fetchData(endpoint: string, query: any) {
-    try{
-        return await fetch(`${BASE_API_URL}/${endpoint}`, query)
-    }
-    catch {
-
-    }
+export function fetchData(endpoint: string, query: any) {
+    return fetch(`${BASE_API_URL}/${endpoint}`, query)
+    .then(response => {
+        if(!response.ok) {
+            return Promise.reject(`Error: ${response.statusText}`)
+        }
+        return response.json()
+    })
 }

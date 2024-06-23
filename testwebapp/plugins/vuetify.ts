@@ -2,6 +2,7 @@ import { defineNuxtPlugin } from '#app'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
+import colors from 'vuetify/util/colors'
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -17,7 +18,7 @@ export default defineNuxtPlugin((app) => {
       themes: {
         light: {
           colors: {
-            primary: '#6200ee',
+            primary:  colors.amber.darken3,
             secondary: '#03dac6',
             background: '#ffffff',
             surface: '#ffffff',

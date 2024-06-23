@@ -7,7 +7,7 @@
       <v-card-text>
         <v-text-field
           v-model="currentItem.email"
-          :rules="[requiredRule, emailRule]"
+          :rules="[valudators.requiredRule, valudators.emailRule]"
           prepend-icon="mdi-account"
           label="Email"
           required
@@ -15,7 +15,7 @@
         />
         <v-text-field
           v-model="currentItem.password"
-          :rules="[requiredRule]"
+          :rules="[valudators.requiredRule]"
           prepend-icon="mdi-lock"
           label="Пароль"
           required
@@ -43,15 +43,19 @@
     password: 'FiRK2M%7Q$cqgMz@',
   })
 
+  const valudators = {
+    requiredRule,
+    emailRule,
+  }
+
   
   // Определение метода login
   const login = () => {
     if(form.value.validate()) {
-      const store = useAuthStore()
-      store.login(currentItem.value.email, currentItem.value.password)
+      useAuthStore().login(
+        currentItem.value.email, 
+        currentItem.value.password, 
+        useRouter())
     }
-    //if (form.value.validate()) {}
-    
-    const router = useRouter()
   }
 </script>

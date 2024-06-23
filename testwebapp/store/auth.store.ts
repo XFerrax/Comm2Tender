@@ -1,61 +1,94 @@
-import { HttpQueryType, BuildQuery } from "~/utils/helpers"
-import { defineStore } from 'pinia'
-import { fetchData } from '~/plugins/api'
-import jwtDecode from 'jwt-decode';
+import { defineStore } from 'pinia';
+import { fetchData } from '~/plugins/api';
+import { menuStore } from './menu.store';
+import helpers, { HttpQueryType } from '~/utils/helpers';
 
-interface IUser {
-	email: string
-	status: boolean
-	accessToken: string
-	refreshToken: string
-	roleType: string
-  }
+const $helpers = helpers();
 
-interface IAuthStore {
-	user: IUser
+export const useAuthStore = defineStore({
+  id: 'auth',
+  state: () => ({ }),
+  getters: {
+    accessToken: (): string | null => getCookie('accessToken') as string | null,
+    refreshToken: (): string | null => getCookie('refreshToken') as string | null,
+  },
+  actions: {
+    setTokens(tokens: { accessToken: string | null, refreshToken: string | null }) {
+      if (tokens.accessToken) {
+		setCookie('accessToken', tokens.accessToken)
+      } else {
+		deleteCookie('accessToken');
+      }
+
+      if (tokens.refreshToken) {
+		setCookie('refreshToken', tokens.refreshToken, 14400)
+      } else {
+        deleteCookie('refreshToken');
+      }
+    },
+    login(email: string, password: string, router: any) {
+      fetchData('auth/login',
+          {
+            method: 'post', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ login: email, password: password }) 
+          })
+        .then(response => {
+          const data = response;
+          this.setTokens({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken 
+          })
+          fetchData('auth/getUserView', $helpers.BuildQuery(HttpQueryType.get))
+            .then(inResponse => {
+              const myMenuStore = menuStore();
+			        myMenuStore.removeMenuItem()
+              myMenuStore.setMenuItems(inResponse.menuItems);
+              router.push(inResponse.menuItems[0].path);
+            })
+            .catch()
+        })
+        .catch(() => {
+          this.logout()
+        });
+    },
+    logout() {
+      fetchData('auth/logout', $helpers.BuildQuery(HttpQueryType.get))
+        .catch()
+        .finally(()=>{
+          const myMenuStore = menuStore();
+          myMenuStore.removeMenuItem()
+          this.setTokens({ accessToken: null, refreshToken: null })
+          useRouter().push('/login');
+        })
+    },
+  },
+});
+
+function setCookie(name: string, val: string, seconds?: number) {
+    const date = new Date();
+    const value = val;
+	if(seconds) {
+		date.setTime(date.getTime() + seconds * 1000);
+	}
+	else {
+    	date.setTime(date.getTime() + (60 * 60 * 1000));
+	}
+
+    document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
 }
 
-interface JwtTokenPayload {
-	[key: string]: any;
-  }
+function getCookie(name: string) {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    
+    if (parts.length == 2) {
+        return parts.pop()?.split(";").shift();
+    }
+}
 
-const defaultValue: IAuthStore = {
-	user: {
-	  email: '',
-	  status: false,
-	  accessToken: '',
-	  refreshToken: '',
-	  roleType: '',
-	},
-  }
-
-  export const useAuthStore = defineStore({
-	id: 'auth', // Идентификатор хранилища
-	state: (): IAuthStore => defaultValue, // Инициализация состояния
-	getters: {
-	  accessToken: (state): string => state.user.accessToken,
-	  refreshToken: (state): string => state.user.refreshToken,
-	  roleType: (state): string => state.user.roleType,
-	},
-	actions: {
-	  async login(email: string, password: string) {
-		const response = await fetchData('auth/login', BuildQuery(HttpQueryType.post, { login: email, password: password }))
-		const data = await (response as Response).json()
-		// Обновление состояния на основе полученных данных
-		this.user.accessToken = data.accessToken
-		this.user.refreshToken = data.refreshToken
-		const jwtToken = jwtDecode<JwtTokenPayload>(data.accessToken)
-		const roleKey = Object.keys(jwtToken).find(str => str.includes('role'))
-		this.user.roleType = roleKey ? jwtToken[roleKey] : undefined
-		this.user.email = email
-		this.user.status = true
-		const route = useRouter();
-		route.push('/')
-	  },
-	  async logout() {
-		await fetch('auth/logout', BuildQuery(HttpQueryType.get))
-		// Сброс состояния при выходе
-		this.user = { ...defaultValue.user }
-	  },
-	},
-  })
+function deleteCookie(name: string) {
+    const date = new Date();
+    date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
+    document.cookie = name + "=; expires=" + date.toUTCString() + "; path=/";
+}

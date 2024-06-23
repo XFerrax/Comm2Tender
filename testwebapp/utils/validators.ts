@@ -19,8 +19,9 @@ export function dateRule(value: string, type?: helpers.DateType)
   return !value || helpers.convertDateStringToISOString(value, type).length > 0 || 'Некорректная дата'
 }
 
-export function lengthRule(value: string, message: string, rule?: helpers.ILengthRule) {
+export function lengthRule(value: string, rule?: helpers.ILengthRule) : boolean | string{
   if (!rule) {
+    console.log(rule)
     return 'Неправильно установлено правило проверки';
   }
 
@@ -28,17 +29,16 @@ export function lengthRule(value: string, message: string, rule?: helpers.ILengt
   const min = rule.min;
   const max = rule.max;
 
-  if (!message) {
-    message =
-      'Количество символов должно быть ' +
-      (min !== undefined && max !== undefined
-        ? min === max
-          ? `${min}`
-          : `от ${min} до ${max}`
-        : min !== undefined
-        ? `не менее ${min}`
-        : `не более ${max}`);
-  }
+  const message =
+    'Количество символов должно быть ' +
+    (min !== undefined && max !== undefined
+      ? min === max
+        ? `${min}`
+        : `от ${min} до ${max}`
+      : min !== undefined
+      ? `не менее ${min}`
+      : `не более ${max}`);
+  
 
   if (!value) {
     return true; // пустое значение допускается, так как обязательность проверяется required
