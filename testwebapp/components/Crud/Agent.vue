@@ -1,6 +1,6 @@
 <template>
   <VLayout v-if="visible" wrap>
-    <VCard title="Пользователи" flat width="100%">
+    <VCard title="Контрагенты" flat width="100%">
       <template v-slot:text>
         <VContainer>
           <VRow>
@@ -112,7 +112,7 @@
                   <VIcon>mdi-delete</VIcon>
                   <VDialog activator="parent">
                     <VCard>
-                      <VCardTitle class="text-h5">Удалить выбранного пользователя?</VCardTitle>
+                      <VCardTitle class="text-h5">Удалить выбранного контрагента?</VCardTitle>
                       <VCardActions>
                         <VSpacer />
                         <VBtn variant="text" @click="deleteItemConfirm">OK</VBtn>
@@ -142,20 +142,21 @@ import { ref } from 'vue'
 import MyAlert from '~/components/Control/MyAlert.vue'
 import helpers from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
-import Form from '~/components/Form/User.vue'
+import Form from '~/components/Form/Agent.vue'
 
 var props = defineProps(mixinPropsCrud)
 const useCrud = mixinUseCrud()
 const $helpers = helpers()
 const addBtn = ref(null)
-const itemKey = 'userId'
+const itemKey = 'agentId'
 
 const headers = ref([
-  { title: 'ID пользователя', key: itemKey, align: 'end', sortable: true, },
-  { title: 'ФИО', key: 'name', align: 'start', sortable: true, },
-  { title: 'E-mail', key: 'email', align: 'start', sortable: true, },
-  { title: 'Роль', key: 'role.name', align: 'start', sortable: true, },
-  { title: 'Активация', key: 'isActive', align: 'center', sortable: false, }
+  { title: 'ID агента', key: itemKey, align: 'end', sortable: true, },
+  { title: 'Название', key: 'name', align: 'start', sortable: true, },
+  { title: 'ИНН', key: 'inn', align: 'start', sortable: true, },
+  { title: 'КПП', key: 'kpp', align: 'start', sortable: true, },
+  { title: 'ОГРН', key: 'ogrn', align: 'start', sortable: true, },
+  { title: 'Дата регистрации', key: 'agentRegistrationDate', align: 'start', sortable: true, },
 ])
 
 if (!props.readonly) {
@@ -179,7 +180,7 @@ function load() {
         pagination: useCrud.pagination.value,
         search: useCrud.search.value,
       }))
-    fetchData('user/search', request)
+    fetchData('agent/search', request)
       .then(response => {
         useCrud.items = ref<any[]>(response.items)
         useCrud.total = response.total

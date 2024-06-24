@@ -1,6 +1,6 @@
 <template>
   <VLayout v-if="visible" wrap>
-    <VCard title="Пользователи" flat width="100%">
+    <VCard title="Проценты" flat width="100%">
       <template v-slot:text>
         <VContainer>
           <VRow>
@@ -142,20 +142,22 @@ import { ref } from 'vue'
 import MyAlert from '~/components/Control/MyAlert.vue'
 import helpers from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
-import Form from '~/components/Form/User.vue'
+import Form from '~/components/Form/Percent.vue'
 
 var props = defineProps(mixinPropsCrud)
 const useCrud = mixinUseCrud()
 const $helpers = helpers()
 const addBtn = ref(null)
-const itemKey = 'userId'
+const itemKey = 'percentsDictionaryId'
 
 const headers = ref([
   { title: 'ID пользователя', key: itemKey, align: 'end', sortable: true, },
-  { title: 'ФИО', key: 'name', align: 'start', sortable: true, },
-  { title: 'E-mail', key: 'email', align: 'start', sortable: true, },
-  { title: 'Роль', key: 'role.name', align: 'start', sortable: true, },
-  { title: 'Активация', key: 'isActive', align: 'center', sortable: false, }
+  { title: 'Ставка ЦБ', key: 'refinancingRate', align: 'start', sortable: true, },
+  { title: '% ТМК', key: 'tmk', align: 'start', sortable: true, },
+  { title: 'Банковская гарантия', key: 'bankGuarantee', align: 'start', sortable: true, },
+  { title: 'Кредит', key: 'credit', align: 'center', sortable: false, },
+  { title: 'Таможенная пошлина', key: 'customDuty', align: 'center', sortable: false, },
+  { title: 'Скидка', key: 'discount', align: 'center', sortable: false, },
 ])
 
 if (!props.readonly) {
@@ -179,7 +181,7 @@ function load() {
         pagination: useCrud.pagination.value,
         search: useCrud.search.value,
       }))
-    fetchData('user/search', request)
+    fetchData('percentsDictionary/search', request)
       .then(response => {
         useCrud.items = ref<any[]>(response.items)
         useCrud.total = response.total

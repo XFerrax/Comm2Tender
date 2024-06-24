@@ -1,6 +1,6 @@
 <template>
   <VLayout v-if="visible" wrap>
-    <VCard title="Пользователи" flat width="100%">
+    <VCard title="Заявки" flat width="100%">
       <template v-slot:text>
         <VContainer>
           <VRow>
@@ -142,20 +142,17 @@ import { ref } from 'vue'
 import MyAlert from '~/components/Control/MyAlert.vue'
 import helpers from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
-import Form from '~/components/Form/User.vue'
+import Form from '~/components/Form/Proposal.vue'
 
 var props = defineProps(mixinPropsCrud)
 const useCrud = mixinUseCrud()
 const $helpers = helpers()
 const addBtn = ref(null)
-const itemKey = 'userId'
+const itemKey = 'proposalId'
 
 const headers = ref([
-  { title: 'ID пользователя', key: itemKey, align: 'end', sortable: true, },
-  { title: 'ФИО', key: 'name', align: 'start', sortable: true, },
-  { title: 'E-mail', key: 'email', align: 'start', sortable: true, },
-  { title: 'Роль', key: 'role.name', align: 'start', sortable: true, },
-  { title: 'Активация', key: 'isActive', align: 'center', sortable: false, }
+  { title: 'ID заявки', key: itemKey, align: 'end', sortable: true, },
+  { title: 'Контрагент', key: 'agent.name', align: 'start', sortable: true, },
 ])
 
 if (!props.readonly) {
@@ -167,8 +164,6 @@ if (!props.readonly) {
   })
 }
 
-onMounted(() => load())
-
 function load() {
   if (!useCrud.loading.value) {
     useCrud.mixinBeforeRequest()
@@ -179,7 +174,7 @@ function load() {
         pagination: useCrud.pagination.value,
         search: useCrud.search.value,
       }))
-    fetchData('user/search', request)
+    fetchData('proposal/search', request)
       .then(response => {
         useCrud.items = ref<any[]>(response.items)
         useCrud.total = response.total

@@ -1,13 +1,7 @@
 <template>
-  <div>
-    
-  </div>
+  <Crud />
 </template>
 
 <script lang="ts" setup>
-
+import Crud from '~/Components/Crud/CustomsFee.vue';
 </script>
-
-<style>
-
-</style>
