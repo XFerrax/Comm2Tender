@@ -12,6 +12,7 @@ interface UseCrudMixin {
   menu: Ref<boolean>,
   isNew: Ref<boolean>,
   isForm: Ref<boolean>,
+  isDialogConfirm: Ref<boolean>,
   searchTimeout: Ref<NodeJS.Timeout | undefined>,
   mixinSetCurrent: (item: any, func?: () => void) => void,
   mixinMenuItem: (item: any) => void,
@@ -43,6 +44,7 @@ export default function mixinUseCrud(): UseCrudMixin {
 
   const mixinDeleteItem = function(this: UseCrudMixin, item: any): void {
     this.mixinSetCurrent(item)
+    this.isDialogConfirm.value = true
   }
 
   const mixinBeforeRequest = function(this: UseCrudMixin): void {
@@ -66,6 +68,7 @@ export default function mixinUseCrud(): UseCrudMixin {
     menu: ref(false),
     isNew: ref(false),
     isForm: ref(false),
+    isDialogConfirm: ref(false),
     searchTimeout: ref<NodeJS.Timeout | undefined>(undefined),
     mixinSetCurrent,
     mixinMenuItem,

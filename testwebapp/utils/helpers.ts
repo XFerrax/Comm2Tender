@@ -5,6 +5,8 @@ export enum HttpQueryType
 {
   get = 'GET',
   post = 'POST',
+  put = 'PUT',
+  delete = 'DELETE',
 }
 
 export enum DateType

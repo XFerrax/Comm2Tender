@@ -25,7 +25,7 @@ export function lengthRule(value: string, rule?: helpers.ILengthRule) : boolean 
     return 'Неправильно установлено правило проверки';
   }
 
-  const length = value.length;
+  const length = value?.length;
   const min = rule.min;
   const max = rule.max;
 

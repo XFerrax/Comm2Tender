@@ -1,7 +1,11 @@
 <template>
   <Form
-    v-bind:isActive="props.isActive"
-    :save="save"
+    v-model:isActive="props.isActive"
+    v-bind:save-func="props.saveFunc"
+    :title="props.title"
+    :title-suffix="props.titleSuffix"
+    :close-func="close"
+    :is-new="props.isNew"
   >
     <template #fields>
       <VTextField v-model="currentItem.name" :rules="[validators.requiredRule, validators.lengthRule(currentItem.name, lengthRule50)]" :counter="50">
@@ -34,23 +38,19 @@ import Form from '~/components/Form/Form.vue'
 import FormLabel from '~/components/Control/FormLabel.vue'
 import RoleSelect from '~/components/Select/Role.vue'
 import { requiredRule, lengthRule, emailRule } from '~/utils/validators'
-import helpers from '~/utils/helpers'
+import helpers, { HttpQueryType } from '~/utils/helpers'
 import type { ILengthRule } from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
+import mixinPropsForm from '~/composables/mixinPropsForm';
 
-const props = defineProps({
-  isActive: Boolean,
-  isNew: Boolean,
-  editedItem: Object,
-})
+const props = defineProps(mixinPropsForm)
+const emit = defineEmits(['update:isActive'])
 
 const validators = {
   requiredRule,
   lengthRule,
   emailRule,
 }
-
-const isActiveForm = ref(props.isActive)
 
 const lengthRule50 : ILengthRule = { max: 50 }
 
@@ -68,7 +68,7 @@ if(props.editedItem) {
   currentItem.value.name = props.editedItem.name
   currentItem.value.email = props.editedItem.email
   currentItem.value.password = props.editedItem.password
-  currentItem.value.roleId = props.editedItem.role.roleId
+  currentItem.value.roleId = props.editedItem.role?.roleId
   currentItem.value.isActive = props.editedItem.isActive
 }
 
@@ -87,18 +87,22 @@ const save = () => {
   }
   
   const $helpers = helpers()
-  const request = $helpers.BuildQuery(HttpQueryType.post, item)
+  const request = $helpers.BuildQuery(props.isNew ? HttpQueryType.post : HttpQueryType.put, item)
   if (props.isNew) {
     fetchData('user', request)
       .then(() => {
-        isActiveForm.value = false
+        close()
       })
   } else {
     fetchData(`user/${item.userId}`, item)
       .then(() => {
-        isActiveForm.value = false
+        close()
       })
   }
+}
+
+const close = () => {
+  emit('update:isActive', false)
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <VLayout v-if="visible" wrap>
-    <VCard title="Пользователи" flat width="100%">
+    <VCard :title="title" flat width="100%">
       <template v-slot:text>
         <VContainer>
           <VRow>
@@ -32,17 +32,10 @@
                 v-if="!readonly"
                 color="primary" 
                 prepend-icon="mdi-plus"
-                class="align-self-center">
-                Добавить
-                <VDialog activator="parent" max-width="800">
-                  <template v-slot:default="{ isActive }">
-                    <Form
-                      v-bind:isActive="isActive"
-                      is-new
-                    />
-                  </template>
-                </VDialog>
-              </VBtn>
+                class="align-self-center"
+                @click="showForm"
+                text="Добавить"
+              />
             </VCol>
           </VRow>          
         </VContainer>
@@ -54,7 +47,7 @@
         :headers="headers"
         :items="useCrud.items.value"
         :footer-props="{
-          'items-per-page-options': 10,
+          'Элементов на странице': 10,
         }"
         :options.sync="useCrud.pagination"
         :server-items-length="useCrud.total"
@@ -86,15 +79,6 @@
                   @click="useCrud.mixinEditItem(item)"
                 >
                   <VIcon>mdi-pencil</VIcon>
-                  <VDialog activator="parent" max-width="800">
-                    <template v-slot:default="{ isActive }">
-                      <Form
-                        v-bind:isActive="isActive"
-                        is-new="false"
-                        :edited-item="item"
-                      />
-                    </template>
-                  </VDialog>
                 </VBtn>
               </template>
             </VTooltip>
@@ -108,20 +92,7 @@
                   color="error" 
                   v-bind="props" 
                   @click="useCrud.mixinDeleteItem(item)"
-                >
-                  <VIcon>mdi-delete</VIcon>
-                  <VDialog activator="parent">
-                    <VCard>
-                      <VCardTitle class="text-h5">Удалить выбранного пользователя?</VCardTitle>
-                      <VCardActions>
-                        <VSpacer />
-                        <VBtn variant="text" @click="deleteItemConfirm">OK</VBtn>
-                        <VBtn variant="text" @click="closeDelete">Cancel</VBtn>
-                        <VSpacer />
-                      </VCardActions>
-                    </VCard>
-                  </VDialog>
-                </VBtn>
+                />
               </template>
             </VTooltip>
           </VRow>
@@ -133,6 +104,18 @@
     </VCard>
 
   </VLayout>
+  <Form
+    v-model:isActive="useCrud.isForm.value"
+    v-bind:title-suffix="titleSuffixForm"
+    :is-new="useCrud.isNew.value"
+    :edited-item="useCrud.editedItem"
+    :api-address="apiAddress"
+  />
+  <DialogConfirm
+    :isOpen="useCrud.isDialogConfirm.value"
+    @confirm="deleteItem"
+    @cancel="useCrud.isDialogConfirm.value = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -140,15 +123,19 @@ import mixinPropsCrud from '~/composables/mixinPropsCrud'
 import mixinUseCrud from '~/composables/mixinUseCrud'
 import { ref } from 'vue'
 import MyAlert from '~/components/Control/MyAlert.vue'
+import DialogConfirm from '~/components/Dialog/DialogConfirm.vue'
 import helpers from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
 import Form from '~/components/Form/User.vue'
 
 var props = defineProps(mixinPropsCrud)
 const useCrud = mixinUseCrud()
+
 const $helpers = helpers()
-const addBtn = ref(null)
-const itemKey = 'userId'
+const apiAddress = 'user'
+const itemKey = `${apiAddress}Id`
+const title = 'Пользователи'
+const titleSuffixForm = 'пользователя'
 
 const headers = ref([
   { title: 'ID пользователя', key: itemKey, align: 'end', sortable: true, },
@@ -169,7 +156,7 @@ if (!props.readonly) {
 
 onMounted(() => load())
 
-function load() {
+const load = () => {
   if (!useCrud.loading.value) {
     useCrud.mixinBeforeRequest()
     const request = $helpers.BuildQuery(
@@ -179,7 +166,7 @@ function load() {
         pagination: useCrud.pagination.value,
         search: useCrud.search.value,
       }))
-    fetchData('user/search', request)
+    fetchData(`${apiAddress}/search`, request)
       .then(response => {
         useCrud.items = ref<any[]>(response.items)
         useCrud.total = response.total
@@ -188,11 +175,18 @@ function load() {
   }
 }
 
-function saved() {
-
+const deleteItem = () => {
+  const request = $helpers.BuildQuery(HttpQueryType.delete)
+  fetchData(`${apiAddress}/${useCrud.editedItem.value.userId}`, request)
+    .then(response => {
+      useCrud.items = ref<any[]>(response.items)
+      useCrud.total = response.total
+      useCrud.mixinAfterRequest(true)
+    })
 }
 
-const close = () => {
-  addBtn.value = null
+const showForm = () => {
+  useCrud.isNew.value = true
+  useCrud.isForm.value = true
 }
 </script>
