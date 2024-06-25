@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinqToDB.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,9 +9,12 @@ namespace Comm2Tender.Logic.Models.Dto
     public class Agent
     {
         public int AgentId { get; set; }
-        public bool IsUseBalance { get; set; }
-        public decimal Balance { get; set; }
-
+        public string Name { get; set; }
+        public DateTime AgentRegistrationDate { get; set; }
+        public DateTime AgentSystemRegistrationDate { get; set; }
+        public decimal OGRN { get; set; }
+        public decimal INN { get; set; }
+        public decimal KPP { get; set; }
 
         public static implicit operator Agent(Data.Agent a)
         {
@@ -19,6 +23,12 @@ namespace Comm2Tender.Logic.Models.Dto
             return new Agent()
             {
                 AgentId = a.AgentId,
+                Name = a.Name,
+                AgentRegistrationDate = a.AgentRegistrationDate,
+                AgentSystemRegistrationDate = a.AgentSystemRegistrationDate,
+                OGRN = a.OGRN,
+                INN = a.INN,
+                KPP = a.KPP,
             };
         }
 
@@ -29,6 +39,12 @@ namespace Comm2Tender.Logic.Models.Dto
             return new Data.Agent()
             {
                 AgentId = a.AgentId,
+                Name = a.Name,
+                AgentRegistrationDate = a.AgentRegistrationDate,
+                AgentSystemRegistrationDate = a.AgentSystemRegistrationDate,
+                OGRN = a.OGRN,
+                INN = a.INN,
+                KPP = a.KPP,
             };
         }
     }

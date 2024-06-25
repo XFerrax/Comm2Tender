@@ -9,7 +9,6 @@ namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = RolesNames.ADMINISTRATOR_ROLE_NAME)]
     public class UserController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
