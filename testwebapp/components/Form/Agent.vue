@@ -1,10 +1,41 @@
 <template>
   <Form
-    v-bind:isActive="props.isActive"
-    :save="save"
+    v-model:isActive="props.isActive"
+    v-bind:save-func="save"
+    :title="props.title"
+    :title-suffix="props.titleSuffix"
+    :close-func="close"
+    :is-new="props.isNew"
   >
     <template #fields>
-      
+      <VTextField v-model="currentItem.name" :rules="[validators.requiredRule]" :counter="50">
+        <template #label>
+          <FormLabel label="Название контрагента" required />
+        </template>
+      </VTextField>
+      <VDateInput
+        v-model="currentItem.agentRegistrationDate"
+        label="Выберите дату регистрации контрагента"
+      />
+      <VTextField v-model="currentItem.ogrn" :rules="[validators.requiredRule]">
+        <template #label>
+          <FormLabel label="ОГРН" required />
+        </template>
+      </VTextField>
+      <VTextField
+        v-model="currentItem.inn"
+        :rules="[validators.requiredRule]"
+        :counter="50"
+      >
+        <template #label>
+          <FormLabel label="ИНН" required />
+        </template>
+      </VTextField>
+      <VTextField v-model="currentItem.kpp" :rules="[validators.requiredRule]" :counter="50">
+        <template #label>
+          <FormLabel label="КПП" required />
+        </template>
+      </VTextField>
     </template>
   </Form>
 </template>
@@ -12,17 +43,14 @@
 <script setup lang="ts">
 import Form from '~/components/Form/Form.vue'
 import FormLabel from '~/components/Control/FormLabel.vue'
-import RoleSelect from '~/components/Select/Role.vue'
+import Select from '~/components/Select/Select.vue'
 import { requiredRule, lengthRule, emailRule } from '~/utils/validators'
 import helpers from '~/utils/helpers'
 import type { ILengthRule } from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
 
-const props = defineProps({
-  isActive: Boolean,
-  isNew: Boolean,
-  editedItem: Object,
-})
+const props = defineProps(mixinPropsForm)
+const emit = defineEmits(['update:isActive'])
 
 const validators = {
   requiredRule,
@@ -35,50 +63,53 @@ const isActiveForm = ref(props.isActive)
 const lengthRule50 : ILengthRule = { max: 50 }
 
 const currentItem = ref({
-  userId: 0,
+  agentId: 0,
   name: '',
-  email: '',
-  password: '',
-  roleId: 0,
-  isActive: false,
+  agentRegistrationDate: null,
+  agentSystemRegistrationDate: null,
+  ogrn: 0,
+  inn: 0,
+  kpp: 0,
 })
 
 if(props.editedItem) {
-  currentItem.value.userId = props.editedItem.userId
+  currentItem.value.agentId = props.editedItem.agentId
   currentItem.value.name = props.editedItem.name
-  currentItem.value.email = props.editedItem.email
-  currentItem.value.password = props.editedItem.password
-  currentItem.value.roleId = props.editedItem.role.roleId
-  currentItem.value.isActive = props.editedItem.isActive
+  currentItem.value.agentRegistrationDate = props.editedItem.agentRegistrationDate
+  currentItem.value.agentSystemRegistrationDate = props.editedItem.agentSystemRegistrationDate
+  currentItem.value.ogrn = props.editedItem.role.ogrn
+  currentItem.value.inn = props.editedItem.inn
+  currentItem.value.kpp = props.editedItem.kpp
 }
 
 const save = () => {
   const item = {
-    userId: currentItem.value.userId,
+    agentId: currentItem.value.agentId,
     name: currentItem.value.name,
-    email: currentItem.value.email,
-    password: currentItem.value.password,
-    role: {
-      roleId: currentItem.value.roleId,
-      name: '',
-    
-    },
-    isActive: currentItem.value.isActive,
+    agentRegistrationDate: currentItem.value.agentRegistrationDate,
+    agentSystemRegistrationDate: currentItem.value.agentSystemRegistrationDate,
+    ogrn: currentItem.value.ogrn,
+    inn: currentItem.value.inn,
+    kpp: currentItem.value.kpp,
   }
   
   const $helpers = helpers()
-  const request = $helpers.BuildQuery(HttpQueryType.post, item)
+  const request = $helpers.BuildQuery(props.isNew ? HttpQueryType.post : HttpQueryType.put, item)
   if (props.isNew) {
-    fetchData('user', request)
+    fetchData(props.apiAddress!, request)
       .then(() => {
         isActiveForm.value = false
       })
   } else {
-    fetchData(`user/${item.userId}`, item)
+    fetchData(`${props.apiAddress!}/${item.agentId}`, item)
       .then(() => {
         isActiveForm.value = false
       })
   }
+}
+
+const close = () => {
+  emit('update:isActive', false)
 }
 </script>
 

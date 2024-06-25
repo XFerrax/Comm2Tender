@@ -189,4 +189,5 @@ const showForm = () => {
   useCrud.isNew.value = true
   useCrud.isForm.value = true
 }
+
 </script>

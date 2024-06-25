@@ -3,5 +3,5 @@
 </template>
 
 <script lang="ts" setup>
-import Crud from '~/components/Crud/Agent.vue';
+import Crud from '~/Components/Crud/Tender.vue';
 </script>

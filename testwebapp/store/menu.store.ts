@@ -23,13 +23,14 @@ export const menuStore = defineStore({
       return [];
     }
   },
-  persist: true,
   actions: {
     setMenuItems(items: IMenuItem[]) {
       localStorage.setItem('menu', JSON.stringify(items))
     },
     removeMenuItem() {
-      localStorage.removeItem('menu')
+      if (localStorage.length > 0) {
+        localStorage.removeItem('menu')
+      }
     },
   }
 })

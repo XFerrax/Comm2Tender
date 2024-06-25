@@ -1,5 +1,5 @@
 <template>
-  <v-autocomplete
+  <VAutocomplete
     v-if="visible"
     :hide-details="hideDetails"
     :value="value"
@@ -10,15 +10,16 @@
     :search-input.sync="selectSearch"
     placeholder="Начните набирать текст для поиска"
     :menu-props="{ transition: 'slide-y-transition' }"
-    item-title="name"
-    item-value="roleId"
+    :item-title="props.itemTitle"
+    :item-value="`${props.apiAddress}Id`"
     :clearable="!readonly"
+    :prepend-icon="props.prependIcon"
     @input="$emit('input', $event)"
   >
     <template #label>
-      <FormLabel :required="rules.includes(requiredRule)" label="Роль" />
+      <FormLabel :required="rules.includes(requiredRule)" :label="props.label" />
     </template>
-  </v-autocomplete>
+  </VAutocomplete>
 </template>
 <script setup lang="ts">
 import FormLabel from '~/components/Control/FormLabel.vue'
@@ -28,35 +29,34 @@ import { fetchData } from '~/plugins/api'
 
 const props = defineProps({
   value: {
-      type: Number,
-      default: 0,
+    type: Number,
+    default: 0,
+  },
+  visible: {
+    type: Boolean,
+    default: false,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
+  hideDetails: {
+    type: Boolean,
+    default: false,
+  },
+  rules: {
+    type: Array,
+    default() {
+      return []
     },
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
-    hideDetails: {
-      type: Boolean,
-      default: false,
-    },
-    rules: {
-      type: Array,
-      default() {
-        return []
-      },
-    },
-    selectMulti: {
-      type: Boolean,
-      default: false,
-    },
-    allowAdd: {
-      type: Boolean,
-      default: false,
-    },
+  },
+  apiAddress: String,
+  itemTitle: String,
+  label: String,
+  prependIcon: {
+    type: String,
+    default: '',
+  },
 })
 
 const selectItems = ref([])
@@ -74,17 +74,13 @@ function selectLoad() {
   const request = $helpers.BuildQuery(
       HttpQueryType.post, 
       $helpers.getListRequest({}))
-  fetchData('role/search', request) // передайте параметры запроса, если необходимо
-    .then((response) => {
-      selectItems.value = response.items
-        // .map(item => ({
-        //   roleId: item.roleId,
-        //   name: item.name
-        // }))
-    })
-    .catch(() => { })
-    .finally(() => {
-      selectLoading.value = false
-    })
+      fetchData(`${props.apiAddress}/search`, request) // передайте параметры запроса, если необходимо
+        .then((response) => {
+          selectItems.value = response.items
+        })
+        .catch(() => { })
+        .finally(() => {
+          selectLoading.value = false
+        })
 }
 </script>

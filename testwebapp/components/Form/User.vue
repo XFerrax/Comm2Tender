@@ -1,7 +1,7 @@
 <template>
   <Form
     v-model:isActive="props.isActive"
-    v-bind:save-func="props.saveFunc"
+    v-bind:save-func="save"
     :title="props.title"
     :title-suffix="props.titleSuffix"
     :close-func="close"
@@ -27,7 +27,14 @@
           <FormLabel label="Пароль" required />
         </template>
       </VTextField>
-      <RoleSelect v-model="currentItem.roleId" :visible="true" :rules="[validators.requiredRule]" />
+      <Select
+        v-model="currentItem.roleId"
+        :visible="true"
+        :rules="[validators.requiredRule]"
+        api-address="role"
+        item-title="name"
+        label="Роль" 
+      />
       <VCheckbox v-model="currentItem.isActive" label="Активация учетной записи" />
     </template>
   </Form>
@@ -36,7 +43,7 @@
 <script setup lang="ts">
 import Form from '~/components/Form/Form.vue'
 import FormLabel from '~/components/Control/FormLabel.vue'
-import RoleSelect from '~/components/Select/Role.vue'
+import Select from '~/components/Select/Select.vue'
 import { requiredRule, lengthRule, emailRule } from '~/utils/validators'
 import helpers, { HttpQueryType } from '~/utils/helpers'
 import type { ILengthRule } from '~/utils/helpers'
@@ -63,14 +70,16 @@ const currentItem = ref({
   isActive: false,
 })
 
-if(props.editedItem) {
-  currentItem.value.userId = props.editedItem.userId
-  currentItem.value.name = props.editedItem.name
-  currentItem.value.email = props.editedItem.email
-  currentItem.value.password = props.editedItem.password
-  currentItem.value.roleId = props.editedItem.role?.roleId
-  currentItem.value.isActive = props.editedItem.isActive
-}
+watch(
+  ()=>props.editedItem,
+  (newVal)=>{
+    currentItem.value.userId = newVal?.userId
+    currentItem.value.name = newVal?.name
+    currentItem.value.email = newVal?.email
+    currentItem.value.password = newVal?.password
+    currentItem.value.roleId = newVal?.role?.roleId
+    currentItem.value.isActive = newVal?.isActive
+})
 
 const save = () => {
   const item = {
@@ -80,8 +89,6 @@ const save = () => {
     password: currentItem.value.password,
     role: {
       roleId: currentItem.value.roleId,
-      name: '',
-    
     },
     isActive: currentItem.value.isActive,
   }
@@ -89,12 +96,12 @@ const save = () => {
   const $helpers = helpers()
   const request = $helpers.BuildQuery(props.isNew ? HttpQueryType.post : HttpQueryType.put, item)
   if (props.isNew) {
-    fetchData('user', request)
+    fetchData(props.apiAddress!, request)
       .then(() => {
         close()
       })
   } else {
-    fetchData(`user/${item.userId}`, item)
+    fetchData(`${props.apiAddress!}/${item.userId}`, item)
       .then(() => {
         close()
       })

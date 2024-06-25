@@ -5,8 +5,7 @@
                 <VAppBarNavIcon @click="rail = !rail" />
             </template>
         </VAppBar>
-
-        <VNavigationDrawer v-model="drawer" v-if="menuItems.length != 0" :rail="rail" :width="300">
+        <VNavigationDrawer v-if="menuItems.length != 0" :rail="rail" :width="300">
             <VList>
                 <template v-for="item in menuItems" :key="item.name">
                     <VListItem :to="item.path" link :prepend-icon="item.icon" :title="item.name" />
@@ -18,7 +17,6 @@
 </template>
 
 <script lang="ts" setup>
-
 const props = defineProps<{
     menuItems: { name: string, path: string, icon: string }[]
 }>()
@@ -26,4 +24,3 @@ const props = defineProps<{
 const drawer = ref(true)
 const rail = ref(false)
 </script>
-      

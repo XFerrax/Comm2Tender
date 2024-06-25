@@ -152,7 +152,7 @@ export default function helpers() : IHelpers
   {
     //const authtoken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwianRpIjoiMiIsInR5cCI6IkFjY2VzcyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImFkbWluaXN0cmF0b3IiLCJleHAiOjE3MTkwNTc3MjgsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAzNyIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAzNyJ9.3P0mKxL8FUX9s9G_jfO0DtCjVEmCkNG5KTY0FO_book'
     const authStore = useAuthStore()
-    if(queryType == HttpQueryType.post) {
+    if(queryType == HttpQueryType.post || queryType == HttpQueryType.put) {
       return {
         method: queryType.toString(),
         headers: 

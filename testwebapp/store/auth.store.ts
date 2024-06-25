@@ -46,7 +46,6 @@ export const useAuthStore = defineStore({
               myMenuStore.setMenuItems(inResponse.menuItems);
               router.push(inResponse.menuItems[0].path);
             })
-            .catch()
         })
         .catch(() => {
           this.logout()
