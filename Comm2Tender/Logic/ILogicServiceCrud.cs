@@ -36,6 +36,13 @@ namespace Comm2Tender.Logic
         bool UpdateProposal(Proposal model);
         #endregion Proposal
 
+        #region Tender
+        ListResponse SearchTender(ListRequest listRequest);
+        bool DeleteTender(int id);
+        bool UpdateTender(Tender model);
+        AddResponse AddTender(Tender model);
+        #endregion Tender
+
         #region User
         AddResponse AddUser(User model);
 

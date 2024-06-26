@@ -195,54 +195,6 @@ namespace Comm2Tender.Data
         }
         #endregion Proposal
 
-        #region User
-        public int AddUser(User model)
-        {
-            using var db = GetDatabase();
-            return db.InsertWithInt32Identity<User>(model);
-        }
-
-        public bool DeleteUser(int id)
-        {
-            using var db = GetDatabase();
-            var deletedTokens = db.UserToken.Where(x => x.UserId == id).Delete();
-            var deletedUsers = db.User.LoadWith(x => x.Role).Where(a => a.UserId == id).Delete();
-            return deletedUsers == 1;
-        }
-
-        public (List<Logic.Models.Dto.User> listRequest, int total) SearchUser(ListRequest listRequest)
-        {
-            using var db = GetDatabase();
-            var items = db.User
-                .LoadWith(a => a.Role)
-                .WhereDynamic(listRequest.Filter);
-            if (string.IsNullOrWhiteSpace(listRequest.Search) == false)
-            {
-                items = items.Where(a => a.Name.Contains(listRequest.Search));
-            }
-            items = items.OrderByDynamic(listRequest.Sort);
-            var total = items.Count();
-            if (listRequest.Size > 0)
-            {
-                items = items.Skip((listRequest.Page - 1) * listRequest.Size).Take(listRequest.Size);
-            }
-            return (items.ToList().ConvertAll(a => (Logic.Models.Dto.User)a), total);
-        }
-
-        public bool UpdateUser(User model)
-        {
-            using var db = GetDatabase();
-            db.Update<User>(model);
-            return true;
-        }
-
-        public User GetUser(int id)
-        {
-            using var db = GetDatabase();
-            return db.User.First(x => x.UserId == id);
-        }
-        #endregion User
-
         #region Tender
         public int AddTender(Tender model)
         {
@@ -290,5 +242,53 @@ namespace Comm2Tender.Data
 
         }
         #endregion Tender
+
+        #region User
+        public int AddUser(User model)
+        {
+            using var db = GetDatabase();
+            return db.InsertWithInt32Identity<User>(model);
+        }
+
+        public bool DeleteUser(int id)
+        {
+            using var db = GetDatabase();
+            var deletedTokens = db.UserToken.Where(x => x.UserId == id).Delete();
+            var deletedUsers = db.User.LoadWith(x => x.Role).Where(a => a.UserId == id).Delete();
+            return deletedUsers == 1;
+        }
+
+        public (List<Logic.Models.Dto.User> listRequest, int total) SearchUser(ListRequest listRequest)
+        {
+            using var db = GetDatabase();
+            var items = db.User
+                .LoadWith(a => a.Role)
+                .WhereDynamic(listRequest.Filter);
+            if (string.IsNullOrWhiteSpace(listRequest.Search) == false)
+            {
+                items = items.Where(a => a.Name.Contains(listRequest.Search));
+            }
+            items = items.OrderByDynamic(listRequest.Sort);
+            var total = items.Count();
+            if (listRequest.Size > 0)
+            {
+                items = items.Skip((listRequest.Page - 1) * listRequest.Size).Take(listRequest.Size);
+            }
+            return (items.ToList().ConvertAll(a => (Logic.Models.Dto.User)a), total);
+        }
+
+        public bool UpdateUser(User model)
+        {
+            using var db = GetDatabase();
+            db.Update<User>(model);
+            return true;
+        }
+
+        public User GetUser(int id)
+        {
+            using var db = GetDatabase();
+            return db.User.First(x => x.UserId == id);
+        }
+        #endregion User
     }
 }

@@ -120,6 +120,32 @@ namespace Comm2Tender.Logic
         }
         #endregion Proposal
 
+        #region Tender
+        public ListResponse SearchTender(ListRequest listRequest)
+        {
+            var respList = DataService.SearchTender(listRequest);
+            return new ListResponse() { Items = respList.listRequest, Total = respList.total };
+        }
+
+        public bool DeleteTender(int id)
+        {
+            return DataService.DeleteTender(id);
+        }
+
+        public bool UpdateTender(Tender model)
+        {
+            return DataService.UpdateTender(model);
+        }
+
+        public AddResponse AddTender(Tender model)
+        {
+            return new AddResponse
+            {
+                Id = DataService.AddTender(model),
+            };
+        }
+        #endregion Tender
+
         #region User
         public AddResponse AddUser(User model)
         {
@@ -149,9 +175,6 @@ namespace Comm2Tender.Logic
         {
             return DataService.GetUser(id);
         }
-
         #endregion User
-
-        
     }
 }
