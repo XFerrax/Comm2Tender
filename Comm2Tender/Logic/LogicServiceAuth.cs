@@ -172,7 +172,8 @@ namespace Comm2Tender.Logic
                             new UserMenuItem("Контрагенты", "/agents", "mdi-briefcase-account"),
                             new UserMenuItem("Заявки", "/proposals", "mdi-invoice-multiple"),
                             new UserMenuItem("Процентные ставки", "/percents", "mdi-bank-plus"),
-                            new UserMenuItem("Таможенные пошлины", "/customsfee", "mdi-train-car-box-full"),
+                            new UserMenuItem("Таможенные пошлины", "/customsfees", "mdi-train-car-box-full"),
+                            new UserMenuItem("Тендеры", "/tenders", "mdi-book-variant"),
                         }
                     };
                 case RolesType.Economist:
@@ -182,7 +183,7 @@ namespace Comm2Tender.Logic
                         {
                             new UserMenuItem("Контрагенты", "/agents", "mdi-briefcase-account"),
                             new UserMenuItem("Процентные ставки", "/percents", "mdi-bank-plus"),
-                            new UserMenuItem("Таможенные пошлины", "/customsfee", "mdi-train-car-box-full"),
+                            new UserMenuItem("Таможенные пошлины", "/customsfees", "mdi-train-car-box-full"),
                         }
                     };
                 case RolesType.Specialist:
@@ -192,6 +193,7 @@ namespace Comm2Tender.Logic
                         {
                             new UserMenuItem("Контрагенты", "/agents", "mdi-briefcase-account"),
                             new UserMenuItem("Заявки", "/proposals", "mdi-invoice-multiple"),
+                            new UserMenuItem("Тендеры", "/tenders", "mdi-book-variant"),
                         }
                     };
                 default:
