@@ -3,5 +3,5 @@
 </template>
 
 <script lang="ts" setup>
-import Crud from '~/Components/Crud/CustomsFee.vue';
+import Crud from '~/components/Crud/CustomsFee.vue';
 </script>

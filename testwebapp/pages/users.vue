@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import Crud from '~/Components/Crud/User.vue';
+import Crud from '~/components/Crud/User.vue';
 </script>
 
 <style>

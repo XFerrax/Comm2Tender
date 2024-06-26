@@ -3,5 +3,5 @@
 </template>
 
 <script lang="ts" setup>
-import Crud from '~/Components/Crud/Percent.vue';
+import Crud from '~/components/Crud/Percent.vue';
 </script>

@@ -3,5 +3,5 @@
 </template>
 
 <script lang="ts" setup>
-import Crud from '~/Components/Crud/Proposal.vue';
+import Crud from '~/components/Crud/Proposal.vue';
 </script>
