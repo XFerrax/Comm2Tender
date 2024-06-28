@@ -1,22 +1,11 @@
 <template>
-  <Form
-    v-model:isActive="props.isActive"
-    v-bind:save-func="save"
-    :title="props.title"
-    :title-suffix="props.titleSuffix"
-    :close-func="close"
-    :is-new="props.isNew"
-  >
+  <Form v-model:isActive="props.isActive" v-bind:save-func="save" :title="props.title" :title-suffix="props.titleSuffix" :close-func="close" :is-new="props.isNew">
     <template #fields>
-      <VTextField v-model="currentItem.minAmount" :rules="[validators.requiredRule]" :counter="50">
-        <template #label>
-          <FormLabel label="Нижняя граница действия пошлины" required />
-        </template>
+      <VTextField v-model="currentItem.minAmount" :rules="[validators.requiredRule, floatRule({ value: currentItem.minAmount, rule: myLengthRule(0, 999999999) })]" :counter="13">
+        <template #label><FormLabel label="Нижняя граница действия пошлины" required /></template>
       </VTextField>
-      <VTextField v-model="currentItem.summaryCustomFee" :rules="[validators.requiredRule]">
-        <template #label>
-          <FormLabel label="Пошлина" required />
-        </template>
+      <VTextField v-model="currentItem.summaryCustomFee" :rules="[validators.requiredRule, floatRule({ value: currentItem.summaryCustomFee, rule: myLengthRule(0, 999999999) })]" :counter="11">
+        <template #label><FormLabel label="Пошлина" required /></template>
       </VTextField>
     </template>
   </Form>
@@ -25,8 +14,7 @@
 <script setup lang="ts">
 import Form from '~/components/Form/Form.vue'
 import FormLabel from '~/components/Control/FormLabel.vue'
-import Select from '~/components/Select/Select.vue'
-import { requiredRule, lengthRule, emailRule } from '~/utils/validators'
+import { requiredRule, lengthRule, floatRule } from '~/utils/validators'
 import helpers from '~/utils/helpers'
 import type { ILengthRule } from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
@@ -37,12 +25,17 @@ const emit = defineEmits(['update:isActive'])
 const validators = {
   requiredRule,
   lengthRule,
-  emailRule,
+  floatRule,
 }
 
 const isActiveForm = ref(props.isActive)
 
-const lengthRule50 : ILengthRule = { max: 50 }
+const myLengthRule = (min?: number, max?: number) : ILengthRule => {
+  const ret = {}
+  if (min) { ret: { min: min } }
+  if (max) { ret: { max: max } }
+  return ret 
+} 
 
 const currentItem = ref({
   customFeeDictionaryId: 0,

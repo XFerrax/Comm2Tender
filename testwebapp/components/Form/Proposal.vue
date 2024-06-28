@@ -1,186 +1,256 @@
 <template>
-  <Form
-    v-model:isActive="props.isActive"
-    v-bind:save-func="save"
-    :title="props.title"
-    :title-suffix="props.titleSuffix"
-    :close-func="close"
-    :is-new="props.isNew"
-  >
+  <Form v-model:isActive="props.isActive" v-bind:save-func="save" :title="props.title" :title-suffix="props.titleSuffix" :close-func="close" :is-new="props.isNew">
     <template #fields>
-      <Select
-        v-model="currentItem.agentId"
-        :visible="true"
-        :rules="[validators.requiredRule]"
-        api-address="agent"
-        item-title="name"
-        label="Контрагент" 
-      />
-      <Select
-        v-model="currentItem.tenderId"
-        :visible="true"
-        :rules="[validators.requiredRule]"
-        api-address="tender"
-        item-title="number"
-        label="Тендер" 
-      />
+      <Select v-model="currentItem.agentId" :visible="true" :rules="[validators.requiredRule]" api-address="agent" item-title="name" label="Контрагент" />
+      <Select v-model="currentItem.tenderId" :visible="true" :rules="[validators.requiredRule]" api-address="tender" item-title="number" label="Тендер" />
       <VDivider />
       <VCardText>Объем закупки</VCardText>
       <VTextField
-          label="Количество товара(услуг), ед"
-          prepend-icon="mdi-briefcase-account"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.countPos"
-      />
+        label="Количество товара(услуг), ед"
+        prepend-icon="mdi-briefcase-account"
+        variant="outlined"
+        :rules="[validators.requiredRule, validators.lengthRule(currentItem.countPos.toString(), myLengthRule(0, 9))]" 
+        v-model="currentItem.countPos">
+        <template #label><FormLabel label="Количество товара(услуг), ед" required /></template>
+      </VTextField>
       <VTextField
-          label="Стоимость 1 ед товара(услуги)"
-          prepend-icon="mdi-briefcase-account"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.positionPrice"
-      />
+        label="Стоимость 1 ед товара(услуги)"
+        prepend-icon="mdi-briefcase-account"
+        variant="outlined"
+        :rules="[validators.requiredRule, validators.lengthRule(currentItem.positionPrice.toString(), myLengthRule(0, 9))]"
+        v-model="currentItem.positionPrice">
+        <template #label><FormLabel label="Стоимость 1 ед товара(услуги)" required /></template>
+      </VTextField>
       <VTextField
-          label="Стоимость доставки, руб."
-          prepend-icon="mdi-cash"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.deliveryCost"
-      />
+        label="Стоимость доставки, руб."
+        prepend-icon="mdi-cash"
+        variant="outlined"
+        :rules="[validators.requiredRule, validators.lengthRule(currentItem.deliveryCost.toString(), myLengthRule(0, 9))]"
+        v-model="currentItem.deliveryCost">
+          <template #label><FormLabel label="Стоимость доставки, руб." required /></template></VTextField>
       <VTextField
-          label="Сроки поставки, дн"
-          prepend-icon="mdi-timer-settings-outline"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.deliveryTime"
+        label="Сроки поставки, дн"
+        prepend-icon="mdi-timer-settings-outline"
+        variant="outlined"
+        :rules="[validators.requiredRule, validators.lengthRule(currentItem.deliveryTime.toString(), myLengthRule(0, 9))]"
+        v-model="currentItem.deliveryTime"
       >
-          <VTooltip 
-              activator="parent"
-              location="top"
-              text="Количество дней между датой заключения договора(или первого аванса) и даты поставки товара. Шаг рассчета 5 дней" />
+        <template #label><FormLabel label="Сроки поставки, дн" required /></template>
+        <VTooltip 
+            activator="parent"
+            location="top"
+            text="Количество дней между датой заключения договора(или первого аванса) и даты поставки товара. Шаг рассчета 5 дней" />
       </VTextField>
       <VDivider />
       <VCardText>Условия оплаты</VCardText>
       
       <VTextField
-          label="Аванс 1"
-          prepend-icon="mdi-cash"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.prepaidExpense1"
-      />
+        label="Аванс 1"
+        prepend-icon="mdi-cash"
+        variant="outlined"
+        :rules="[
+          validators.requiredRule, 
+          validators.lengthRule(currentItem.prepaidExpense1.toString(), myLengthRule(0, 9)),
+          validators.summaryControl([
+            currentItem.prepaidExpense1,
+            currentItem.prepaidExpense2,
+            currentItem.prepaidExpense3,
+            currentItem.postPaymant1,
+            currentItem.postPaymant2,
+            currentItem.postPaymant3,
+          ], 100)
+        ]"
+        v-model="currentItem.prepaidExpense1">
+          <template #label><FormLabel label="Аванс 1" required /></template></VTextField>
       
       <VTextField
-          label="Аванс 2"
-          prepend-icon="mdi-cash"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.prepaidExpense2"
-      />
+        label="Аванс 2"
+        prepend-icon="mdi-cash"
+        variant="outlined"
+        :rules="[
+          validators.requiredRule, 
+          validators.lengthRule(currentItem.prepaidExpense2.toString(), myLengthRule(0, 9)),
+          validators.summaryControl([
+            currentItem.prepaidExpense1,
+            currentItem.prepaidExpense2,
+            currentItem.prepaidExpense3,
+            currentItem.postPaymant1,
+            currentItem.postPaymant2,
+            currentItem.postPaymant3,
+          ], 100)
+        ]"
+        v-model="currentItem.prepaidExpense2">
+          <template #label><FormLabel label="Аванс 2" required /></template>
+      </VTextField> 
       <VTextField
-          label="Аванс 3"
-          prepend-icon="mdi-cash"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.prepaidExpense3"
-      />
+        label="Аванс 3"
+        prepend-icon="mdi-cash"
+        variant="outlined"
+        :rules="[
+          validators.requiredRule, 
+          validators.lengthRule(currentItem.prepaidExpense3.toString(), myLengthRule(0, 9)),
+          validators.summaryControl([
+            currentItem.prepaidExpense1,
+            currentItem.prepaidExpense2,
+            currentItem.prepaidExpense3,
+            currentItem.postPaymant1,
+            currentItem.postPaymant2,
+            currentItem.postPaymant3,
+          ], 100)
+        ]"
+        v-model="currentItem.prepaidExpense3">
+          <template #label><FormLabel label="Аванс 3" required /></template>
+      </VTextField>
       
       <VTextField
-          label="Срок аванса 1, дн"
-          prepend-icon="mdi-timer-settings-outline"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.periodOfExecution1"
+        label="Срок аванса 1, дн"
+        prepend-icon="mdi-timer-settings-outline"
+        variant="outlined"
+        :rules="[
+          validators.requiredRule, 
+          validators.lengthRule(currentItem.periodOfExecution1.toString(), myLengthRule(0, 9)), 
+          validators.multiplicity(currentItem.periodOfExecution1, 5)
+        ]"
+        v-model="currentItem.periodOfExecution1"
       >
+        <template #label><FormLabel label="Срок аванса 1, дн" required /></template>
           <VTooltip text="Количество дней между датой аванса и датой поступления товара на склад. Шаг рассчета 5 дней" />
       </VTextField>
       <VTextField
-          label="Срок аванса 2, дн"
-          prepend-icon="mdi-timer-settings-outline"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.periodOfExecution2"
-      />
+        label="Срок аванса 2, дн"
+        prepend-icon="mdi-timer-settings-outline"
+        variant="outlined"
+        :rules="[
+          validators.requiredRule, 
+          validators.lengthRule(currentItem.periodOfExecution2.toString(), myLengthRule(0, 9)), 
+          validators.multiplicity(currentItem.periodOfExecution2, 5)
+        ]"
+        v-model="currentItem.periodOfExecution2">
+          <template #label><FormLabel label="Срок аванса 2, дн" required /></template>  
+      </VTextField>
       <VTextField
-          label="Срок аванса 3, дн"
-          prepend-icon="mdi-timer-settings-outline"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.periodOfExecution3"
-      />
+        label="Срок аванса 3, дн"
+        prepend-icon="mdi-timer-settings-outline"
+        variant="outlined"
+        :rules="[
+          validators.requiredRule, 
+          validators.lengthRule(currentItem.periodOfExecution3.toString(), myLengthRule(0, 9)), 
+          validators.multiplicity(currentItem.periodOfExecution3, 5)
+        ]"
+        v-model="currentItem.periodOfExecution3">
+          <template #label><FormLabel label="Срок аванса 3, дн" required /></template>
+        </VTextField>
 
       <VTextField
-          label="Постоплата 1, %"
-          prepend-icon="mdi-cash-100"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.postPaymant1"
-      />
+        label="Постоплата 1, %"
+        prepend-icon="mdi-cash-100"
+        variant="outlined"
+        :rules="[
+          validators.requiredRule, 
+          validators.lengthRule(currentItem.postPaymant1.toString(), myLengthRule(0, 9)),
+          validators.summaryControl([
+            currentItem.prepaidExpense1,
+            currentItem.prepaidExpense2,
+            currentItem.prepaidExpense3,
+            currentItem.postPaymant1,
+            currentItem.postPaymant2,
+            currentItem.postPaymant3,
+          ], 100)
+        ]"
+        v-model="currentItem.postPaymant1">
+        <template #label><FormLabel label="Постоплата 1, %" required /></template>
+      </VTextField>
       <VTextField
-          label="Постоплата 2, %"
-          prepend-icon="mdi-cash-100"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.postPaymant2"
-      />
+        label="Постоплата 2, %"
+        prepend-icon="mdi-cash-100"
+        variant="outlined"
+        :rules="[
+          validators.requiredRule, 
+          validators.lengthRule(currentItem.postPaymant2.toString(), myLengthRule(0, 9)),
+          validators.summaryControl([
+            currentItem.prepaidExpense1,
+            currentItem.prepaidExpense2,
+            currentItem.prepaidExpense3,
+            currentItem.postPaymant1,
+            currentItem.postPaymant2,
+            currentItem.postPaymant3,
+          ], 100)
+        ]"
+        v-model="currentItem.postPaymant2">
+          <template #label><FormLabel label="Постоплата 2, %" required /></template>
+        </VTextField>
       <VTextField
-          label="Постоплата 3, %"
-          prepend-icon="mdi-cash-100"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.postPaymant3"
-      />
+        label="Постоплата 3, %"
+        prepend-icon="mdi-cash-100"
+        variant="outlined"
+        :rules="[
+          validators.requiredRule, 
+          validators.lengthRule(currentItem.postPaymant3.toString(), myLengthRule(0, 9)),
+          validators.summaryControl([
+            currentItem.prepaidExpense1,
+            currentItem.prepaidExpense2,
+            currentItem.prepaidExpense3,
+            currentItem.postPaymant1,
+            currentItem.postPaymant2,
+            currentItem.postPaymant3,
+          ], 100)
+        ]"
+        v-model="currentItem.postPaymant3">
+          <template #label><FormLabel label="Постоплата 3, %" required /></template>
+        </VTextField>
       <VTextField
-          label="Срок постоплаты 1, дн"
-          prepend-icon="mdi-timer-settings-outline"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.postPaymantPeriod1"
-      >
+        label="Срок постоплаты 1, дн"
+        prepend-icon="mdi-timer-settings-outline"
+        variant="outlined"
+        :rules="[validators.requiredRule, validators.lengthRule(currentItem.postPaymantPeriod1.toString(), myLengthRule(0, 9))]"
+        v-model="currentItem.postPaymantPeriod1">
+          <template #label><FormLabel label="Срок постоплаты 1, дн" required /></template>
           <VTooltip text="Количество дней между датой поставки товаров и планируемой датой постоплаты. Шаг рассчета 5 дней" />
       </VTextField>
       <VTextField
-          label="Срок постоплаты 2, дн"
-          prepend-icon="mdi-timer-settings-outline"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.postPaymantPeriod2"
-      />
+        label="Срок постоплаты 2, дн"
+        prepend-icon="mdi-timer-settings-outline"
+        variant="outlined"
+        :rules="[validators.requiredRule, validators.lengthRule(currentItem.postPaymantPeriod2.toString(), myLengthRule(0, 9))]"
+        v-model="currentItem.postPaymantPeriod2">
+          <template #label><FormLabel label="Срок постоплаты 2, дн" required /></template>
+        </VTextField>
       <VTextField
-          label="Срок постоплаты 3, дн"
-          prepend-icon="mdi-timer-settings-outline"
-          variant="outlined"
-          :rules="[validators.requiredRule]"
-          v-model="currentItem.postPaymantPeriod3"
-      />
+        label="Срок постоплаты 3, дн"
+        prepend-icon="mdi-timer-settings-outline"
+        variant="outlined"
+        :rules="[validators.requiredRule, validators.lengthRule(currentItem.postPaymantPeriod3.toString(), myLengthRule(0, 9))]"
+        v-model="currentItem.postPaymantPeriod3">
+          <template #label><FormLabel label="Срок постоплаты 3, дн" required /></template>
+        </VTextField>
       <VDivider />
       <VCardText>Дополнительные условия</VCardText>
       <VRadioGroup inline label="Банковские условия" :rules="[validators.requiredRule]">
-          <VRadio label="Нет" :true-value="() => { currentItem.accreditive = false; currentItem.bankGuarantee = false }" />
-          <VRadio label="Банковская гарантия" :false-value="() => { currentItem.bankGuarantee = false }" :true-value="() => { currentItem.bankGuarantee = true }" />
-          <VRadio label="Аккредитив" :false-value="() => { currentItem.accreditive = false }" :true-value="() => { currentItem.accreditive = true }" />
+        <VRadio label="Нет" :true-value="() => { currentItem.accreditive = false; currentItem.bankGuarantee = false }" />
+        <VRadio label="Банковская гарантия" :false-value="() => { currentItem.bankGuarantee = false }" :true-value="() => { currentItem.bankGuarantee = true }" />
+        <VRadio label="Аккредитив" :false-value="() => { currentItem.accreditive = false }" :true-value="() => { currentItem.accreditive = true }" />
       </VRadioGroup>
       <VRadioGroup inline label="Таможенное условие 1" v-model="currentItem.customDuty" :rules="[validators.requiredRule]">
-          <VRadio label="Нет" value="false" />
-          <VRadio label="Таможенная пошлина" value="true" />
+        <VRadio label="Нет" value="false" />
+        <VRadio label="Таможенная пошлина" value="true" />
       </VRadioGroup>
       <VRadioGroup inline label="Таможенное условие 2" v-model="currentItem.customFee" :rules="[validators.requiredRule]">
-          <VRadio label="Нет" value="false" />
-          <VRadio label="Таможенный сбор" value="true" />
+        <VRadio label="Нет" value="false" />
+        <VRadio label="Таможенный сбор" value="true" />
       </VRadioGroup>
       <VDivider />
       <VCardText>Критерии надежности</VCardText>
       <VRadioGroup inline label="Были нарушения сроков поставки" v-model="currentItem.missingDeadlines" :rules="[validators.requiredRule]">
-          <VRadio label="Да" value="true" />
-          <VRadio label="Нет" value="false" />
+        <VRadio label="Да" value="true" />
+        <VRadio label="Нет" value="false" />
       </VRadioGroup>
       <VRadioGroup inline label="Были претензии к качеству товара/услуги" v-model="currentItem.poorQuality" :rules="[validators.requiredRule]">
-          <VRadio label="Да" value="true" />
-          <VRadio label="Нет" value="false" />
+        <VRadio label="Да" value="true" />
+        <VRadio label="Нет" value="false" />
       </VRadioGroup>
       <VRadioGroup inline label="Были нарушения внутренних норм" v-model="currentItem.normsViolated" :rules="[validators.requiredRule]">
-          <VRadio label="Да" value="true" />
-          <VRadio label="Нет" value="false" />
+        <VRadio label="Да" value="true" />
+        <VRadio label="Нет" value="false" />
       </VRadioGroup>
     </template>
   </Form>
@@ -190,7 +260,7 @@
 import Form from '~/components/Form/Form.vue'
 import FormLabel from '~/components/Control/FormLabel.vue'
 import Select from '~/components/Select/Select.vue'
-import { requiredRule, lengthRule, emailRule } from '~/utils/validators'
+import { requiredRule, lengthRule } from '~/utils/validators'
 import helpers from '~/utils/helpers'
 import type { ILengthRule } from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
@@ -201,14 +271,22 @@ const emit = defineEmits(['update:isActive'])
 const validators = {
   requiredRule,
   lengthRule,
-  emailRule,
+  multiplicity: (val1: number, controlMultiplicity: number) => {
+    return val1 % controlMultiplicity == 0 ? true : `Значение должно быть кратным ${controlMultiplicity}`
+  },
+  summaryControl: (values: number[], controlSummary: number) => {
+    return controlSummary == values.reduce((accum, current) => accum += current, 0) ? true : `В сумме должно быть ${controlSummary}`
+  },
 }
 
 const isActiveForm = ref(props.isActive)
 
-const bankTerms = () => {
-
-}
+const myLengthRule = (min?: number, max?: number) : ILengthRule => {
+  const ret = {}
+  if (min) { ret: { min: min } }
+  if (max) { ret: { max: max } }
+  return ret 
+} 
 
 const lengthRule50 : ILengthRule = { max: 50 }
 

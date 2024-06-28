@@ -26,7 +26,7 @@ export const useAuthStore = defineStore({
         deleteCookie('refreshToken');
       }
     },
-    login(email: string, password: string, router: any) {
+    login(email: string, password: string) {
       fetchData('auth/login',
           {
             method: 'post', 
@@ -44,7 +44,7 @@ export const useAuthStore = defineStore({
               const myMenuStore = menuStore();
 			        myMenuStore.removeMenuItem()
               myMenuStore.setMenuItems(inResponse.menuItems);
-              router.push(inResponse.menuItems[0].path);
+              useRouter().push(inResponse.menuItems[0].path);
             })
         })
         .catch(() => {

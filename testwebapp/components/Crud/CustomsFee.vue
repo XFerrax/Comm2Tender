@@ -42,7 +42,6 @@
       </template>
       <VDivider />
       <VDataTable
-        v-model="useCrud.selected"
         :show-select="selectMulti"
         :headers="headers"
         :items="useCrud.items.value"
@@ -92,7 +91,9 @@
                   color="error" 
                   v-bind="props" 
                   @click="useCrud.mixinDeleteItem(item)"
-                />
+                >
+                  <VIcon>mdi-delete</VIcon>
+                </VBtn>
               </template>
             </VTooltip>
           </VRow>
@@ -132,7 +133,7 @@ var props = defineProps(mixinPropsCrud)
 const useCrud = mixinUseCrud()
 
 const $helpers = helpers()
-const apiAddress = 'сustomFeeDictionary'
+const apiAddress = 'customFeeDictionary'
 const itemKey = `${apiAddress}Id`
 const title = 'Таможенные пошлины'
 const titleSuffixForm = 'таможенной пошлины'

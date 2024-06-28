@@ -4,7 +4,6 @@ export function requiredRule(value: any) : boolean | string {
   return !!value || 'Обязательное поле'
 }
 
-
 export function emailRule(value: string) : boolean | string
 {
   const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i

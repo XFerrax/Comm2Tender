@@ -42,7 +42,6 @@
       </template>
       <VDivider />
       <VDataTable
-        v-model="useCrud.selected"
         :show-select="selectMulti"
         :headers="headers"
         :items="useCrud.items.value"
@@ -92,7 +91,9 @@
                   color="error" 
                   v-bind="props" 
                   @click="useCrud.mixinDeleteItem(item)"
-                />
+                >
+                  <VIcon>mdi-delete</VIcon>
+                </VBtn>
               </template>
             </VTooltip>
           </VRow>

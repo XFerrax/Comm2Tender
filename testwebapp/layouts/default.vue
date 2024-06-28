@@ -1,9 +1,9 @@
 <template>
   <div>
-    <AppHeader :menuItems="myMenuItems">
-      <VMain>
+    <AppHeader>
+      <template #mainApp>
         <slot />
-      </VMain>
+      </template>
     </AppHeader>
     <AppFooter />
   </div>
@@ -12,9 +12,4 @@
 <script lang="ts" setup>
   import AppHeader from '~/components/basecomponents/AppHeader.vue'
   import AppFooter from '~/components/basecomponents/AppFooter.vue'
-  import { menuStore } from '~/store/menu.store';
-
-
-  const myMenuStore = menuStore()
-  const myMenuItems = computed(() => myMenuStore.menuItemsStore)
 </script>

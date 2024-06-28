@@ -2,25 +2,41 @@
     <VLayout>
         <VAppBar absolute :elevation="2" rounded title="TenderSelections">
             <template v-slot:prepend>
-                <VAppBarNavIcon @click="rail = !rail" />
+                <VAppBarNavIcon v-if="myPath != 'login'" @click="rail = !rail" />
+            </template>
+            <template v-slot:append>
+                <VBtn icon="mdi-logout" v-if="myPath != 'login'" @click="logout"/>
             </template>
         </VAppBar>
-        <VNavigationDrawer v-if="menuItems.length != 0" :rail="rail" :width="300">
+        <VNavigationDrawer v-model="drawer" permanent v-if="myPath != 'login'" :rail="rail" :width="300">
             <VList>
-                <template v-for="item in menuItems" :key="item.name">
+                <template v-for="item in menu" :key="item.name">
                     <VListItem :to="item.path" link :prepend-icon="item.icon" :title="item.name" />
                 </template>
             </VList>
         </VNavigationDrawer>
-        <slot />
+        <VMain>
+            <slot name="mainApp" />
+        </VMain>
     </VLayout>
 </template>
 
 <script lang="ts" setup>
-const props = defineProps<{
-    menuItems: { name: string, path: string, icon: string }[]
-}>()
-
-const drawer = ref(true)
+import { menuStore } from '~/store/menu.store';
+const drawer = true
 const rail = ref(false)
+const route = useRoute()
+const myPath = ref(route.name)
+const useMenuStore = menuStore()
+const menu = ref(useMenuStore.menuItemsStore)
+
+watchEffect(() => {
+    myPath.value = route.name
+    menu.value = useMenuStore.menuItemsStore
+})
+
+const logout = () => {
+    useAuthStore().logout()
+}
+
 </script>
