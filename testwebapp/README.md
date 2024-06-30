@@ -183,3 +183,29 @@ const close = () => {
 }
 ```
 
+Настройка цветовой схемы темы приложения: "~/plugins/vuetify.ts"
+Так же можно изменить название или добавить новую тему.
+Темная тема - добавить в themes объект "dark: { }" и наполнить его оптимальными значениями для темной темы(подбирать самостоятельно, опираться на исследования гугла по интерфейсам)
+Цвета брать из палитры тут "https://dev.vuetifyjs.com/en/styles/colors/"
+
+```ts
+theme: {
+  defaultTheme: 'light',
+    themes: {
+      light: {
+        colors: {
+          primary:  colors.amber.darken3,
+          secondary: '#03dac6',
+          background: '#ffffff',
+          surface: '#ffffff',
+          error: '#b00020',
+          onPrimary: '#ffffff',
+          onSecondary: '#000000',
+          onBackground: '#000000',
+          onSurface: '#000000',
+          onError: '#ffffff',
+      },
+    },
+  },
+},
+```
