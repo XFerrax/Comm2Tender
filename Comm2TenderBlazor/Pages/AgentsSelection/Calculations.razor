@@ -1,0 +1,71 @@
+﻿@page "/calculations/{id:int}"
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h1>Расчет</h1>
+
+@if (calculations == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<div>
+		<table class="table">
+			<thead>
+			<tr>
+				<th>Контрагент</th>
+				<th>Стоимость 1 ед.</th>
+				<th>Экономический эффект</th>
+				<th>Оценка надежности</th>
+				<th>Интегральная оценка</th>
+				<th>Примечания</th>
+			</tr>
+			</thead>
+			<tbody>
+			@foreach (var calculation in calculations)
+			{
+				<tr>
+					<td>@calculation.AgentName</td>
+					<td>@calculation.PositionPrice</td>
+					<td>@calculation.EconomyEffect</td>
+					<td>@calculation.ReliabilityAssessment</td>
+					<td>@calculation.IntegralAssessment</td>
+					<td>@calculation.Note</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+
+	</div>
+
+	<SfChart>
+		
+
+	</SfChart>
+}
+
+
+
+@code{
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    private List<Calculation> calculations;
+
+    protected override async Task OnInitializedAsync()
+    {
+	    try
+	    {
+		    var repsonseViewModel = await PagesHelper.GetItemsAsync<ResponseViewModel<Calculation>>($"api/Calculation/get_calc/{Id}", HttpClient);
+		    calculations = repsonseViewModel.Items;
+	    }
+	    catch (Exception ex)
+	    {
+		    NavigationManager.NavigateTo("/error");
+	    }
+
+    }
+}

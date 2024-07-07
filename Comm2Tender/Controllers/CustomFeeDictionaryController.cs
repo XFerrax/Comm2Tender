@@ -9,7 +9,6 @@ namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = RolesNames.ECONOMIST_ROLE_NAME)]
     public class CustomFeeDictionaryController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
@@ -34,10 +33,9 @@ namespace Comm2Tender.Controllers
         }
 
         // PUT CustomFeeDictionary/5
-        [HttpPut("{id:int:min(1)}")]
-        public ActionResult<string> Put([FromBody] CustomFeeDictionary model, int id)
+        [HttpPut]
+        public ActionResult<string> Put([FromBody] CustomFeeDictionary model)
         {
-            model.CustomFeeDictionaryId = id;
             if (LogicService.UpdateCustomFeeDictionary(model))
             {
                 return Ok();
@@ -45,8 +43,8 @@ namespace Comm2Tender.Controllers
             return new NotFoundResult();
         }
 
-        // DELETE CustomFeeDictionary/5
-        [HttpDelete("{id:int:min(1)}")]
+        // DELETE CustomFeeDictionary/delete_fee/5
+        [HttpDelete("delete_fee/{id:int}")]
         public ActionResult<string> Delete(int id)
         {
             if (LogicService.DeleteCustomFeeDictionary(id))
@@ -54,6 +52,19 @@ namespace Comm2Tender.Controllers
                 return Ok();
             }
             return new NotFoundResult();
+        }
+
+        [HttpGet("get_fee/{id:int}")]
+        public ActionResult<string> GetFee(int id)
+        {
+            try
+            {
+                return Ok(LogicService.GetCustomFeeDictionary(id));
+            }
+            catch (System.Exception)
+            {
+                return new NotFoundResult();
+            }
         }
     }
 }

@@ -1,0 +1,120 @@
+﻿@page "/percent/{id:int}"
+@using Comm2TenderBlazor.Models.Dto
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h1>@title</h1>
+
+@if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <EditForm Model="@percent" OnValidSubmit="() => HandleSubmit(percent)">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div>
+                    <label class="form-label">Ставка ЦБ:</label>
+                    <InputNumber @bind-Value="percent.RefinancingRate" class="form-control"></InputNumber>
+                </div>
+                <div>
+                    <label class="form-label">% ТМК:</label>
+                    <InputNumber @bind-Value="percent.Tmk" class="form-control"></InputNumber>
+                </div>
+                <div>
+                    <label class="form-label">Банковская гарантия:</label>
+                    <InputNumber @bind-Value="percent.BankGuarantee" class="form-control"></InputNumber>
+                </div>
+                <div>
+                    <label class="form-label">Кредит:</label>
+                    <InputNumber @bind-Value="percent.Credit" class="form-control"></InputNumber>
+
+                </div>
+                <div>
+                    <label class="form-label">Таможенная пошлина:</label>
+                    <InputNumber @bind-Value="percent.CustomDuty" class="form-control "></InputNumber>
+
+                </div>
+                <div>
+                    <label class="form-label">Скидка:</label>
+                    <InputNumber @bind-Value="percent.Discount" class="form-control "></InputNumber>
+
+                </div>
+
+                @if (Id == 0)
+                {
+                    <button class="btn-info" type="submit">Добавить</button>
+                }
+                else
+                {
+                    <button class="btn-info" type="submit">Обновить</button>
+                }
+
+                <button class="btn-warning" @onclick="Back">Отмена</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    private string title = "";
+
+    private PercentsDictionary? percent;
+
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (Id != 0)
+            {
+                percent = await HttpClient.GetFromJsonAsync<PercentsDictionary>($"api/percentsDictionary/get_percents/{Id}");
+
+                title = "Изменить проценты";
+            }
+            else
+            {
+                title = "Новые проценты";
+
+                percent = new PercentsDictionary();
+
+            }
+
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            NavigationManager.NavigateTo("/error");
+        }
+    }
+
+    private async Task HandleSubmit(PercentsDictionary model)
+    {
+        if (model.PercentsDictionaryId == 0)
+        {
+            await HttpClient.PostAsJsonAsync("api/percentsDictionary", model);
+            Back();
+        }
+        else
+        {
+            await HttpClient.PutAsJsonAsync("api/percentsDictionary", model);
+            Back();
+        }
+    }
+
+    private void Back()
+    {
+        NavigationManager.NavigateTo("/percents");
+    }
+
+}

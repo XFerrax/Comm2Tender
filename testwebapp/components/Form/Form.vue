@@ -10,7 +10,7 @@
           </VToolbarItems>
         </VToolbar>
         <VCardText>
-          <slot name="fields" />
+          <slot name="fields" ></slot>
         </VCardText>
         <VCardActions class="pa-4">
           <VLayout wrap>

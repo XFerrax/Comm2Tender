@@ -45,10 +45,11 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddCors(options => 
-    options.AddPolicy(name: "FrontSite", 
+builder.Services.AddCors(options =>
+    options.AddPolicy(name: "FrontSite",
                 builder => builder
-                    .SetIsOriginAllowed(isOriginAllowed: _ => true)
+                    .WithOrigins("http://localhost:3000")
+                    //.SetIsOriginAllowed(isOriginAllowed: _ => true)
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials()));
@@ -64,13 +65,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCors("FrontSite");
+
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseCors("FrontSite");
 
 app.UseEndpoints(endpoints =>
 {

@@ -1,0 +1,110 @@
+﻿@page "/percents"
+@using Comm2TenderBlazor.Models.Dto
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Процентные ставки</PageTitle>
+
+<h1>Процентные ставки</h1>
+
+@* <div class="mb-3">
+    <input class="form-control mb-3" type="text" @bind="searchText" placeholder="Enter search query" />
+    <button class="btn btn-primary" @onclick="Search">Поиск</button>
+</div> *@
+
+@if (percents == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="Add">Добавить</button>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ставка ЦБ</th>
+                <th>% ТМК</th>
+                <th>Банковская гарантия</th>
+                <th>Кредит</th>
+                <th>Таможенная пошлина</th>
+                <th>Скидка</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var percent in percents)
+            {
+                <tr>
+                    <td>@percent.PercentsDictionaryId</td>
+                    <td>@percent.RefinancingRate</td>
+                    <td>@percent.Tmk</td>
+                    <td>@percent.BankGuarantee</td>
+                    <td>@percent.Credit</td>
+                    <td>@percent.CustomDuty</td>
+                    <td>@percent.Discount</td>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="() => Update(percent)">
+                            <span class="btn btn-secondary">Редактировать</span>
+                        </button>
+                        <button @onclick="() => Delete(percent.PercentsDictionaryId)">Удалить</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    //[CascadingParameter] public IModalService Modal { get; set; }
+
+    private List<PercentsDictionary> percents;
+    private string searchText;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            percents = await PagesHelper.GetAllListAsync<PercentsDictionary>("api/percentsDictionary/Search", HttpClient);
+        }
+        catch (Exception ex)
+        {
+            NavigationManager.NavigateTo("/error");
+        }
+
+    }
+
+    private async Task Search()
+    {
+        percents = await PagesHelper.SearchAsync<PercentsDictionary>(searchText, "api/percentsDictionary/Search", HttpClient);
+    }
+
+    private async Task Add()
+    {
+        // var modalParameters = new ModalParameters();
+        // modalParameters.Add("Id", 0);
+
+        // Modal.Show<UserForm>("Новый пользователь", modalParameters);
+
+        NavigationManager.NavigateTo("/percent/0");
+    }
+
+    private async Task Update(PercentsDictionary model)
+    {
+        // var modalParameters = new ModalParameters();
+        // modalParameters.Add("Id", user.UserId);
+
+        // Modal.Show<UserForm>(user.Name, modalParameters);
+
+        NavigationManager.NavigateTo($"/percent/{model.PercentsDictionaryId}");
+    }
+
+    private async Task Delete(int id)
+    {
+        await HttpClient.DeleteAsync($"api/percentsDictionary/delete_percents/{id}");
+        percents = await PagesHelper.GetAllListAsync<PercentsDictionary>("api/percentsDictionary/Search", HttpClient);
+    }
+}    

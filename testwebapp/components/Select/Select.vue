@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import FormLabel from '~/components/Control/FormLabel.vue'
 import { requiredRule } from '~/utils/validators'
-import helpers from '~/utils/helpers'
+import helpers, { HttpQueryType } from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
 
 const props = defineProps({

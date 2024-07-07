@@ -34,7 +34,7 @@
         api-address="role"
         item-title="name"
         label="Роль" 
-      />
+      ></Select>
       <VCheckbox v-model="currentItem.isActive" label="Активация учетной записи" />
     </template>
   </Form>
@@ -51,7 +51,7 @@ import { fetchData } from '~/plugins/api'
 import mixinPropsForm from '~/composables/mixinPropsForm';
 
 const props = defineProps(mixinPropsForm)
-const emit = defineEmits(['update:isActive'])
+const emit = defineEmits(['update:isActive','saved'])
 
 const validators = {
   requiredRule,
@@ -70,27 +70,37 @@ const currentItem = ref({
   isActive: false,
 })
 
-watch(
-  ()=>props.editedItem,
-  (newVal)=>{
-    currentItem.value.userId = newVal?.userId
-    currentItem.value.name = newVal?.name
-    currentItem.value.email = newVal?.email
-    currentItem.value.password = newVal?.password
-    currentItem.value.roleId = newVal?.role?.roleId
-    currentItem.value.isActive = newVal?.isActive
-})
+watch(() => props.editedItem, (newVal) => {
+  if (props.isNew) {
+    currentItem.value = {
+      userId: 0,
+      name: '',
+      email: '',
+      password: '',
+      roleId: 0,
+      isActive: false,
+    };
+  } else {
+    currentItem.value.userId = newVal?.userId;
+    currentItem.value.name = newVal?.name;
+    currentItem.value.email = newVal?.email;
+    currentItem.value.password = newVal?.password;
+    currentItem.value.roleId = newVal?.role?.roleId;
+    currentItem.value.isActive = newVal?.isActive;
+  }
+});
 
 const save = () => {
   const item = {
-    userId: currentItem.value.userId,
-    name: currentItem.value.name,
-    email: currentItem.value.email,
-    password: currentItem.value.password,
-    role: {
-      roleId: currentItem.value.roleId,
+    UserId: currentItem.value.userId,
+    Name: currentItem.value.name,
+    Email: currentItem.value.email,
+    Password: currentItem.value.password,
+    Role: {
+      Name: "",
+      RoleId: currentItem.value.roleId,
     },
-    isActive: currentItem.value.isActive,
+    IsActive: currentItem.value.isActive
   }
   
   const $helpers = helpers()
@@ -98,11 +108,13 @@ const save = () => {
   if (props.isNew) {
     fetchData(props.apiAddress!, request)
       .then(() => {
+        emit('saved');
         close()
       })
   } else {
-    fetchData(`${props.apiAddress!}/${item.userId}`, item)
+    fetchData(props.apiAddress!, request)
       .then(() => {
+        emit('saved');
         close()
       })
   }

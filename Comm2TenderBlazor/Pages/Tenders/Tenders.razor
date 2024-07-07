@@ -1,0 +1,109 @@
+﻿@page "/tenders"
+@using Comm2TenderBlazor.Models.Dto
+
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Тендеры</PageTitle>
+
+<h1>Тендеры</h1>
+
+
+@if (tenders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="mb-3">
+        <input class="form-control mb-3" type="text" @bind="searchText" placeholder="Enter search query" />
+        <button class="btn btn-primary" @onclick="Search">Поиск</button>
+    </div>
+
+    <button class="btn btn-primary" @onclick="Add">Добавить</button>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID тендера</th>
+                <th>СОМ номер</th>
+                <th>Описание</th>
+                <th>Контрагент победитель</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tender in tenders)
+            {
+                <tr>
+                    <td>@tender.TenderId</td>
+                    <td>@tender.Number</td>
+                    <td>@tender.Discription</td>
+                    <td>@tender.WinnerProposal?.Agent.Name</td>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="() => Update(tender)">
+                            <span class="btn btn-secondary">Редактировать</span>
+                        </button>
+                        <button @onclick="() => Delete(tender.TenderId)">Удалить</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    //[CascadingParameter] public IModalService Modal { get; set; }
+
+    private List<Tender> tenders;
+    private Proposal winnerProposal;
+    private string searchText;
+
+    private const string PageTitle = "Пользователи";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            tenders = await PagesHelper.GetAllListAsync<Tender>("api/tender/Search", HttpClient);
+        }
+        catch (Exception ex)
+        {
+            NavigationManager.NavigateTo("/error");
+        }
+
+    }
+
+    private async Task Search()
+    {
+        tenders = await PagesHelper.SearchAsync<Tender>(searchText, "api/tender/Search", HttpClient);
+    }
+
+    private async Task Add()
+    {
+        // var modalParameters = new ModalParameters();
+        // modalParameters.Add("Id", 0);
+
+        // Modal.Show<UserForm>("Новый пользователь", modalParameters);
+        NavigationManager.NavigateTo("/tender/0");
+    }
+
+    private async Task Update(Tender model)
+    {
+        // var modalParameters = new ModalParameters();
+        // modalParameters.Add("Id", user.UserId);
+
+        // Modal.Show<UserForm>(user.Name, modalParameters);
+
+        NavigationManager.NavigateTo($"/tender/{model.TenderId}");
+    }
+
+    private async Task Delete(int id)
+    {
+        await HttpClient.DeleteAsync($"api/tender/delete_tender/{id}");
+        tenders = await PagesHelper.GetAllListAsync<Tender>("api/tender/Search", HttpClient);
+    }
+
+}

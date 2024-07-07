@@ -26,6 +26,11 @@ namespace Comm2Tender.Logic
             };
         }
 
+        public Agent GetAgent(int id)
+        {
+            return DataService.GetAgent(id);
+        }
+
         public bool DeleteAgent(int id)
         {
             return DataService.DeleteAgent(id);
@@ -67,6 +72,11 @@ namespace Comm2Tender.Logic
         {
             return DataService.UpdateCustomFeeDictionary(model);
         }
+
+        public CustomFeeDictionary GetCustomFeeDictionary(int id)
+        {
+            return DataService.GetCustomFeeDictionary(id);
+        }
         #endregion CustomFeeDictionary
 
         #region PercentsDictionary
@@ -92,6 +102,12 @@ namespace Comm2Tender.Logic
         {
             return DataService.UpdatePercentsDictionary(model);
         }
+
+        public PercentsDictionary GetPercentsDictionary(int id)
+        {
+            return DataService.GetPercentsDictionary(id);
+        }
+
         #endregion PercentsDictionary
 
         #region Proposal
@@ -118,7 +134,55 @@ namespace Comm2Tender.Logic
         {
             return DataService.UpdateProposal(model);
         }
+
+        public ListResponse GetTenderProposals(int tenderId)
+        {
+            var tenders = DataService.GetProposalsByTenderId(tenderId);
+
+            var listResponse = new ListResponse();
+            listResponse.Items = tenders;
+            listResponse.Total = tenders.Count;
+
+            return listResponse;
+        }
+
+        public Proposal GetProposal(int id)
+        {
+            return DataService.GetProposal(id);
+        }
+
         #endregion Proposal
+
+        #region Tender
+        public ListResponse SearchTender(ListRequest listRequest)
+        {
+            var respList = DataService.SearchTender(listRequest);
+            return new ListResponse() { Items = respList.listRequest, Total = respList.total };
+        }
+
+        public bool DeleteTender(int id)
+        {
+            return DataService.DeleteTender(id);
+        }
+
+        public bool UpdateTender(Tender model)
+        {
+            return DataService.UpdateTender(model);
+        }
+
+        public AddResponse AddTender(Tender model)
+        {
+            return new AddResponse
+            {
+                Id = DataService.AddTender(model),
+            };
+        }
+
+        public Tender GetTender(int tenderId)
+        {
+            return DataService.GetTender(tenderId);
+        }
+        #endregion Tender
 
         #region User
         public AddResponse AddUser(User model)
@@ -149,9 +213,6 @@ namespace Comm2Tender.Logic
         {
             return DataService.GetUser(id);
         }
-
         #endregion User
-
-        
     }
 }

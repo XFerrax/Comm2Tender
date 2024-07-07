@@ -1,54 +1,24 @@
 <template>
-  <Form
-    v-model:isActive="props.isActive"
-    v-bind:save-func="save"
-    :title="props.title"
-    :title-suffix="props.titleSuffix"
-    :close-func="close"
-    :is-new="props.isNew"
-  >
+  <Form v-model:isActive="props.isActive" v-bind:save-func="save" :title="props.title" :title-suffix="props.titleSuffix" :close-func="close" :is-new="props.isNew">
     <template #fields>
-      <VDateInput
-        v-model="currentItem.dateEnter"
-        label="Выберите дату начала действия процентов"
-      />
-      <VTextField v-model="currentItem.refinancingRate" :rules="[validators.requiredRule]" :counter="50">
-        <template #label>
-          <FormLabel label="Ставка рефинансирования ЦБ РФ" required />
-        </template>
+      <VDateInput v-model="currentItem.dateEnter" label="Выберите дату начала действия процентов" />
+      <VTextField v-model="currentItem.refinancingRate" :rules="[validators.requiredRule, floatRule({ value: currentItem.refinancingRate, rule: myLengthRule(0, 10000)})]" :counter="8">
+        <template #label><FormLabel label="Ставка рефинансирования ЦБ РФ" required /></template>
       </VTextField>
-      <VTextField v-model="currentItem.tmk" :rules="[validators.requiredRule]">
-        <template #label>
-          <FormLabel label="Процент ТМК" required />
-        </template>
+      <VTextField v-model="currentItem.tmk" :rules="[validators.requiredRule, floatRule({ value: currentItem.tmk, rule: myLengthRule(0, 10000)})]" :counter="8">
+        <template #label><FormLabel label="Процент ТМК" required /></template>
       </VTextField>
-      <VTextField
-        v-model="currentItem.bankGuarantee"
-        :rules="[validators.requiredRule]"
-        :counter="50"
-      >
-        <template #label>
-          <FormLabel label="Банковская гарантия" required />
-        </template>
+      <VTextField v-model="currentItem.bankGuarantee" :rules="[validators.requiredRule, floatRule({ value: currentItem.bankGuarantee, rule: myLengthRule(0, 10000)})]" :counter="8">
+        <template #label><FormLabel label="Банковская гарантия" required /></template>
       </VTextField>
-      <VTextField v-model="currentItem.credit" :rules="[validators.requiredRule]" :counter="50">
-        <template #label>
-          <FormLabel label="Кредитная ставка" required />
-        </template>
+      <VTextField v-model="currentItem.credit" :rules="[validators.requiredRule, floatRule({ value: currentItem.credit, rule: myLengthRule(0, 10000)})]" :counter="8">
+        <template #label><FormLabel label="Кредитная ставка" required /></template>
       </VTextField>
-      <VTextField v-model="currentItem.customDuty" :rules="[validators.requiredRule]">
-        <template #label>
-          <FormLabel label="Таможенная пошлина" required />
-        </template>
+      <VTextField v-model="currentItem.customDuty" :rules="[validators.requiredRule, validators.floatRule({ value: currentItem.customDuty, rule: myLengthRule(0, 10000)})]" :counter="8">
+        <template #label><FormLabel label="Таможенная пошлина" required /></template>
       </VTextField>
-      <VTextField
-        v-model="currentItem.discount"
-        :rules="[validators.requiredRule]"
-        :counter="50"
-      >
-        <template #label>
-          <FormLabel label="Скидка" required />
-        </template>
+      <VTextField v-model="currentItem.discount" :rules="[validators.requiredRule, floatRule({ value: currentItem.discount, rule: myLengthRule(0, 10000)})]" :counter="8">
+        <template #label><FormLabel label="Скидка" required /></template>
       </VTextField>
     </template>
   </Form>
@@ -57,12 +27,12 @@
 <script setup lang="ts">
 import Form from '~/components/Form/Form.vue'
 import FormLabel from '~/components/Control/FormLabel.vue'
-import RoleSelect from '~/components/Select/Select.vue'
-import { requiredRule, lengthRule, emailRule } from '~/utils/validators'
-import helpers from '~/utils/helpers'
+import { requiredRule, lengthRule, floatRule } from '~/utils/validators'
+import helpers, { HttpQueryType } from '~/utils/helpers'
 import type { ILengthRule } from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
 import { VDateInput } from 'vuetify/labs/VDateInput'
+import mixinPropsForm from '~/composables/mixinPropsForm'
 
 const props = defineProps(mixinPropsForm)
 const emit = defineEmits(['update:isActive'])
@@ -70,12 +40,17 @@ const emit = defineEmits(['update:isActive'])
 const validators = {
   requiredRule,
   lengthRule,
-  emailRule,
+  floatRule
 }
 
 const isActiveForm = ref(props.isActive)
 
-const lengthRule50 : ILengthRule = { max: 50 }
+const myLengthRule = (min?: number, max?: number) : ILengthRule => {
+  const ret = {}
+  if (min) { ret: { min: min } }
+  if (max) { ret: { max: max } }
+  return ret 
+} 
 
 const currentItem = ref({
   percentsDictionaryId: 0,

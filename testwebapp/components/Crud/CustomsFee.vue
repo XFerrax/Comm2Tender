@@ -42,7 +42,6 @@
       </template>
       <VDivider />
       <VDataTable
-        v-model="useCrud.selected"
         :show-select="selectMulti"
         :headers="headers"
         :items="useCrud.items.value"
@@ -92,7 +91,9 @@
                   color="error" 
                   v-bind="props" 
                   @click="useCrud.mixinDeleteItem(item)"
-                />
+                >
+                  <VIcon>mdi-delete</VIcon>
+                </VBtn>
               </template>
             </VTooltip>
           </VRow>
@@ -124,7 +125,7 @@ import mixinUseCrud from '~/composables/mixinUseCrud'
 import { ref } from 'vue'
 import MyAlert from '~/components/Control/MyAlert.vue'
 import DialogConfirm from '~/components/Dialog/DialogConfirm.vue'
-import helpers from '~/utils/helpers'
+import helpers, { HttpQueryType } from '~/utils/helpers'
 import { fetchData } from '~/plugins/api'
 import Form from '~/components/Form/CustomsFee.vue'
 
@@ -132,7 +133,7 @@ var props = defineProps(mixinPropsCrud)
 const useCrud = mixinUseCrud()
 
 const $helpers = helpers()
-const apiAddress = 'сustomFeeDictionary'
+const apiAddress = 'customFeeDictionary'
 const itemKey = `${apiAddress}Id`
 const title = 'Таможенные пошлины'
 const titleSuffixForm = 'таможенной пошлины'
@@ -187,4 +188,4 @@ const showForm = () => {
   useCrud.isNew.value = true
   useCrud.isForm.value = true
 }
-</script>
+</script>, { HttpQueryType }

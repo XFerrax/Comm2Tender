@@ -54,8 +54,7 @@
     if(form.value.validate()) {
       useAuthStore().login(
         currentItem.value.email, 
-        currentItem.value.password, 
-        useRouter())
+        currentItem.value.password)
     }
   }
 </script>

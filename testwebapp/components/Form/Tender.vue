@@ -8,12 +8,12 @@
     :is-new="props.isNew"
   >
     <template #fields>
-      <VTextField v-model="currentItem.number" :rules="[validators.requiredRule, validators.lengthRule(currentItem.name, lengthRule50)]" :counter="50">
+      <VTextField v-model="currentItem.number" :rules="[validators.requiredRule, validators.lengthRule(currentItem.number, lengthRule50)]" :counter="50">
         <template #label>
           <FormLabel label="Номер тендера" required />
         </template>
       </VTextField>
-      <VTextField v-model="currentItem.discription" :rules="[validators.requiredRule, validators.emailRule(currentItem.email)]">
+      <VTextField v-model="currentItem.discription" :rules="[validators.requiredRule, validators.emailRule(currentItem.discription)]">
         <template #label>
           <FormLabel label="Описание" required />
         </template>
@@ -25,14 +25,14 @@
         api-address="percentsDictionary"
         item-title="name"
         label="Набор процентных ставок" 
-      />
+      ></Select>
       <Select
         v-model="currentItem.winnerProposalId"
         :visible="true"
         api-address="agent"
         item-title="name"
         label="Контрагент" 
-      />
+      ></Select>
     </template>
   </Form>
 </template>
@@ -67,8 +67,8 @@ const currentItem = ref({
 })
 
 watch(
-  ()=>props.editedItem,
-  (newVal)=>{
+  () => props.editedItem,
+  (newVal) => {
     currentItem.value.tenderId = newVal?.tenderId
     currentItem.value.number = newVal?.number
     currentItem.value.discription = newVal?.discription
@@ -84,10 +84,10 @@ const save = () => {
     percentsDictionary: {
       percentsDictionaryId: currentItem.value.percentsDictionaryId,
     },
-    winnerProposal: null,
+    winnerProposal: null as { winnerProposalId: number; } | null,
   }
 
-  if(currentItem.value.winnerProposalId>0)
+  if(currentItem.value.winnerProposalId > 0)
   {
     item.winnerProposal = {
       winnerProposalId: currentItem.value.winnerProposalId,

@@ -26,30 +26,41 @@ export const useAuthStore = defineStore({
         deleteCookie('refreshToken');
       }
     },
-    login(email: string, password: string, router: any) {
-      fetchData('auth/login',
-          {
-            method: 'post', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify({ login: email, password: password }) 
-          })
-        .then(response => {
-          const data = response;
-          this.setTokens({
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken 
-          })
-          fetchData('auth/getUserView', $helpers.BuildQuery(HttpQueryType.get))
-            .then(inResponse => {
-              const myMenuStore = menuStore();
-			        myMenuStore.removeMenuItem()
-              myMenuStore.setMenuItems(inResponse.menuItems);
-              router.push(inResponse.menuItems[0].path);
-            })
+    login(email: string, password: string) {
+      fetchData('auth/login', {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login: email, password: password })
+      })
+      .then(response => {
+        const data = response;
+        this.setTokens({
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken
+        });
+    
+        const authHeaders = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${data.accessToken}`
+        };
+    
+        fetchData('auth/getUserView', {
+          method: 'get',
+          headers: authHeaders
+        })
+        .then(inResponse => {
+          const myMenuStore = menuStore();
+          myMenuStore.removeMenuItem();
+          myMenuStore.setMenuItems(inResponse.menuItems);
+          useRouter().push(inResponse.menuItems[0].path);
         })
         .catch(() => {
-          this.logout()
+          this.logout();
         });
+      })
+      .catch(() => {
+        this.logout();
+      });
     },
     logout() {
       fetchData('auth/logout', $helpers.BuildQuery(HttpQueryType.get))

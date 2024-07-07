@@ -1,3 +1,5 @@
+import { menuStore } from "~/store/menu.store";
+
 export default defineNuxtPlugin((app) => {
 
 })

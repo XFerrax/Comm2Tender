@@ -1,9 +1,9 @@
 import * as helpers from '~/utils/helpers'
+import type { FloatValidatorOptions } from '~/utils/helpers'
 
 export function requiredRule(value: any) : boolean | string {
   return !!value || 'Обязательное поле'
 }
-
 
 export function emailRule(value: string) : boolean | string
 {

@@ -10,6 +10,7 @@ namespace Comm2Tender.Logic
 
         #region Agent
         AddResponse AddAgent(Agent model);
+        Agent GetAgent(int id);
         bool DeleteAgent(int id);
         ListResponse SearchAgent(ListRequest listRequest);
         bool UpdateAgent(Agent model);
@@ -20,6 +21,8 @@ namespace Comm2Tender.Logic
         bool DeleteCustomFeeDictionary(int id);
         ListResponse SearchCustomFeeDictionary(ListRequest listRequest);
         bool UpdateCustomFeeDictionary(CustomFeeDictionary model);
+        CustomFeeDictionary GetCustomFeeDictionary(int id);
+
         #endregion CustomFeeDictionary
 
         #region PercentsDictionary
@@ -27,6 +30,7 @@ namespace Comm2Tender.Logic
         bool DeletePercentsDictionary(int id);
         ListResponse SearchPercentsDictionary(ListRequest listRequest);
         bool UpdatePercentsDictionary(PercentsDictionary model);
+        PercentsDictionary GetPercentsDictionary(int id);
         #endregion PercentsDictionary
 
         #region Proposal
@@ -34,7 +38,17 @@ namespace Comm2Tender.Logic
         bool DeleteProposal(int id);
         ListResponse SearchProposal(ListRequest listRequest);
         bool UpdateProposal(Proposal model);
+        ListResponse GetTenderProposals(int tenderId);
+        Proposal GetProposal(int id);
         #endregion Proposal
+
+        #region Tender
+        ListResponse SearchTender(ListRequest listRequest);
+        bool DeleteTender(int id);
+        bool UpdateTender(Tender model);
+        AddResponse AddTender(Tender model);
+        Tender GetTender(int tenderId);
+        #endregion Tender
 
         #region User
         AddResponse AddUser(User model);

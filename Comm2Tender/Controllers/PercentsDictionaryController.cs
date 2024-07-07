@@ -9,7 +9,6 @@ namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = RolesNames.ECONOMIST_ROLE_NAME)]
     public class PercentsDictionaryController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
@@ -30,14 +29,14 @@ namespace Comm2Tender.Controllers
         [HttpPost]
         public ActionResult<string> Post([FromBody] PercentsDictionary model)
         {
+            model.DateEnter = System.DateTime.UtcNow;
             return Ok(LogicService.AddPercentsDictionary(model));
         }
 
         // PUT PercentsDictionary/5
-        [HttpPut("{id:int:min(1)}")]
-        public ActionResult<string> Put([FromBody] PercentsDictionary model, int id)
+        [HttpPut]
+        public ActionResult<string> Put([FromBody] PercentsDictionary model)
         {
-            model.PercentsDictionaryId = id;
             if (LogicService.UpdatePercentsDictionary(model))
             {
                 return Ok();
@@ -46,7 +45,7 @@ namespace Comm2Tender.Controllers
         }
 
         // DELETE PercentsDictionary/5
-        [HttpDelete("{id:int:min(1)}")]
+        [HttpDelete("delete_percents/{id:int}")]
         public ActionResult<string> Delete(int id)
         {
             if (LogicService.DeletePercentsDictionary(id))
@@ -54,6 +53,19 @@ namespace Comm2Tender.Controllers
                 return Ok();
             }
             return new NotFoundResult();
+        }
+
+        [HttpGet("get_percents/{id:int}")]
+        public ActionResult<string> GetPercentsDictionary(int id)
+        {
+            try
+            {
+                return Ok(LogicService.GetPercentsDictionary(id));
+            }
+            catch (System.Exception)
+            {
+                return new NotFoundResult();
+            }
         }
     }
 }

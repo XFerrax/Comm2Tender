@@ -7,6 +7,7 @@
         public string Discription { get; set; } // nvarchar(50)
         public PercentsDictionary PercentsDictionary { get; set; } // int
         public Proposal? WinnerProposal { get; set; } // int
+        public int? WinnerProposalId { get; set; } // int
 
 
         public static implicit operator Tender(Data.Tender a)
@@ -33,7 +34,7 @@
                 Number = a.Number,
                 Discription = a.Discription,
                 PercentsDictionaryId = a.PercentsDictionary.PercentsDictionaryId,
-                WinnerProposalId = a.WinnerProposal?.ProposalId,
+                WinnerProposalId = a.WinnerProposalId,
             };
         }
     }

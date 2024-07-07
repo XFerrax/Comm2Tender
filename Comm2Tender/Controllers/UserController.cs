@@ -4,12 +4,13 @@ using Comm2Tender.Logic.Models;
 using Comm2Tender.Logic.Models.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = RolesNames.ADMINISTRATOR_ROLE_NAME)]
+    //[Authorize(Roles = RolesNames.ADMINISTRATOR_ROLE_NAME)]
     public class UserController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
@@ -26,18 +27,40 @@ namespace Comm2Tender.Controllers
             return Ok(LogicService.SearchUser(listRequest));
         }
 
+        [HttpGet("get_user/{id:int}")]
+        public ActionResult<string> GetUser(int id) 
+        {
+            try
+            {
+                return Ok(LogicService.GetUser(id));
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+
         // POST User
         [HttpPost]
         public ActionResult<string> Post([FromBody] User model)
         {
-            return Ok(LogicService.AddUser(model));
+            try
+            {
+                return Ok(LogicService.AddUser(model));
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+            
         }
 
         // PUT User/5
-        [HttpPut("{id:int:min(1)}")]
-        public ActionResult<string> Put([FromBody] User model, int id)
+        //[HttpPut("{id:int:min(1)}")]
+        [HttpPut]
+        public ActionResult<string> Put([FromBody] User model)
         {
-            model.UserId = id;
+            //model.UserId = id;
             if (LogicService.UpdateUser(model))
             {
                 return Ok();
@@ -46,7 +69,7 @@ namespace Comm2Tender.Controllers
         }
 
         // DELETE User/5
-        [HttpDelete("{id:int:min(1)}")]
+        [HttpDelete("delete_user/{id:int:min(1)}")]
         public ActionResult<string> Delete(int id)
         {
             if (LogicService.DeleteUser(id))

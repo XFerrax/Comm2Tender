@@ -20,6 +20,10 @@ namespace Comm2Tender.Data
         bool DeleteCustomFeeDictionary(int id);
         (List<Logic.Models.Dto.CustomFeeDictionary> listRequest, int total) SearchCustomFeeDictionary(ListRequest listRequest);
         bool UpdateCustomFeeDictionary(CustomFeeDictionary model);
+
+        CustomFeeDictionary GetCustomFeeByPositionPrice(decimal positionPrice);
+        CustomFeeDictionary GetCustomFeeDictionary(int id);
+
         #endregion CustomFeeDictionary
 
         #region PercentsDictionary
@@ -29,6 +33,7 @@ namespace Comm2Tender.Data
         bool UpdatePercentsDictionary(PercentsDictionary model);
 
         PercentsDictionary GetLastPercentsDictionary();
+        PercentsDictionary GetPercentsDictionary(int id);
         #endregion PercentsDictionary
 
         #region Proposal
@@ -36,15 +41,17 @@ namespace Comm2Tender.Data
         bool DeleteProposal(int id);
         (List<Logic.Models.Dto.Proposal> listRequest, int total) SearchProposal(ListRequest listRequest);
         bool UpdateProposal(Proposal model);
+        List<Proposal> GetProposalsByTenderId(int tenderId);
+        Proposal GetProposal(int id);
         #endregion Proposal
 
         #region User
         int AddUser(User model);
+        User GetUser(int userId);
         bool DeleteUser(int id);
         (List<Logic.Models.Dto.User> listRequest, int total) SearchUser(ListRequest listRequest);
         bool UpdateUser(User model);
 
-        User GetUser(int id);
         #endregion User
 
         #region Tender

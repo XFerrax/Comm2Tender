@@ -12,7 +12,7 @@ const defaultValue: Array<IMenuItem> = [ ]
 export const menuStore = defineStore({
   id: 'menuStore',
   state: () => ({
-    //menuItemsStore: defaultValue,
+    menuItemsStore: defaultValue,
   }),
   getters: {
     menuItemsStore: () => {

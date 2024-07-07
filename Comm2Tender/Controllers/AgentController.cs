@@ -4,12 +4,12 @@ using Comm2Tender.Logic.Models;
 using Comm2Tender.Logic.Models.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = RolesNames.SPECIALIST_ROLE_NAME)]
     public class AgentController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
@@ -17,6 +17,19 @@ namespace Comm2Tender.Controllers
         public AgentController(ILogicService logicService)
         {
             LogicService = (ILogicServiceCrud)logicService;
+        }
+
+        [HttpGet("get_agent/{id:int}")]
+        public ActionResult<string> GetAgent(int id)
+        {
+            try
+            {
+                return Ok(LogicService.GetAgent(id));
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
 
         // POST Agent/Search
@@ -30,14 +43,14 @@ namespace Comm2Tender.Controllers
         [HttpPost]
         public ActionResult<string> Post([FromBody] Agent model)
         {
+            model.AgentSystemRegistrationDate =  DateTime.UtcNow;
             return Ok(LogicService.AddAgent(model));
         }
 
         // PUT Agent/5
-        [HttpPut("{id:int:min(1)}")]
-        public ActionResult<string> Put([FromBody] Agent model, int id)
+        [HttpPut()]
+        public ActionResult<string> Put([FromBody] Agent model)
         {
-            model.AgentId = id;
             if (LogicService.UpdateAgent(model))
             {
                 return Ok();
@@ -45,8 +58,8 @@ namespace Comm2Tender.Controllers
             return new NotFoundResult();
         }
 
-        // DELETE Agent/5
-        [HttpDelete("{id:int:min(1)}")]
+        // DELETE Agent/delete_agent/5
+        [HttpDelete("delete_agent/{id:int:min(1)}")]
         public ActionResult<string> Delete(int id)
         {
             if (LogicService.DeleteAgent(id))
