@@ -17,12 +17,19 @@
 }
 else
 {
-    <div class="mb-3">
-        <input class="form-control mb-3" type="text" @bind="searchText" placeholder="Enter search query" />
-        <button class="btn btn-primary" @onclick="Search">Поиск</button>
-    </div>
+	<div class="container">
+		<div class="mb-3">
+			<input class="form-control mb-3" type="text" @bind="searchText" placeholder="Enter search query" />
+			<button class="btn btn-primary" @onclick="Search">Поиск</button>
+		</div>
+	</div>
+    
+	<div class="container">
+		<button class="btn btn-primary" @onclick="Add">Добавить</button>
 
-    <button class="btn btn-primary" @onclick="Add">Добавить</button>
+		<InputFile></InputFile>
+	</div>
+    
 
     <table class="table">
         <thead>
@@ -43,10 +50,10 @@ else
                     <td>@tender.Discription</td>
                     <td>@tender.WinnerProposal?.Agent.Name</td>
                     <td>
-                        <button class="btn btn-secondary" @onclick="() => Update(tender)">
-                            <span class="btn btn-secondary">Редактировать</span>
+                        <button class="btn btn-success" @onclick="() => Update(tender)">
+	                        Редактировать
                         </button>
-                        <button @onclick="() => Delete(tender.TenderId)">Удалить</button>
+                        <button class="btn btn-danger"  @onclick="() => Delete(tender.TenderId)">Удалить</button>
                     </td>
                 </tr>
             }

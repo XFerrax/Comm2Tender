@@ -1,0 +1,59 @@
+﻿@page "/selection"
+@using Comm2TenderBlazor.Models.Dto
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h1>Выбор контрагента</h1>
+
+@if (tenders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>СОМ номер</th>
+                <th>Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tender in tenders)
+            {
+                <tr>
+                    <td>@tender.Number</td>
+                    <td>@tender.Discription</td>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="() => OpenCalculationPage(tender)">
+                            <span class="btn btn-secondary">Выбор</span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private List<Tender> tenders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            tenders = await PagesHelper.GetAllListAsync<Tender>("api/tender/Search", HttpClient);
+        }
+        catch (Exception ex)
+        {
+            NavigationManager.NavigateTo("/error");
+        }
+    }
+
+    private void OpenCalculationPage(Tender tender)
+    {
+        NavigationManager.NavigateTo($"/calculations/{tender.TenderId}");
+    }
+}

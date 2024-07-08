@@ -2,12 +2,12 @@
 (
 	[PercentsDictionaryId] INT NOT NULL PRIMARY KEY IDENTITY, 
     [DateEnter] DATETIME NOT NULL, 
-    [RefinancingRate] DECIMAL(4, 3) NOT NULL, 
-    [Tmk] DECIMAL(4, 3) NOT NULL, 
-    [BankGuarantee] DECIMAL(4, 3) NOT NULL, 
-    [Credit] DECIMAL(4, 3) NOT NULL, 
-    [CustomDuty] DECIMAL(4, 3) NOT NULL, 
-    [Discount] DECIMAL(4, 3) NOT NULL, 
+    [RefinancingRate] DECIMAL(9, 3) NOT NULL, 
+    [Tmk] DECIMAL(9, 3) NOT NULL, 
+    [BankGuarantee] DECIMAL(9, 3) NOT NULL, 
+    [Credit] DECIMAL(9, 3) NOT NULL, 
+    [CustomDuty] DECIMAL(9, 3) NOT NULL, 
+    [Discount] DECIMAL(9, 3) NOT NULL, 
 )
 
 GO

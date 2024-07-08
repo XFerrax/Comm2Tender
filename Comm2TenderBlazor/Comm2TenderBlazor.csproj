@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazored.Modal" Version="7.2.0" />
-    <PackageReference Include="Syncfusion.Blazor.Charts" Version="26.1.40" />
+    <PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
   </ItemGroup>
 
 </Project>

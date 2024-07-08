@@ -1,5 +1,8 @@
 ﻿@page "/calculations/{id:int}"
 
+@using ChartJs.Blazor.BarChart
+@using ChartJs.Blazor.Common
+
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 
@@ -31,19 +34,27 @@ else
 					<td>@calculation.PositionPrice</td>
 					<td>@calculation.EconomyEffect</td>
 					<td>@calculation.ReliabilityAssessment</td>
-					<td>@calculation.IntegralAssessment</td>
+					<td>@String.Format("{0:0.###}",calculation.IntegralAssessment)</td>
 					<td>@calculation.Note</td>
 				</tr>
 			}
 			</tbody>
 		</table>
 
+	</div> 
+	
+	
+<style>
+    .custom-chart {
+        width: 700px; /* Устанавливаем ширину в 300px */
+        height: 500px; /* Устанавливаем высоту в 200px */
+    }
+</style>
+
+	<div class="custom-chart">
+		<Chart Config="barConfig"></Chart>
 	</div>
-
-	<SfChart>
-		
-
-	</SfChart>
+	
 }
 
 
@@ -54,6 +65,7 @@ else
     public int? Id { get; set; }
 
     private List<Calculation> calculations;
+    private BarConfig barConfig;
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,11 +73,51 @@ else
 	    {
 		    var repsonseViewModel = await PagesHelper.GetItemsAsync<ResponseViewModel<Calculation>>($"api/Calculation/get_calc/{Id}", HttpClient);
 		    calculations = repsonseViewModel.Items;
+
+			if (calculations.Count == 0)
+			{
+				throw new NullReferenceException();
+			}
+
+		    barConfig = CreateBarConfig(this.calculations);
+
 	    }
 	    catch (Exception ex)
 	    {
-		    NavigationManager.NavigateTo("/error");
+			NavigationManager.NavigateTo("/selection");
 	    }
 
+    }
+
+    private BarConfig CreateBarConfig(IEnumerable<Calculation> calculations)
+    {
+	    var _barConfig = new BarConfig
+	    {
+		    Options = new BarOptions()
+		    {
+			    Responsive = true,
+			    Title = new OptionsTitle()
+			    {
+				    Display = true,
+				    Text = "Интегральная оценка"
+			    } 
+		    }
+	    };
+
+
+	    foreach (var calculation in calculations)
+	    {
+			_barConfig.Data.Labels.Add(calculation.AgentName);
+	    }
+
+
+	    var integralAssessments = this.calculations.Select(x => x.IntegralAssessment).ToList();
+
+	    var dataset = new BarDataset<decimal>(integralAssessments);
+	    dataset.BackgroundColor = new IndexableOption<string>("#007bff");
+
+
+		_barConfig.Data.Datasets.Add(dataset);
+		return _barConfig;
     }
 }

@@ -1,6 +1,3 @@
-using Blazored.Modal;
-using Syncfusion.Blazor;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var baseAddress = builder.Configuration["ApiUrl"];
@@ -9,8 +6,7 @@ var baseAddress = builder.Configuration["ApiUrl"];
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient();
-builder.Services.AddBlazoredModal();
-builder.Services.AddSyncfusionBlazor();
+
 builder.Services.AddScoped(sp =>
 {
     var client = new HttpClient();
