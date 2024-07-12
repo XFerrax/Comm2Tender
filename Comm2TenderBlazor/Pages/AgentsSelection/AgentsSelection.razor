@@ -22,15 +22,18 @@ else
         <tbody>
             @foreach (var tender in tenders)
             {
-                <tr>
-                    <td>@tender.Number</td>
-                    <td>@tender.Discription</td>
-                    <td>
-                        <button class="btn btn-secondary" @onclick="() => OpenCalculationPage(tender)">
-                            <span class="btn btn-secondary">Выбор</span>
-                        </button>
-                    </td>
-                </tr>
+
+	            <tr>
+		            <td>@tender.Number</td>
+		            <td>@tender.Discription</td>
+		            <td>
+			            <button class="btn btn-secondary" @onclick="() => OpenCalculationPage(tender)">
+				            <span class="btn btn-secondary">Выбор</span>
+			            </button>
+		            </td>
+	            </tr>
+	            
+                
             }
         </tbody>
     </table>

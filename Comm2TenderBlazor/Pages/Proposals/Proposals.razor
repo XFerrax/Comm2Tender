@@ -27,7 +27,7 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>ID заявки</th>
+                <th>Тендер</th>
                 <th>Контрагент</th>
                 <th>Количество товара</th>
                 <th>Стоимость 1 ед</th>
@@ -40,10 +40,9 @@ else
             @foreach (var proposal in proposals)
             {
                 <tr>
-                    <td>@proposal.ProposalId</td>
+                    <td>@proposal.Tender.Number</td>
                     <td>@proposal.Agent.Name</td>
                     <td>@proposal.CountPos</td>
-                    <td>@proposal.PositionPrice</td>
                     <td>@proposal.PositionPrice</td>
                     <td>@proposal.DeliveryCost</td>
                     <td>@proposal.DeliveryTime</td>

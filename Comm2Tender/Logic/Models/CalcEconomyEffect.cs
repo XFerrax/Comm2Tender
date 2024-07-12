@@ -54,15 +54,15 @@ namespace Comm2Tender.Logic.Models
 
                 if (sumintpay1 == 1 && sumintpay4 == 0)
                 {
-                    rateProc1 =- (proposal.CountPos*proposal.PositionPrice+proposal.DeliveryCost) * (proposal.PrepaidExpense1/100) * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) * 5 / 365;
+                    rateProc1 =-(proposal.CountPos * proposal.PositionPrice + proposal.DeliveryCost) * (proposal.PrepaidExpense1 / 100) * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) * 5 / 365 / 100;
                 }
                 if (sumintpay2 == 1 && sumintpay4 == 0)
                 {
-                    rateProc2 =-(proposal.CountPos * proposal.PositionPrice + proposal.DeliveryCost) * (proposal.PrepaidExpense2 / 100) * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) * 5 / 365;
+                    rateProc2 =-(proposal.CountPos * proposal.PositionPrice + proposal.DeliveryCost) * (proposal.PrepaidExpense2 / 100) * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) * 5 / 365 / 100;
                 }
                 if (sumintpay3 == 1 && sumintpay4 == 0)
                 {
-                    rateProc3 =-(proposal.CountPos * proposal.PositionPrice + proposal.DeliveryCost) * (proposal.PrepaidExpense3 / 100) * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) * 5 / 365;
+                    rateProc3 =-(proposal.CountPos * proposal.PositionPrice + proposal.DeliveryCost) * (proposal.PrepaidExpense3 / 100) * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) * 5 / 365 / 100;
                 }
 
                 decimal pay = pay1 + pay2 + pay3 + rateProc1 + rateProc2 + rateProc3;
@@ -93,7 +93,7 @@ namespace Comm2Tender.Logic.Models
                 decimal payposh = 0;
                 if (proposal.CustomDuty && post > 0)
                 {
-                    payposh =- order.Value * percentsDictionary.CustomDuty;
+                    payposh =- order.Value * percentsDictionary.CustomDuty/100;
                 }
 
                 decimal paysbor = 0;
@@ -119,15 +119,15 @@ namespace Comm2Tender.Logic.Models
                 decimal profit1 = 0, profit2 = 0, profit3 = 0;
                 if (sumintpay5 == 1 && sumintpay6 == 0)
                 {
-                    profit1 = order.Value * (proposal.PostPaymant1/100) * 5 * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) / 365;
+                    profit1 = order.Value * (proposal.PostPaymant1/100) * 5 * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) / 365/100;
                 }
                 if (sumintpay5 == 1 && sumintpay7 == 0)
                 {
-                    profit2 = order.Value * (proposal.PostPaymant2/100) * 5 * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) / 365;
+                    profit2 = order.Value * (proposal.PostPaymant2/100) * 5 * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) / 365/100;
                 }
                 if (sumintpay5 == 1 && sumintpay8 == 0)
                 {
-                    profit3 = order.Value * (proposal.PostPaymant3/100) * 5 * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) / 365;
+                    profit3 = order.Value * (proposal.PostPaymant3 / 100) * 5 * (percentsDictionary.RefinancingRate + percentsDictionary.Tmk) / 365 / 100;
                 }
 
                 decimal paygarant = 0;
@@ -140,7 +140,7 @@ namespace Comm2Tender.Logic.Models
                 decimal totalprofit = post + profit1 + profit2 + profit3 + paygarant;
                 decimal cashflow = totalloss + totalprofit,
                     cashflowink = cashflow + oldCashflowink,
-                    discountraid = Convert.ToDecimal(Math.Pow(Convert.ToDouble(1 / (1 + percentsDictionary.Discount / 73)), p)),
+                    discountraid = Convert.ToDecimal(Math.Pow(Convert.ToDouble(1 / (1 + percentsDictionary.Discount / 73/100)), p)),
                     cashflowdiscont = cashflow * discountraid,
                     cashflowdiscontink = cashflowdiscont + oldcashflowdiscontink;
 
