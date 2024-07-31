@@ -4,7 +4,7 @@ namespace Comm2Tender.Logic.Models.Dto
 {
     public class UserView
     {
-        public int UserId { get; set; }
+        public long UserId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public Role Role { get; set; }

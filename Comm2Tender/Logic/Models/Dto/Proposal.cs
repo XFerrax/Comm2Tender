@@ -1,8 +1,10 @@
-﻿namespace Comm2Tender.Logic.Models.Dto
+﻿using System.Collections;
+
+namespace Comm2Tender.Logic.Models.Dto
 {
     public class Proposal
     {
-        public int ProposalId { get; set; } // int
+        public long ProposalId { get; set; } // int
         public Agent Agent { get; set; } // int
         public User User { get; set; } // int
         public Tender Tender { get; set; } // int
@@ -10,7 +12,7 @@
         /// <summary>
         /// Количество товара(услуг), ед
         /// </summary>
-        public int CountPos { get; set; } // int
+        public decimal CountPos { get; set; } // int
         
         /// <summary>
         /// Стоимость 1 ед товара(услуги)
@@ -25,7 +27,7 @@
         /// <summary>
         /// Сроки поставки, дн
         /// </summary>
-        public int DeliveryTime { get; set; } // int
+        public decimal DeliveryTime { get; set; } // int
         
         /// <summary>
         /// Аванс 1
@@ -45,17 +47,17 @@
         /// <summary>
         /// Срок аванса 1, дн
         /// </summary>
-        public int PeriodOfExecution1 { get; set; } // int
+        public decimal PeriodOfExecution1 { get; set; } // int
         
         /// <summary>
         /// Срок аванса 2, дн
         /// </summary>
-        public int PeriodOfExecution2 { get; set; } // int
+        public decimal PeriodOfExecution2 { get; set; } // int
         
         /// <summary>
         /// Срок аванса 3, дн
         /// </summary>
-        public int PeriodOfExecution3 { get; set; } // int
+        public decimal PeriodOfExecution3 { get; set; } // int
         
         /// <summary>
         /// Постоплата 1, %
@@ -75,17 +77,17 @@
         /// <summary>
         /// Срок постоплаты 1, дн
         /// </summary>
-        public int PostPaymantPeriod1 { get; set; } // int
+        public decimal PostPaymantPeriod1 { get; set; } // int
         
         /// <summary>
         /// Срок постоплаты 2, дн
         /// </summary>
-        public int PostPaymantPeriod2 { get; set; } // int
+        public decimal PostPaymantPeriod2 { get; set; } // int
         
         /// <summary>
         /// Срок постоплаты 3, дн
         /// </summary>
-        public int PostPaymantPeriod3 { get; set; } // int
+        public decimal PostPaymantPeriod3 { get; set; } // int
         
         /// <summary>
         /// Аккредитив

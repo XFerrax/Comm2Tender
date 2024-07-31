@@ -1,6 +1,7 @@
 ﻿
 using Comm2Tender.Logic.Models;
 using LinqToDB;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;

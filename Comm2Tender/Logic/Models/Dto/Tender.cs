@@ -2,7 +2,7 @@
 {
     public class Tender
     {
-        public int TenderId { get; set; } // int
+        public long TenderId { get; set; } // int
         public string Number { get; set; } // nvarchar(50)
         public string Discription { get; set; } // nvarchar(50)
         public PercentsDictionary PercentsDictionary { get; set; } // int

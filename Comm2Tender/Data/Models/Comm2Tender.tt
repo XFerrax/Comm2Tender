@@ -1,9 +1,8 @@
-<#@ template language="C#" debug="True" hostSpecific="True"                    #>
-<#@ CleanupBehavior processor="T4VSHost" CleanupAfterProcessingtemplate="true" #>
-<#@ output extension=".generated.cs"                                           #>
+<#@ template language="C#" debug="True" hostSpecific="True" #>
+<#@ output extension=".generated.cs"                        #>
 
-<#@ include file="$(LinqToDBT4SqlServerTemplatesPath)LinqToDB.SqlServer.Tools.ttinclude" once="true" #>
-<#@ include file="$(LinqToDBT4SqlServerTemplatesPath)PluralizationService.ttinclude"     once="true" #>
+<#@ include file="$(LinqToDBT4PostgreSQLTemplatesPath)LinqToDB.PostgreSQL.Tools.ttinclude" once="true" #>
+<#@ include file="$(LinqToDBT4PostgreSQLTemplatesPath)PluralizationService.ttinclude"      once="true" #>
 <#
 	NamespaceName                       = "Comm2Tender.Data";
 	NormalizeNames                      = false;
@@ -12,6 +11,7 @@
 	PluralizeDataContextPropertyNames   = false;
 	SingularizeDataContextPropertyNames = false;
 
-	LoadSqlServerMetadata(".\\SQLEXPRESS", "Comm2Tender"); // Integrated Security
+	LoadPostgreSQLMetadata("nanopi.ferraxnet", "3343", "Comm2Tender", "postgres", "wsxasd1234");
+
 	GenerateModel();
 #>

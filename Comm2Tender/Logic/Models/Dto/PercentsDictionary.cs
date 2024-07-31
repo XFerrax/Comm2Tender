@@ -4,7 +4,7 @@ namespace Comm2Tender.Logic.Models.Dto
 {
     public class PercentsDictionary
     {
-        public int PercentsDictionaryId { get; set; } // int
+        public long PercentsDictionaryId { get; set; } // int
         public DateTime DateEnter { get; set; } // datetime
         public decimal RefinancingRate { get; set; } // decimal(4, 3)
         public decimal Tmk { get; set; } // decimal(4, 3)

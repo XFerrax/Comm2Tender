@@ -19,19 +19,29 @@ namespace Comm2Tender.Data
 {
 	/// <summary>
 	/// Database       : Comm2Tender
-	/// Data Source    : .\SQLEXPRESS
-	/// Server Version : 16.00.1115
+	/// Data Source    : tcp://nanopi.ferraxnet:3343
+	/// Server Version : 16.3 (Debian 16.3-1.pgdg120+1)
 	/// </summary>
 	public partial class Comm2TenderDB : LinqToDB.Data.DataConnection
 	{
 		public ITable<Agent>               Agent               { get { return this.GetTable<Agent>(); } }
 		public ITable<CustomFeeDictionary> CustomFeeDictionary { get { return this.GetTable<CustomFeeDictionary>(); } }
+		/// <summary>
+		/// Ставка ЦБ РФ
+		/// </summary>
 		public ITable<PercentsDictionary>  PercentsDictionary  { get { return this.GetTable<PercentsDictionary>(); } }
+		/// <summary>
+		/// Количество товара(услуг), ед
+		/// </summary>
 		public ITable<Proposal>            Proposal            { get { return this.GetTable<Proposal>(); } }
 		public ITable<Role>                Role                { get { return this.GetTable<Role>(); } }
 		public ITable<Tender>              Tender              { get { return this.GetTable<Tender>(); } }
 		public ITable<User>                User                { get { return this.GetTable<User>(); } }
 		public ITable<UserToken>           UserToken           { get { return this.GetTable<UserToken>(); } }
+
+		partial void InitMappingSchema()
+		{
+		}
 
 		public Comm2TenderDB()
 		{
@@ -67,13 +77,13 @@ namespace Comm2Tender.Data
 	[Table(Schema="dbo", Name="Agent")]
 	public partial class Agent
 	{
-		[PrimaryKey, Identity] public int      AgentId                     { get; set; } // int
-		[Column,     NotNull ] public string   Name                        { get; set; } // nvarchar(100)
-		[Column,     NotNull ] public DateTime AgentRegistrationDate       { get; set; } // datetime
-		[Column,     NotNull ] public DateTime AgentSystemRegistrationDate { get; set; } // datetime
-		[Column,     NotNull ] public decimal  OGRN                        { get; set; } // decimal(15, 0)
-		[Column,     NotNull ] public decimal  INN                         { get; set; } // decimal(12, 0)
-		[Column,     NotNull ] public decimal  KPP                         { get; set; } // decimal(9, 0)
+		[PrimaryKey, Identity] public long     AgentId                     { get; set; } // bigint
+		[Column,     NotNull ] public string   Name                        { get; set; } // text
+		[Column,     NotNull ] public DateTime AgentRegistrationDate       { get; set; } // date
+		[Column,     NotNull ] public DateTime AgentSystemRegistrationDate { get; set; } // date
+		[Column,     NotNull ] public decimal  OGRN                        { get; set; } // numeric
+		[Column,     NotNull ] public decimal  INN                         { get; set; } // numeric
+		[Column,     NotNull ] public decimal  KPP                         { get; set; } // numeric
 
 		#region Associations
 
@@ -89,40 +99,43 @@ namespace Comm2Tender.Data
 	[Table(Schema="dbo", Name="CustomFeeDictionary")]
 	public partial class CustomFeeDictionary
 	{
-		[PrimaryKey, Identity] public int     CustomFeeDictionaryId { get; set; } // int
-		[Column,     NotNull ] public decimal MinAmount             { get; set; } // decimal(13, 3)
-		[Column,     NotNull ] public decimal SummaryCustomFee      { get; set; } // decimal(11, 3)
+		[PrimaryKey, Identity] public long    CustomFeeDictionaryId { get; set; } // bigint
+		[Column,     NotNull ] public decimal MinAmount             { get; set; } // numeric
+		[Column,     NotNull ] public decimal SummaryCustomFee      { get; set; } // numeric
 	}
 
+	/// <summary>
+	/// Ставка ЦБ РФ
+	/// </summary>
 	[Table(Schema="dbo", Name="PercentsDictionary")]
 	public partial class PercentsDictionary
 	{
-		[PrimaryKey, Identity] public int      PercentsDictionaryId { get; set; } // int
-		[Column,     NotNull ] public DateTime DateEnter            { get; set; } // datetime
+		[PrimaryKey, Identity] public long     PercentsDictionaryId { get; set; } // bigint
+		[Column,     NotNull ] public DateTime DateEnter            { get; set; } // date
 		/// <summary>
 		/// Ставка ЦБ РФ
 		/// </summary>
-		[Column,     NotNull ] public decimal  RefinancingRate      { get; set; } // decimal(4, 3)
+		[Column,     NotNull ] public decimal  RefinancingRate      { get; set; } // numeric
 		/// <summary>
 		/// % ТМК
 		/// </summary>
-		[Column,     NotNull ] public decimal  Tmk                  { get; set; } // decimal(4, 3)
+		[Column,     NotNull ] public decimal  Tmk                  { get; set; } // numeric
 		/// <summary>
 		/// Банковская гарантия
 		/// </summary>
-		[Column,     NotNull ] public decimal  BankGuarantee        { get; set; } // decimal(4, 3)
+		[Column,     NotNull ] public decimal  BankGuarantee        { get; set; } // numeric
 		/// <summary>
 		/// % Аккредитива
 		/// </summary>
-		[Column,     NotNull ] public decimal  Credit               { get; set; } // decimal(4, 3)
+		[Column,     NotNull ] public decimal  Credit               { get; set; } // numeric
 		/// <summary>
 		/// Таможенная пошлина
 		/// </summary>
-		[Column,     NotNull ] public decimal  CustomDuty           { get; set; } // decimal(4, 3)
+		[Column,     NotNull ] public decimal  CustomDuty           { get; set; } // numeric
 		/// <summary>
 		/// Ставка дисконтирования
 		/// </summary>
-		[Column,     NotNull ] public decimal  Discount             { get; set; } // decimal(4, 3)
+		[Column,     NotNull ] public decimal  Discount             { get; set; } // numeric
 
 		#region Associations
 
@@ -135,141 +148,96 @@ namespace Comm2Tender.Data
 		#endregion
 	}
 
+	/// <summary>
+	/// Количество товара(услуг), ед
+	/// </summary>
 	[Table(Schema="dbo", Name="Proposal")]
 	public partial class Proposal
 	{
-		[PrimaryKey, Identity] public int     ProposalId             { get; set; } // int
-		[Column,     NotNull ] public int     AgentId                { get; set; } // int
-		[Column,     NotNull ] public int     UserId                 { get; set; } // int
-		[Column,     NotNull ] public int     TenderId               { get; set; } // int
+		[PrimaryKey, Identity] public long    ProposalId             { get; set; } // bigint
+		[Column,     NotNull ] public long    AgentId                { get; set; } // bigint
+		[Column,     NotNull ] public long    UserId                 { get; set; } // bigint
+		[Column,     NotNull ] public long    TenderId               { get; set; } // bigint
 		/// <summary>
 		/// Количество товара(услуг), ед
 		/// </summary>
-		[Column,     NotNull ] public int     CountPos               { get; set; } // int
+		[Column,     NotNull ] public decimal CountPos               { get; set; } // numeric
 		/// <summary>
 		/// Стоимость 1 ед товара(услуги)
 		/// </summary>
-		[Column,     NotNull ] public decimal PositionPrice          { get; set; } // decimal(8, 3)
+		[Column,     NotNull ] public decimal PositionPrice          { get; set; } // numeric
 		/// <summary>
 		/// Стоимость доставки, руб.
 		/// </summary>
-		[Column,     NotNull ] public decimal DeliveryCost           { get; set; } // decimal(8, 3)
+		[Column,     NotNull ] public decimal DeliveryCost           { get; set; } // numeric
 		/// <summary>
 		/// Сроки поставки, дн
 		/// </summary>
-		[Column,     NotNull ] public int     DeliveryTime           { get; set; } // int
+		[Column,     NotNull ] public decimal DeliveryTime           { get; set; } // numeric
 		/// <summary>
 		/// Аванс 1
 		/// </summary>
-		[Column,     NotNull ] public decimal PrepaidExpense1        { get; set; } // decimal(8, 3)
+		[Column,     NotNull ] public decimal PrepaidExpense1        { get; set; } // numeric
 		/// <summary>
 		/// Аванс 2
 		/// </summary>
-		[Column,     NotNull ] public decimal PrepaidExpense2        { get; set; } // decimal(8, 3)
+		[Column,     NotNull ] public decimal PrepaidExpense2        { get; set; } // numeric
 		/// <summary>
 		/// Аванс 3
 		/// </summary>
-		[Column,     NotNull ] public decimal PrepaidExpense3        { get; set; } // decimal(8, 3)
+		[Column,     NotNull ] public decimal PrepaidExpense3        { get; set; } // numeric
 		/// <summary>
 		/// Срок аванса 1, дн
 		/// </summary>
-		[Column,     NotNull ] public int     PeriodOfExecution1     { get; set; } // int
+		[Column,     NotNull ] public decimal PeriodOfExecution1     { get; set; } // numeric
 		/// <summary>
 		/// Срок аванса 2, дн
 		/// </summary>
-		[Column,     NotNull ] public int     PeriodOfExecution2     { get; set; } // int
+		[Column,     NotNull ] public decimal PeriodOfExecution2     { get; set; } // numeric
 		/// <summary>
 		/// Срок аванса 3, дн
 		/// </summary>
-		[Column,     NotNull ] public int     PeriodOfExecution3     { get; set; } // int
+		[Column,     NotNull ] public decimal PeriodOfExecution3     { get; set; } // numeric
 		/// <summary>
 		/// Постоплата 1, %
 		/// </summary>
-		[Column,     NotNull ] public decimal PostPaymant1           { get; set; } // decimal(8, 3)
+		[Column,     NotNull ] public decimal PostPaymant1           { get; set; } // numeric
 		/// <summary>
 		/// Постоплата 2, %
 		/// </summary>
-		[Column,     NotNull ] public decimal PostPaymant2           { get; set; } // decimal(8, 3)
+		[Column,     NotNull ] public decimal PostPaymant2           { get; set; } // numeric
 		/// <summary>
 		/// Постоплата 3, %
 		/// </summary>
-		[Column,     NotNull ] public decimal PostPaymant3           { get; set; } // decimal(8, 3)
+		[Column,     NotNull ] public decimal PostPaymant3           { get; set; } // numeric
 		/// <summary>
 		/// Срок постоплаты 1, дн
 		/// </summary>
-		[Column,     NotNull ] public int     PostPaymantPeriod1     { get; set; } // int
+		[Column,     NotNull ] public decimal PostPaymantPeriod1     { get; set; } // numeric
 		/// <summary>
 		/// Срок постоплаты 2, дн
 		/// </summary>
-		[Column,     NotNull ] public int     PostPaymantPeriod2     { get; set; } // int
+		[Column,     NotNull ] public decimal PostPaymantPeriod2     { get; set; } // numeric
 		/// <summary>
 		/// Срок постоплаты 3, дн
 		/// </summary>
-		[Column,     NotNull ] public int     PostPaymantPeriod3     { get; set; } // int
-		/// <summary>
-		/// Аккредитив
-		/// </summary>
-		[Column,     NotNull ] public bool    Accreditive            { get; set; } // bit
-		/// <summary>
-		/// Банковская гарантия
-		/// </summary>
-		[Column,     NotNull ] public bool    BankGuarantee          { get; set; } // bit
-		/// <summary>
-		/// Таможенная пошлина
-		/// </summary>
-		[Column,     NotNull ] public bool    CustomDuty             { get; set; } // bit
-		/// <summary>
-		/// Таможенный сбор
-		/// </summary>
-		[Column,     NotNull ] public bool    CustomFee              { get; set; } // bit
-		/// <summary>
-		/// Были нарушения сроков поставки
-		/// </summary>
-		[Column,     NotNull ] public bool    MissingDeadlines       { get; set; } // bit
-		/// <summary>
-		/// Были претензии к качеству товара/услуги
-		/// </summary>
-		[Column,     NotNull ] public bool    PoorQuality            { get; set; } // bit
-		/// <summary>
-		/// Были нарушения внутренних норм
-		/// </summary>
-		[Column,     NotNull ] public bool    NormsViolated          { get; set; } // bit
-		/// <summary>
-		/// Опыт работы с контр агентом
-		/// </summary>
-		[Column,     NotNull ] public bool    ExperienceCooperation  { get; set; } // bit
-		/// <summary>
-		/// Опыт работы на рынке
-		/// </summary>
-		[Column,     NotNull ] public bool    ExperienceMarket       { get; set; } // bit
-		/// <summary>
-		/// Штрафы и судебные издержки
-		/// </summary>
-		[Column,     NotNull ] public bool    Fines                  { get; set; } // bit
-		/// <summary>
-		/// Посредник или производитель. True - посредник, False - производитель.
-		/// </summary>
-		[Column,     NotNull ] public bool    Intermediary           { get; set; } // bit
-		/// <summary>
-		/// Производство и складские запасы
-		/// </summary>
-		[Column,     NotNull ] public bool    ProductionAndInventory { get; set; } // bit
-		/// <summary>
-		/// Наличие современного оборудования
-		/// </summary>
-		[Column,     NotNull ] public bool    ModernEquipment        { get; set; } // bit
-		/// <summary>
-		/// Географическая близость к заказчику
-		/// </summary>
-		[Column,     NotNull ] public bool    Georgraphy             { get; set; } // bit
-		/// <summary>
-		/// Лояльность в рамках тендера
-		/// </summary>
-		[Column,     NotNull ] public bool    Concessions            { get; set; } // bit
-		/// <summary>
-		/// Наличие рекламаций
-		/// </summary>
-		[Column,     NotNull ] public bool    Complaints             { get; set; } // bit
+		[Column,     NotNull ] public decimal PostPaymantPeriod3     { get; set; } // numeric
+		[Column,     NotNull ] public bool    Accreditive            { get; set; } // boolean
+		[Column,     NotNull ] public bool    BankGuarantee          { get; set; } // boolean
+		[Column,     NotNull ] public bool    CustomDuty             { get; set; } // boolean
+		[Column,     NotNull ] public bool    CustomFee              { get; set; } // boolean
+		[Column,     NotNull ] public bool    MissingDeadlines       { get; set; } // boolean
+		[Column,     NotNull ] public bool    PoorQuality            { get; set; } // boolean
+		[Column,     NotNull ] public bool    NormsViolated          { get; set; } // boolean
+		[Column,     NotNull ] public bool    ExperienceCooperation  { get; set; } // boolean
+		[Column,     NotNull ] public bool    ExperienceMarket       { get; set; } // boolean
+		[Column,     NotNull ] public bool    Fines                  { get; set; } // boolean
+		[Column,     NotNull ] public bool    Intermediary           { get; set; } // boolean
+		[Column,     NotNull ] public bool    ProductionAndInventory { get; set; } // boolean
+		[Column,     NotNull ] public bool    ModernEquipment        { get; set; } // boolean
+		[Column,     NotNull ] public bool    Georgraphy             { get; set; } // boolean
+		[Column,     NotNull ] public bool    Concessions            { get; set; } // boolean
+		[Column,     NotNull ] public bool    Complaints             { get; set; } // boolean
 
 		#region Associations
 
@@ -303,8 +271,8 @@ namespace Comm2Tender.Data
 	[Table(Schema="dbo", Name="Role")]
 	public partial class Role
 	{
-		[PrimaryKey, Identity] public int    RoleId { get; set; } // int
-		[Column,     NotNull ] public string Name   { get; set; } // nvarchar(50)
+		[PrimaryKey, Identity] public long   RoleId { get; set; } // bigint
+		[Column,     NotNull ] public string Name   { get; set; } // text
 
 		#region Associations
 
@@ -320,11 +288,11 @@ namespace Comm2Tender.Data
 	[Table(Schema="dbo", Name="Tender")]
 	public partial class Tender
 	{
-		[PrimaryKey, Identity   ] public int    TenderId             { get; set; } // int
-		[Column,     NotNull    ] public string Number               { get; set; } // nvarchar(50)
-		[Column,     NotNull    ] public string Discription          { get; set; } // nvarchar(50)
-		[Column,     NotNull    ] public int    PercentsDictionaryId { get; set; } // int
-		[Column,        Nullable] public int?   WinnerProposalId     { get; set; } // int
+		[PrimaryKey, Identity   ] public long   TenderId             { get; set; } // bigint
+		[Column,     NotNull    ] public string Number               { get; set; } // text
+		[Column,     NotNull    ] public string Discription          { get; set; } // text
+		[Column,     NotNull    ] public long   PercentsDictionaryId { get; set; } // bigint
+		[Column,        Nullable] public long?  WinnerProposalId     { get; set; } // bigint
 
 		#region Associations
 
@@ -352,12 +320,12 @@ namespace Comm2Tender.Data
 	[Table(Schema="dbo", Name="User")]
 	public partial class User
 	{
-		[PrimaryKey, Identity] public int    UserId   { get; set; } // int
-		[Column,     NotNull ] public int    RoleId   { get; set; } // int
-		[Column,     NotNull ] public string Name     { get; set; } // nvarchar(50)
-		[Column,     NotNull ] public string Email    { get; set; } // nvarchar(50)
-		[Column,     NotNull ] public string Password { get; set; } // nvarchar(50)
-		[Column,     NotNull ] public bool   IsActive { get; set; } // bit
+		[PrimaryKey, Identity] public long   UserId   { get; set; } // bigint
+		[Column,     NotNull ] public long   RoleId   { get; set; } // bigint
+		[Column,     NotNull ] public string Name     { get; set; } // text
+		[Column,     NotNull ] public string Email    { get; set; } // text
+		[Column,     NotNull ] public string Password { get; set; } // text
+		[Column,     NotNull ] public bool   IsActive { get; set; } // boolean
 
 		#region Associations
 
@@ -385,12 +353,12 @@ namespace Comm2Tender.Data
 	[Table(Schema="dbo", Name="UserToken")]
 	public partial class UserToken
 	{
-		[PrimaryKey, Identity] public int      UserTokenId            { get; set; } // int
-		[Column,     NotNull ] public int      UserId                 { get; set; } // int
-		[Column,     NotNull ] public DateTime DateTime               { get; set; } // datetime
-		[Column,     NotNull ] public string   Data                   { get; set; } // nvarchar(max)
-		[Column,     NotNull ] public DateTime ExpiresAccessDateTime  { get; set; } // datetime
-		[Column,     NotNull ] public DateTime ExpiresRefreshDateTime { get; set; } // datetime
+		[PrimaryKey, Identity] public long     UserTokenId            { get; set; } // bigint
+		[Column,     NotNull ] public long     UserId                 { get; set; } // bigint
+		[Column,     NotNull ] public DateTime DateTime               { get; set; } // date
+		[Column,     NotNull ] public string   Data                   { get; set; } // text
+		[Column,     NotNull ] public DateTime ExpiresAccessDateTime  { get; set; } // date
+		[Column,     NotNull ] public DateTime ExpiresRefreshDateTime { get; set; } // date
 
 		#region Associations
 
@@ -405,53 +373,52 @@ namespace Comm2Tender.Data
 
 	public static partial class TableExtensions
 	{
-		public static Agent Find(this ITable<Agent> table, int AgentId)
+		public static Agent Find(this ITable<Agent> table, long AgentId)
 		{
 			return table.FirstOrDefault(t =>
 				t.AgentId == AgentId);
 		}
 
-		public static CustomFeeDictionary Find(this ITable<CustomFeeDictionary> table, int CustomFeeDictionaryId)
+		public static CustomFeeDictionary Find(this ITable<CustomFeeDictionary> table, long CustomFeeDictionaryId)
 		{
 			return table.FirstOrDefault(t =>
 				t.CustomFeeDictionaryId == CustomFeeDictionaryId);
 		}
 
-		public static PercentsDictionary Find(this ITable<PercentsDictionary> table, int PercentsDictionaryId)
+		public static PercentsDictionary Find(this ITable<PercentsDictionary> table, long PercentsDictionaryId)
 		{
 			return table.FirstOrDefault(t =>
 				t.PercentsDictionaryId == PercentsDictionaryId);
 		}
 
-		public static Proposal Find(this ITable<Proposal> table, int ProposalId)
+		public static Proposal Find(this ITable<Proposal> table, long ProposalId)
 		{
 			return table.FirstOrDefault(t =>
 				t.ProposalId == ProposalId);
 		}
 
-		public static Role Find(this ITable<Role> table, int RoleId)
+		public static Role Find(this ITable<Role> table, long RoleId)
 		{
 			return table.FirstOrDefault(t =>
 				t.RoleId == RoleId);
 		}
 
-		public static Tender Find(this ITable<Tender> table, int TenderId)
+		public static Tender Find(this ITable<Tender> table, long TenderId)
 		{
 			return table.FirstOrDefault(t =>
 				t.TenderId == TenderId);
 		}
 
-		public static User Find(this ITable<User> table, int UserId)
+		public static User Find(this ITable<User> table, long UserId)
 		{
 			return table.FirstOrDefault(t =>
 				t.UserId == UserId);
 		}
 
-		public static UserToken Find(this ITable<UserToken> table, int UserTokenId)
+		public static UserToken Find(this ITable<UserToken> table, long UserTokenId)
 		{
 			return table.FirstOrDefault(t =>
 				t.UserTokenId == UserTokenId);
 		}
 	}
 }
-

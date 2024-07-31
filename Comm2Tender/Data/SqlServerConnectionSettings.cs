@@ -16,8 +16,8 @@ namespace Comm2Tender.Data
     {
         private readonly string ConnectionString;
         public IEnumerable<IDataProviderSettings> DataProviders => Enumerable.Empty<IDataProviderSettings>();
-        public string DefaultConfiguration => "Microsoft.Data.SqlClient";
-        public string DefaultDataProvider => "Microsoft.Data.SqlClient";
+        public string DefaultConfiguration => "PostgreSQL";
+        public string DefaultDataProvider => "PostgreSQL";
 
         public SqlServerConnectionSettings(string connectionString)
         {
@@ -32,7 +32,7 @@ namespace Comm2Tender.Data
                     new ConnectionStringSettings
                     {
                         Name = "Comm2Tender",
-                        ProviderName = "Microsoft.Data.SqlClient",
+                        ProviderName = "PostgreSQL",
                         ConnectionString = ConnectionString
                     };
             }

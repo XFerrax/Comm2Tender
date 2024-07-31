@@ -139,7 +139,7 @@ namespace Comm2Tender.Logic
 
         }
 
-        public bool BlockUser(int userId, string reason, TimeSpan? blockingTimeSpan = null)
+        public bool BlockUser(long userId, string reason, TimeSpan? blockingTimeSpan = null)
         {
             string ip = GetIP();
             var tail = $"# UserId {userId}, причина {reason}, IP {ip}";

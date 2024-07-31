@@ -17,20 +17,17 @@
     <PackageReference Include="ClosedXML" Version="0.102.2" />
     <PackageReference Include="EfCore.SchemaCompare" Version="6.0.3" />
     <PackageReference Include="linq2db" Version="5.4.1" />
-    <PackageReference Include="linq2db.SqlServer" Version="5.4.1" />
+    <PackageReference Include="linq2db.PostgreSQL" Version="5.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.31" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Data\Models\Comm2Tender.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Comm2Tender.generated.cs</LastGenOutput>
-    </None>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
   <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,7 +39,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <None Update="Data\Models\Comm2Tender.tt">
+      <LastGenOutput>Comm2Tender.generated.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
   </ItemGroup>
 
 </Project>

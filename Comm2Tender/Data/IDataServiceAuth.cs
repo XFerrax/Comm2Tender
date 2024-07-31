@@ -13,15 +13,15 @@ namespace Comm2Tender.Data
         /// </summary>
         /// <param name="userId">Id пользователя</param>
         /// <returns>Возвращает true если пользователь заблокирован</returns>
-        bool CheckUserBlocking(int userId);
+        bool CheckUserBlocking(long userId);
 
-        int AddUserToken(int userId, string data, DateTime dateTime, DateTime accessExpires, DateTime refreshExpires);
+        long AddUserToken(long userId, string data, DateTime dateTime, DateTime accessExpires, DateTime refreshExpires);
         
-        bool DeleteAllUserToken(int userId);
+        bool DeleteAllUserToken(long userId);
 
-        bool DeleteUserToken(int userTokenId);
+        bool DeleteUserToken(long userTokenId);
 
-        Logic.Models.Dto.UserView GetUserView(int userId);
+        Logic.Models.Dto.UserView GetUserView(long userId);
         
     }
 }

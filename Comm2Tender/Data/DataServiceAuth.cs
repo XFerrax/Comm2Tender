@@ -18,13 +18,13 @@ namespace Comm2Tender.Data
             }
         }
 
-        public bool CheckUserBlocking(int userId)
+        public bool CheckUserBlocking(long userId)
         {
             using var db = GetDatabase();
             return db.User.Where(a => a.UserId == userId && a.IsActive == true).Any() == false;
         }
 
-        public int AddUserToken(int userId, string data, DateTime dateTime, DateTime accessExpires, DateTime refreshExpires)
+        public long AddUserToken(long userId, string data, DateTime dateTime, DateTime accessExpires, DateTime refreshExpires)
         {
             using var db = GetDatabase();
             var refreshAuth = db.UserToken.Where(a=>a.UserId == userId&&a.Data == data).FirstOrDefault();
@@ -56,20 +56,20 @@ namespace Comm2Tender.Data
             
         }
 
-        public bool DeleteAllUserToken(int userId)
+        public bool DeleteAllUserToken(long userId)
         {
             using var db = GetDatabase();
             db.UserToken.Where(a => a.UserId == userId).Delete();
             return true;
         }
 
-        public bool DeleteUserToken(int userId)
+        public bool DeleteUserToken(long userId)
         {
             using var db = GetDatabase();
             return db.UserToken.Where(a => a.UserId == userId).Delete() == 1;
         }
 
-        public Logic.Models.Dto.UserView GetUserView(int userId)
+        public Logic.Models.Dto.UserView GetUserView(long userId)
         {
             using var db = GetDatabase();
             Logic.Models.Dto.UserView result = db.User
