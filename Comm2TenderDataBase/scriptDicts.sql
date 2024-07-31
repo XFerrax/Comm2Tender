@@ -1,43 +1,50 @@
 begin transaction
-delete from dbo.[Dict_Claims]
 
-INSERT INTO dbo.[Dict_Claims]
-           ([Name_Claim]
-           ,[Weight_Claim])
-     VALUES
-           ('Р±С‹Р»Рё РЅР°СЂСѓС€РµРЅРёСЏ СЃСЂРѕРєРѕРІ РїРѕСЃС‚Р°РІРєРё' ,0.0233),
-      ('Р±С‹Р»Рё РЅР°СЂСѓС€РµРЅРёСЏ РІРЅСѓС‚СЂРµРЅРЅРёС… РЅРѕСЂРј' ,0.025),
-      ('Р±С‹Р»Рё РїСЂРµС‚РµРЅР·РёРё Рє РєР°С‡РµСЃС‚РІСѓ С‚РѕРІР°СЂР°/СѓСЃР»СѓРіРё' ,0.05583)
+delete from [dbo].[CustomFeeDictionary];
 
-delete from dbo.[РЎustoms_duty]
+DBCC CHECKIDENT ('[dbo].[CustomFeeDictionary]', RESEED, 0);
 
-INSERT INTO dbo.[РЎustoms_duty]
-           ([Min_Price]
-           ,[Max_Price]
-           ,[Sum_РЎustoms_duty])
-     VALUES
-           (0.00,199999.99,775.00),
-       (200000.00,449999.99,1550.00),
-       (450000.00,1199999.99,3100.00),
-(1200000.00,2699999.99,8530.00),
-(2700000.00,4199999.99,12000.00),
-(4200000.00,5499999.99,15500.00),
-(5500000.00,6999999.99,20000.00),
-(7000000.00,7999999.99,23000.00),
-(8000000.00,8999999.99,25000.00),
-(9000000.00,9999999.99,27000.00),
-(10000000.00,null,30000.00)
-    
-delete from dbo.[Interest_rate]
+insert into [dbo].[CustomFeeDictionary] ([MinAmount], [SummaryCustomFee])
+values (       0.0,   775.0),
+       (  200000.0,  1550.0),
+       (  450000.0,  3100.0),
+       ( 1200000.0,  8530.0),
+       ( 2700000.0, 12000.0),
+       ( 4200000.0, 15500.0),
+       ( 5500000.0, 20000.0),
+       ( 7000000.0, 23000.0),
+       ( 8000000.0, 25000.0),
+       ( 9000000.0, 27000.0),
+       (10000000.0, 30000.0);
 
-INSERT INTO dbo.[Interest_rate]
-           ([Rate_CB]
-           ,[Pers_TMK]
-           ,[Pers_Bank]
-           ,[Pers_Customs]
-           ,[Pers_Discount]
-           ,[Pers_Bill_of_Creadit])
-     VALUES
-           (0.12,0.02,0.02,0.01,0.12,0.01)
+if (select count(*) from [dbo].[Role] r where r.[Name] = 'Администратор') = 0
+begin
+insert into [dbo].[Role] ([Name])
+values ('Администратор')
+end;
 
+if (select count(*) from [dbo].[Role] r where r.[Name] = 'Экономист') = 0
+begin
+insert into [dbo].[Role] ([Name])
+values ('Экономист')
+end;
+
+if (select count(*) from [dbo].[Role] r where r.[Name] = 'Специалист') = 0
+begin
+insert into [dbo].[Role] ([Name])
+values ('Специалист')
+end;
+
+if(select count(*) from [dbo].[User] u where u.[Email] = 'testadmin@tmk-group.com') = 0
+insert into [dbo].[User] ([Email], [Name], [Password], [RoleId], [IsActive])
+values (
+    'testadmin@tmk-group.com', 
+    'testadministrator', 
+    'FiRK2M%7Q$cqgMz@', 
+    (select top(1) r.[RoleId] from [dbo].[Role] r where r.[Name] = 'Администратор'),
+    1
+)
+
+
+       
 commit

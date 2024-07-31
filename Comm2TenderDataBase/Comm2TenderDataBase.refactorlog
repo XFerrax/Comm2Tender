@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="5030c84f-2c2c-4a5b-8921-96f0ef987763" ChangeDateTime="06/08/2024 13:22:08">
+    <Property Name="ElementName" Value="[dbo].[User].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[User]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UserId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="66bd1eab-e4bd-4b5f-93dd-526f5265ab79" ChangeDateTime="06/08/2024 13:28:10">
+    <Property Name="ElementName" Value="[dbo].[Role].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Role]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="RoleId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="81ea4d28-1e0c-4ed8-9804-d530692c6ce6" ChangeDateTime="06/08/2024 13:34:29">
+    <Property Name="ElementName" Value="[dbo].[Agent].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Agent]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="AgentId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7aa4eb67-e2d1-4cea-8332-a5e116d4ea9c" ChangeDateTime="06/08/2024 13:53:54">
+    <Property Name="ElementName" Value="[dbo].[Proposal].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Proposal]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ProposalId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="286ba454-9678-4fff-b7b5-828156ee5662" ChangeDateTime="06/08/2024 14:02:20">
+    <Property Name="ElementName" Value="[dbo].[Tender].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Tender]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TenderId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="1b14a155-37e7-4be8-9bae-036848917b15" ChangeDateTime="06/08/2024 16:54:47">
+    <Property Name="ElementName" Value="[dbo].[Proposal].[Срок постоплаты 1, дн]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Proposal]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PostPaymantPeriod1" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f1309761-b521-460c-ad90-71c89a2a3de7" ChangeDateTime="06/08/2024 16:56:53">
+    <Property Name="ElementName" Value="[dbo].[Proposal].[BankRequirement]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Proposal]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Accreditive" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="bfa16877-0d2e-4433-97e6-51ec9186cd44" ChangeDateTime="06/08/2024 20:43:35">
+    <Property Name="ElementName" Value="[dbo].[UserToken].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[UserToken]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UserTokenId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5e13b3b3-f3d4-4b73-aaa9-c8d8b9059e0f" ChangeDateTime="06/09/2024 07:54:53">
+    <Property Name="ElementName" Value="[dbo].[PercentsDictionary].[TmkPercent]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PercentsDictionary]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Tmk" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f5c0ebcf-a66e-465d-9a74-2acf0f214b7e" ChangeDateTime="06/09/2024 07:55:53">
+    <Property Name="ElementName" Value="[dbo].[PercentsDictionary].[Akkreditive]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PercentsDictionary]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Credit" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ca3c4945-3540-4213-aae2-37efc81a7d1a" ChangeDateTime="06/09/2024 08:17:48">
+    <Property Name="ElementName" Value="[dbo].[CustomFeeDictionary].[MinValue]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[CustomFeeDictionary]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="MinAmount" />
+  </Operation>
+</Operations>
