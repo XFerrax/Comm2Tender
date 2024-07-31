@@ -1,0 +1,111 @@
+﻿@page "/agents"
+@using Comm2TenderBlazor.Models.Dto
+
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Контрагенты</PageTitle>
+
+<h1>Контрагенты</h1>
+
+
+@if (agents == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="mb-3">
+        <input class="form-control mb-3" type="text" @bind="searchText" placeholder="Enter search query" />
+        <button class="btn btn-primary" @onclick="Search">Поиск</button>
+    </div>
+    
+    <button class="btn btn-primary" @onclick="Add">Добавить контрагента</button>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID агента</th>
+                <th>Название</th>
+                <th>ИНН</th>
+                <th>КПП</th>
+                <th>ОГРН</th>
+                <th>Дата регистрации</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var agent in agents)
+            {
+                <tr>
+                    <td>@agent.AgentId</td>
+                    <td>@agent.Name</td>
+                    <td>@agent.INN</td>
+                    <td>@agent.KPP</td>
+                    <td>@agent.OGRN</td>
+                    <td>@agent.AgentRegistrationDate</td>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="() => Update(agent)">
+                            <span class="btn btn-secondary">Редактировать</span>
+                        </button>
+                        <button @onclick="() => Delete(agent.AgentId)">Удалить</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    //[CascadingParameter] public IModalService Modal { get; set; }
+
+    private List<Agent> agents;
+    private string searchText;
+
+    private const string PageTitle = "Пользователи";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            agents = await PagesHelper.GetAllListAsync<Agent>("api/agent/Search", HttpClient);
+        }
+        catch (Exception ex)
+        {
+            NavigationManager.NavigateTo("/error");
+        }
+
+    }
+
+    private async Task Search()
+    {
+        agents = await PagesHelper.SearchAsync<Agent>(searchText, "api/agent/Search", HttpClient);
+    }
+
+    private async Task Add()
+    {
+        // var modalParameters = new ModalParameters();
+        // modalParameters.Add("Id", 0);
+
+        // Modal.Show<UserForm>("Новый пользователь", modalParameters);
+        NavigationManager.NavigateTo("/agent/0");
+    }
+
+    private async Task Update(Agent agent)
+    {
+        // var modalParameters = new ModalParameters();
+        // modalParameters.Add("Id", user.UserId);
+
+        // Modal.Show<UserForm>(user.Name, modalParameters);
+
+        NavigationManager.NavigateTo($"/agent/{agent.AgentId}");
+    }
+
+    private async Task Delete(int id)
+    {
+        await HttpClient.DeleteAsync($"api/agent/delete_agent/{id}");
+        agents = await PagesHelper.GetAllListAsync<Agent>("api/agent/Search", HttpClient);
+    }
+}    

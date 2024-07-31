@@ -1,0 +1,123 @@
+﻿@page "/calculations/{id:int}"
+
+@using ChartJs.Blazor.BarChart
+@using ChartJs.Blazor.Common
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h1>Расчет</h1>
+
+@if (calculations == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<div>
+		<table class="table">
+			<thead>
+			<tr>
+				<th>Контрагент</th>
+				<th>Стоимость 1 ед.</th>
+				<th>Экономический эффект</th>
+				<th>Оценка надежности</th>
+				<th>Интегральная оценка</th>
+				<th>Примечания</th>
+			</tr>
+			</thead>
+			<tbody>
+			@foreach (var calculation in calculations)
+			{
+				<tr>
+					<td>@calculation.AgentName</td>
+					<td>@String.Format("{0:0}",calculation.PositionPrice)</td>
+					<td>@String.Format("{0:0.##}",calculation.EconomyEffect)</td>
+					<td>@String.Format("{0:0.##}",calculation.ReliabilityAssessment)</td>
+					<td>@String.Format("{0:0.##}",calculation.IntegralAssessment)</td>
+					<td>@calculation.Note</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+
+	</div> 
+	
+	
+<style>
+    .custom-chart {
+        width: 700px; /* Устанавливаем ширину в 300px */
+        height: 500px; /* Устанавливаем высоту в 200px */
+    }
+</style>
+
+	<div class="custom-chart">
+		<Chart Config="barConfig"></Chart>
+	</div>
+	
+}
+
+
+
+@code{
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    private List<Calculation> calculations;
+    private BarConfig barConfig;
+
+    protected override async Task OnInitializedAsync()
+    {
+	    try
+	    {
+		    var repsonseViewModel = await PagesHelper.GetItemsAsync<ResponseViewModel<Calculation>>($"api/Calculation/get_calc/{Id}", HttpClient);
+		    calculations = repsonseViewModel.Items;
+
+			if (calculations.Count == 0)
+			{
+				throw new NullReferenceException();
+			}
+
+		    barConfig = CreateBarConfig(this.calculations);
+
+	    }
+	    catch (Exception ex)
+	    {
+			NavigationManager.NavigateTo("/selection");
+	    }
+
+    }
+
+    private BarConfig CreateBarConfig(IEnumerable<Calculation> calculations)
+    {
+	    var _barConfig = new BarConfig
+	    {
+		    Options = new BarOptions()
+		    {
+			    Responsive = true,
+			    Title = new OptionsTitle()
+			    {
+				    Display = true,
+				    Text = "Интегральная оценка"
+			    } 
+		    }
+	    };
+
+
+	    foreach (var calculation in calculations)
+	    {
+			_barConfig.Data.Labels.Add(calculation.AgentName);
+	    }
+
+
+	    var integralAssessments = this.calculations.Select(x => x.IntegralAssessment).ToList();
+
+	    var dataset = new BarDataset<decimal>(integralAssessments);
+	    dataset.BackgroundColor = new IndexableOption<string>("#007bff");
+
+
+		_barConfig.Data.Datasets.Add(dataset);
+		return _barConfig;
+    }
+}

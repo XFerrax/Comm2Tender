@@ -1,0 +1,157 @@
+﻿@page "/tender/{id:int}"
+@using Comm2TenderBlazor.Models.Dto
+@using Comm2TenderBlazor.Models.ViewModels
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h1>@title</h1>
+
+@try
+{
+    @if (isLoading)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+         <div class="row">
+            <div class="col">
+                <EditForm Model="@tender" OnValidSubmit="() => HandleSubmit(tender)">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <label class="form-label">COM номер:</label>
+                        <InputText @bind-Value="tender.Number" class="form-control"></InputText>
+                    </div>
+                    <div>
+                        <label class="form-label">Описание:</label>
+                        <InputText @bind-Value="tender.Discription" class="form-control"></InputText>
+                    </div>
+                    <div>
+                        <label class="form-label">Процентная ставка:</label>
+                        <select class="form-select" @bind="@tender.PercentsDictionary.PercentsDictionaryId">
+                            <option value=""></option>
+                            @if (percents != null)
+                            {
+                                @foreach (var percent in percents)
+                                {
+                                    <option value="@percent.PercentsDictionaryId">Ставка ЦБ:@percent.Credit %TMK: @percent.Tmk</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    @if (Id != 0)
+                    { 
+                     
+                         <div>
+                            <label class="form-label">Выберите победителя:</label>
+                            <select class="form-select" @bind="@tender.WinnerProposalId">
+                                @if (proposals != null)
+                                {
+                                    @foreach (var proposal in proposals)
+                                    {
+                                        <option value="@proposal.ProposalId">Контрагент: @proposal.Agent.Name Стоимость 1 ед:@proposal.PositionPrice Количесто единиц: @proposal.CountPos</option>
+                                    }
+                                }
+                            </select>
+                        </div> 
+                    }
+                    <br />
+                    <br />
+                    @if (Id == 0)
+                    {
+                        <button class="btn-info" type="submit">Добавить</button>
+                    }
+                    else
+                    {
+                        <button class="btn-info" type="submit">Обновить</button>
+                    }
+                    
+                     <button class="btn-warning" @onclick="Back">Отмена</button>
+
+                </EditForm>
+            </div>
+        </div> 
+    }
+}
+catch (Exception)
+{
+
+    NavigationManager.NavigateTo("/error");
+}
+
+
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    private string title;
+    private Tender? tender;
+    private List<Proposal>? proposals;
+    private List<PercentsDictionary>? percents;
+
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (Id != 0)
+            {
+                tender = await HttpClient.GetFromJsonAsync<Tender>($"api/tender/get_tender/{Id}");
+
+                title = tender.Number;
+
+                var proposalsResponse = await HttpClient.GetAsync($"api/proposal/tender_proposals/{Id}");
+                var jsonProposalsContent = await proposalsResponse.Content.ReadAsStringAsync();
+
+                var proposalsViewModel = JsonSerializer.Deserialize<ResponseViewModel<Proposal>>(jsonProposalsContent);
+                proposals = proposalsViewModel.Items;
+            }
+            else
+            {
+                title = "Новый тендер";
+
+                tender = new Tender();
+                tender.Number = string.Empty;
+                tender.Discription = string.Empty;
+
+                tender.PercentsDictionary = new PercentsDictionary();
+            }
+
+            percents = await PagesHelper.GetAllListAsync<PercentsDictionary>("api/percentsDictionary/search", HttpClient);
+
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            NavigationManager.NavigateTo("/error");
+        } 
+    }
+
+    private async Task HandleSubmit(Tender tender)
+    {
+        if (tender.TenderId == 0)
+        {
+            await HttpClient.PostAsJsonAsync("api/tender", tender);
+            Back();
+        }
+        else
+        {
+            await HttpClient.PutAsJsonAsync("api/tender", tender);
+            Back();
+        }
+    }
+
+    private void Back()
+    {
+        NavigationManager.NavigateTo("/tenders");
+    }
+
+    
+
+}
