@@ -2,7 +2,7 @@
 {
     public class Calculation
     {
-        public long ProposalId { get; set; }
+        public int ProposalId { get; set; }
         public string AgentName { get; set; }
         public decimal PositionPrice { get; set; }
         public decimal EconomyEffect { get; set; }

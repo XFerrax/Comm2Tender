@@ -7,7 +7,7 @@ namespace Comm2Tender.Logic.Models.Dto
 {
     public class Role
     {
-        public long RoleId { get; set; }
+        public int RoleId { get; set; }
         public string Name { get; set; }   
 
         public static implicit operator Role(Data.Role a)

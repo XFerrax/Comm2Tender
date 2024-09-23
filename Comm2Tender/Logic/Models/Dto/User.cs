@@ -1,10 +1,8 @@
-﻿using System.Collections;
-
-namespace Comm2Tender.Logic.Models.Dto
+﻿namespace Comm2Tender.Logic.Models.Dto
 {
     public class User
     {
-        public long UserId { get; set; } // int
+        public int UserId { get; set; } // int
         public Role Role { get; set; } // int
         public string Name { get; set; } // nvarchar(50)
         public string Email { get; set; } // nvarchar(50)

@@ -4,7 +4,7 @@ namespace Comm2Tender.Logic.Models.Dto
 {
     public class Proposal
     {
-        public long ProposalId { get; set; } // int
+        public int ProposalId { get; set; } // int
         public Agent Agent { get; set; } // int
         public User User { get; set; } // int
         public Tender Tender { get; set; } // int

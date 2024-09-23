@@ -2,7 +2,7 @@
 {
     public class CustomFeeDictionary
     {
-        public long CustomFeeDictionaryId { get; set; } // int
+        public int CustomFeeDictionaryId { get; set; } // int
         public decimal MinAmount { get; set; } // decimal(13, 3)
         public decimal SummaryCustomFee { get; set; } // decimal(11, 3)
 

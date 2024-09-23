@@ -8,13 +8,14 @@ namespace Comm2Tender.Logic.Models.Dto
 {
     public class Agent
     {
-        public long AgentId { get; set; }
+        public int AgentId { get; set; }
         public string Name { get; set; }
         public DateTime AgentRegistrationDate { get; set; }
         public DateTime AgentSystemRegistrationDate { get; set; }
         public decimal OGRN { get; set; }
         public decimal INN { get; set; }
         public decimal KPP { get; set; }
+        public string Description { get; set; }
 
         public static implicit operator Agent(Data.Agent a)
         {
@@ -29,6 +30,7 @@ namespace Comm2Tender.Logic.Models.Dto
                 OGRN = a.OGRN,
                 INN = a.INN,
                 KPP = a.KPP,
+                Description = a.Description,
             };
         }
 
@@ -45,6 +47,7 @@ namespace Comm2Tender.Logic.Models.Dto
                 OGRN = a.OGRN,
                 INN = a.INN,
                 KPP = a.KPP,
+                Description = a.Description,
             };
         }
     }
