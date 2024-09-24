@@ -11,6 +11,7 @@ namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProposalController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;

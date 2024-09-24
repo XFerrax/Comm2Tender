@@ -79,6 +79,41 @@ namespace Comm2Tender.Logic
             return excelFileTenders;
         }
 
+        public (Stream fileStream, string contentType, string name) GetExcelReport(int id)
+        {
+            var file = new XLWorkbook();
+            var sheet = file.Worksheets.Add("Лист 1");
+
+            sheet.Cells("A1").Value = "Контрагент";
+            sheet.Cells("B1").Value = "Стоимость 1 ед.";
+            sheet.Cells("C1").Value = "Экономический эффект";
+            sheet.Cells("D1").Value = "Оценка надежности";
+            sheet.Cells("E1").Value = "Интегральная оценка";
+            sheet.Cells("F1").Value = "Примечания";
+
+            var numrow = 1;
+
+            var listResponse = Calculate(id);
+            var listData = (List<Calculation>)listResponse.Items;
+            listData
+                .ForEach(a => 
+                    {
+                        numrow++;
+                        sheet.Cells("A" + numrow).Value = a.AgentName;
+                        sheet.Cells("B" + numrow).Value = a.PositionPrice;
+                        sheet.Cells("C" + numrow).Value = a.EconomyEffect;
+                        sheet.Cells("D" + numrow).Value = a.ReliabilityAssessment;
+                        sheet.Cells("E" + numrow).Value = a.IntegralAssessment;
+                        sheet.Cells("F" + numrow).Value = a.Note;
+                    });
+            var tender = GetTender(id);
+            var stream = new MemoryStream();
+            file.SaveAs(stream);
+            return (stream, 
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+                tender.Number + ".xlsx");
+        }
+
         private string GetCellValue(IXLCell cell)
         {
             if (cell.IsEmpty())

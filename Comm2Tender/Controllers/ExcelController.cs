@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace Comm2Tender.Controllers
@@ -44,5 +45,12 @@ namespace Comm2Tender.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult Get(int id)
+        {
+            (Stream fileStream, string contentType, string name) = LogicService.GetExcelReport(id);
+
+            return File(fileStream, contentType, name);
+        }
     }
 }

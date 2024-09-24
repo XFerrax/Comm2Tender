@@ -15,6 +15,12 @@
 else
 {
 	<div>
+		<div class="container">
+			<div class="mb-3">
+				<button class="btn btn-primary" @onclick="LoadReport">Поиск</button>
+			</div>
+		</div>
+		<button></button>
 		<table class="table">
 			<thead>
 			<tr>
@@ -32,9 +38,9 @@ else
 				<tr>
 					<td>@calculation.AgentName</td>
 					<td>@String.Format("{0:0}",calculation.PositionPrice)</td>
-					<td>@String.Format("{0:0.##}",calculation.EconomyEffect)</td>
-					<td>@String.Format("{0:0.##}",calculation.ReliabilityAssessment)</td>
-					<td>@String.Format("{0:0.##}",calculation.IntegralAssessment)</td>
+					<td>@String.Format("{0:0.000}",calculation.EconomyEffect)</td>
+					<td>@String.Format("{0:0.000}",calculation.ReliabilityAssessment)</td>
+					<td>@String.Format("{0:0.000}",calculation.IntegralAssessment)</td>
 					<td>@calculation.Note</td>
 				</tr>
 			}
@@ -69,29 +75,29 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-	    try
-	    {
-		    var repsonseViewModel = await PagesHelper.GetItemsAsync<ResponseViewModel<Calculation>>($"api/Calculation/get_calc/{Id}", HttpClient);
-		    calculations = repsonseViewModel.Items;
+        try
+        {
+            var repsonseViewModel = await PagesHelper.GetItemsAsync<ResponseViewModel<Calculation>>($"api/Calculation/get_calc/{Id}", HttpClient);
+            calculations = repsonseViewModel.Items;
 
-			if (calculations.Count == 0)
-			{
-				throw new NullReferenceException();
-			}
+            if (calculations.Count == 0)
+            {
+                throw new NullReferenceException();
+            }
 
-		    barConfig = CreateBarConfig(this.calculations);
+            barConfig = CreateBarConfig(this.calculations);
 
-	    }
-	    catch (Exception ex)
-	    {
-			NavigationManager.NavigateTo("/selection");
-	    }
+        }
+        catch (Exception ex)
+        {
+            NavigationManager.NavigateTo("/selection");
+        }
 
     }
 
     private BarConfig CreateBarConfig(IEnumerable<Calculation> calculations)
     {
-	    var _barConfig = new BarConfig
+        var _barConfig = new BarConfig
 	    {
 		    Options = new BarOptions()
 		    {
@@ -105,19 +111,23 @@ else
 	    };
 
 
-	    foreach (var calculation in calculations)
-	    {
-			_barConfig.Data.Labels.Add(calculation.AgentName);
-	    }
+        foreach (var calculation in calculations)
+        {
+            _barConfig.Data.Labels.Add(calculation.AgentName);
+        }
 
 
-	    var integralAssessments = this.calculations.Select(x => x.IntegralAssessment).ToList();
+        var integralAssessments = this.calculations.Select(x => x.IntegralAssessment).ToList();
 
-	    var dataset = new BarDataset<decimal>(integralAssessments);
-	    dataset.BackgroundColor = new IndexableOption<string>("#007bff");
+        var dataset = new BarDataset<decimal>(integralAssessments);
+        dataset.BackgroundColor = new IndexableOption<string>("#007bff");
 
 
-		_barConfig.Data.Datasets.Add(dataset);
-		return _barConfig;
+        _barConfig.Data.Datasets.Add(dataset);
+        return _barConfig;
+    }
+    private void LoadReport(MouseEventArgs e)
+    {
+        throw new NotImplementedException();
     }
 }

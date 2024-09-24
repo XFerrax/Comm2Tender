@@ -36,9 +36,9 @@ else
             @foreach (var customFee in customFees)
             {
                 <tr>
-                    <td>@customFee.CustomFeeDictionaryId</td>
-                    <td>@customFee.MinAmount</td>
-                    <td>@customFee.SummaryCustomFee</td>
+                    <td>@String.Format("{0:0.000}", customFee.CustomFeeDictionaryId)</td>
+                    <td>@String.Format("{0:0.000}", customFee.MinAmount)</td>
+                    <td>@String.Format("{0:0.000}", customFee.SummaryCustomFee)</td>
                     <td>
                         <button class="btn btn-secondary" @onclick="() => Update(customFee)">
                             <span class="btn btn-secondary">Редактировать</span>

@@ -1,0 +1,32 @@
+version: '3.4'
+
+services:
+  db:
+    image: postgres:15.8-alpine
+    container_name: db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: SZ2DIBVe
+      POSTGRES_PASSWORD: sus4+8&ihyipUTR
+      POSTGRES_DB: Comm2Tender
+    volumes:
+      - ./role_db.sql:/insql/role_db.sql
+      - ./sql.sql:/insql/sql.sql
+
+  comm2tender:
+    image: ${DOCKER_REGISTRY-}comm2tender
+    ports:
+      - "5000:8080"
+    build:
+      context: .
+      dockerfile: Comm2Tender/Dockerfile
+
+  comm2tenderblazor:
+    image: ${DOCKER_REGISTRY-}comm2tenderblazor
+    build:
+      context: .
+      dockerfile: Comm2TenderBlazor/Dockerfile
+
+
+

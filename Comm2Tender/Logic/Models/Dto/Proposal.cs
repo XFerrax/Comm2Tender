@@ -12,7 +12,7 @@ namespace Comm2Tender.Logic.Models.Dto
         /// <summary>
         /// Количество товара(услуг), ед
         /// </summary>
-        public decimal CountPos { get; set; } // int
+        public int CountPos { get; set; } // int
         
         /// <summary>
         /// Стоимость 1 ед товара(услуги)
@@ -27,7 +27,7 @@ namespace Comm2Tender.Logic.Models.Dto
         /// <summary>
         /// Сроки поставки, дн
         /// </summary>
-        public decimal DeliveryTime { get; set; } // int
+        public int DeliveryTime { get; set; } // int
         
         /// <summary>
         /// Аванс 1
@@ -47,17 +47,17 @@ namespace Comm2Tender.Logic.Models.Dto
         /// <summary>
         /// Срок аванса 1, дн
         /// </summary>
-        public decimal PeriodOfExecution1 { get; set; } // int
+        public int PeriodOfExecution1 { get; set; } // int
         
         /// <summary>
         /// Срок аванса 2, дн
         /// </summary>
-        public decimal PeriodOfExecution2 { get; set; } // int
+        public int PeriodOfExecution2 { get; set; } // int
         
         /// <summary>
         /// Срок аванса 3, дн
         /// </summary>
-        public decimal PeriodOfExecution3 { get; set; } // int
+        public int PeriodOfExecution3 { get; set; } // int
         
         /// <summary>
         /// Постоплата 1, %
@@ -77,17 +77,17 @@ namespace Comm2Tender.Logic.Models.Dto
         /// <summary>
         /// Срок постоплаты 1, дн
         /// </summary>
-        public decimal PostPaymantPeriod1 { get; set; } // int
+        public int PostPaymantPeriod1 { get; set; } // int
         
         /// <summary>
         /// Срок постоплаты 2, дн
         /// </summary>
-        public decimal PostPaymantPeriod2 { get; set; } // int
+        public int PostPaymantPeriod2 { get; set; } // int
         
         /// <summary>
         /// Срок постоплаты 3, дн
         /// </summary>
-        public decimal PostPaymantPeriod3 { get; set; } // int
+        public int PostPaymantPeriod3 { get; set; } // int
         
         /// <summary>
         /// Аккредитив

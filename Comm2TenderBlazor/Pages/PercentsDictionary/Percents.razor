@@ -40,12 +40,12 @@ else
             {
                 <tr>
                     <td>@percent.PercentsDictionaryId</td>
-                    <td>@percent.RefinancingRate</td>
-                    <td>@percent.Tmk</td>
-                    <td>@percent.BankGuarantee</td>
-                    <td>@percent.Credit</td>
-                    <td>@percent.CustomDuty</td>
-                    <td>@percent.Discount</td>
+                    <td>@String.Format("{0:0.000}",percent.RefinancingRate)</td>
+                    <td>@String.Format("{0:0.000}",percent.Tmk)</td>
+                    <td>@String.Format("{0:0.000}",percent.BankGuarantee)</td>
+                    <td>@String.Format("{0:0.000}",percent.Credit)</td>
+                    <td>@String.Format("{0:0.000}",percent.CustomDuty)</td>
+                    <td>@String.Format("{0:0.000}",percent.Discount)</td>
                     <td>
                         <button class="btn btn-secondary" @onclick="() => Update(percent)">
                             <span class="btn btn-secondary">Редактировать</span>

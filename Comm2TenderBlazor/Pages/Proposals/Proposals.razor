@@ -43,8 +43,8 @@ else
                     <td>@proposal.Tender.Number</td>
                     <td>@proposal.Agent.Name</td>
                     <td>@proposal.CountPos</td>
-                    <td>@proposal.PositionPrice</td>
-                    <td>@proposal.DeliveryCost</td>
+                    <td>@String.Format("{0:0.000}",proposal.PositionPrice)</td>
+                    <td>@String.Format("{0:0.000}",proposal.DeliveryCost)</td>
                     <td>@proposal.DeliveryTime</td>
                     <td>
                         <button class="btn btn-secondary" @onclick="() => Update(proposal)">

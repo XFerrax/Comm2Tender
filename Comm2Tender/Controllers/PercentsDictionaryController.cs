@@ -9,6 +9,7 @@ namespace Comm2Tender.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PercentsDictionaryController : ControllerBase
     {
         private readonly ILogicServiceCrud LogicService;
