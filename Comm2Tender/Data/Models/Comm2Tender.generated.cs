@@ -216,7 +216,7 @@ namespace Comm2Tender.Data
 		[Column,     NotNull    ] public string Discription          { get; set; } // text
 		[Column,     NotNull    ] public int    PercentsDictionaryId { get; set; } // integer
 		[Column,        Nullable] public int?   WinnerProposalId     { get; set; } // integer
-		[Column,        Nullable] public string Description          { get; set; } // text
+		[Column,        Nullable] public string DiscriptionFeedBack  { get; set; } // text
 		[Column,        Nullable] public int?   Score                { get; set; } // integer
 
 		#region Associations
