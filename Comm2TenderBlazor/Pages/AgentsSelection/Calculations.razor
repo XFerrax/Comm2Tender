@@ -18,11 +18,11 @@
 }
 else
 {
-	@* <div>
+	 <div>
 		<button @onclick="this.DownloadFile">
 			<span class="btn btn-secondary">Скачать отчет</span>
 		</button>
-	</div> *@
+	</div> 
 
 	<div>
 		<table class="table">
@@ -194,7 +194,7 @@ else
 		}
 
 
-		var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"api/excel/file/{Id}");
+		var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"api/excel/{Id}");
 
 	    requestMessage.Headers.Authorization
 		    = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
@@ -206,18 +206,10 @@ else
 
 	    if (response.IsSuccessStatusCode)
 	    {
-		    await using (var content = await response.Content.ReadAsStreamAsync())
-		    {
-			    var fileName = GetFileNameFromHttpResponse(response);
+		    var contentBytes = await response.Content.ReadAsByteArrayAsync();
+		    var fileName = $"{Id}.xls";
 
-				using (var ms = new MemoryStream())
-			    {
-				    await content.CopyToAsync(ms);
-				    ms.Seek(0, SeekOrigin.Begin);
-
-				    await JsRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(ms.ToArray()));
-			    }
-		    }
+		    await JsRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(contentBytes));
 	    }
 	    else
 	    {
@@ -225,12 +217,6 @@ else
 	    }
     }
 
-    private string GetFileNameFromHttpResponse(HttpResponseMessage response)
-    {
-	    string contentDisposition = response.Content.Headers.ContentDisposition.ToString();
-	    string fileName = contentDisposition.Substring(contentDisposition.IndexOf("filename=") + 10).Replace("\"", "");
-	    return fileName;
-    }
 
     public static async Task<T> GetItemAsync<T>(string path, HttpClient httpClient, string token)
     {
