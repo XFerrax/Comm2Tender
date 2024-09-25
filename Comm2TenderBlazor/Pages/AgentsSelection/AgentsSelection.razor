@@ -3,6 +3,7 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h1>Выбор контрагента</h1>
 
@@ -28,12 +29,11 @@ else
 		            <td>@tender.Discription</td>
 		            <td>
 			            <button class="btn btn-secondary" @onclick="() => OpenCalculationPage(tender)">
-				            <span class="btn btn-secondary">Выбор</span>
+				            <span class="btn btn-secondary">Открыть окно выбора</span>
 			            </button>
 		            </td>
 	            </tr>
-	            
-                
+
             }
         </tbody>
     </table>
@@ -45,9 +45,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         try
         {
-            tenders = await PagesHelper.GetAllListAsync<Tender>("api/tender/Search", HttpClient);
+            tenders = await ApiRequests.PostAllListAsync<Tender>("api/tender/Search", HttpClient, token);
         }
         catch (Exception ex)
         {

@@ -4,6 +4,7 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h1>@title</h1>
 
@@ -17,167 +18,166 @@
     {
         <div class="row">
             <div class="col">
-                <EditForm Model="@model" OnValidSubmit="() => HandleSubmit(model)">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                     <div>
-                        <label class="form-label">Тендер:</label>
-                        <select class="form-select" @bind="@model.TenderId">
-                            @if (tenders != null)
-                            {
-                                @foreach (var tender in tenders)
-                                {
-                                    <option value="@tender.TenderId">Номер: @tender.Number</option>
-                                }
-                            }
-                        </select>
-                    </div>
+	            <EditForm Model="@model" OnValidSubmit="() => HandleSubmit(model)">
+		            <DataAnnotationsValidator />
+		            <ValidationSummary />
+		            <div>
+			            <label class="form-label">Тендер:</label>
+			            <select class="form-select" @bind="@model.TenderId">
+				            @if (tenders != null)
+				            {
+					            @foreach (var tender in tenders)
+					            {
+						            <option value="@tender.TenderId">Номер: @tender.Number</option>
+					            }
+				            }
+			            </select>
+		            </div>
 
-                    <div>
-                    <label class="form-label">Контрагент:</label>
-                    <select class="form-select" @bind="@model.AgentId">
-                        @if (agents != null)
-                        {
-                            @foreach (var agent in agents)
-                            {
-                                <option value="@agent.AgentId">Контрагент: @agent.Name</option>
-                            }
-                        }
-                    </select>
-            </div>
+		            <div>
+			            <label class="form-label">Контрагент:</label>
+			            <select class="form-select" @bind="@model.AgentId">
+				            @if (agents != null)
+				            {
+					            @foreach (var agent in agents)
+					            {
+						            <option value="@agent.AgentId">Контрагент: @agent.Name</option>
+					            }
+				            }
+			            </select>
+		            </div>
 
-                    <div>
-                        <label class="form-label">Количество товара(услуг), ед:</label>
-                        <InputNumber @bind-Value="@model.CountPos" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Стоимость 1 ед товара(услуги):</label>
-                        <InputNumber @bind-Value="@model.PositionPrice" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Стоимость доставки, руб:</label>
-                        <InputNumber @bind-Value="@model.DeliveryCost" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Сроки поставки, дн:</label>
-                        <InputNumber @bind-Value="@model.DeliveryTime" class="form-control"></InputNumber>
-                    </div>
+		            <div>
+			            <label class="form-label">Количество товара(услуг), ед:</label>
+			            <InputNumber @bind-Value="@model.CountPos" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Стоимость 1 ед товара(услуги):</label>
+			            <InputNumber @bind-Value="@model.PositionPrice" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Стоимость доставки, руб:</label>
+			            <InputNumber @bind-Value="@model.DeliveryCost" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Сроки поставки, дн:</label>
+			            <InputNumber @bind-Value="@model.DeliveryTime" class="form-control"></InputNumber>
+		            </div>
 
-                    <div>
-                        <label class="form-label">Аванс 1:</label>
-                        <InputNumber @bind-Value="@model.PrepaidExpense1" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Аванс 2:</label>
-                        <InputNumber @bind-Value="@model.PrepaidExpense2" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Аванс 3:</label>
-                        <InputNumber @bind-Value="@model.PrepaidExpense3" class="form-control"></InputNumber>
-                    </div>
+		            <div>
+			            <label class="form-label">Аванс 1:</label>
+			            <InputNumber @bind-Value="@model.PrepaidExpense1" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Аванс 2:</label>
+			            <InputNumber @bind-Value="@model.PrepaidExpense2" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Аванс 3:</label>
+			            <InputNumber @bind-Value="@model.PrepaidExpense3" class="form-control"></InputNumber>
+		            </div>
 
-                    <div>
-                        <label class="form-label">Срок аванса 1, дн:</label>
-                        <InputNumber @bind-Value="@model.PeriodOfExecution1" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Срок аванса 2, дн:</label>
-                        <InputNumber @bind-Value="@model.PeriodOfExecution2" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Срок аванса 3, дн:</label>
-                        <InputNumber @bind-Value="@model.PeriodOfExecution3" class="form-control"></InputNumber>
-                    </div>
+		            <div>
+			            <label class="form-label">Срок аванса 1, дн:</label>
+			            <InputNumber @bind-Value="@model.PeriodOfExecution1" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Срок аванса 2, дн:</label>
+			            <InputNumber @bind-Value="@model.PeriodOfExecution2" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Срок аванса 3, дн:</label>
+			            <InputNumber @bind-Value="@model.PeriodOfExecution3" class="form-control"></InputNumber>
+		            </div>
 
-                    <div>
-                        <label class="form-label">Постоплата 1, %:</label>
-                        <InputNumber @bind-Value="@model.PostPaymant1" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Постоплата 2, %:</label>
-                        <InputNumber @bind-Value="@model.PostPaymant2" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Постоплата 3, %:</label>
-                        <InputNumber @bind-Value="@model.PostPaymant3" class="form-control"></InputNumber>
-                    </div>
+		            <div>
+			            <label class="form-label">Постоплата 1, %:</label>
+			            <InputNumber @bind-Value="@model.PostPaymant1" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Постоплата 2, %:</label>
+			            <InputNumber @bind-Value="@model.PostPaymant2" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Постоплата 3, %:</label>
+			            <InputNumber @bind-Value="@model.PostPaymant3" class="form-control"></InputNumber>
+		            </div>
 
-                    <div>
-                        <label class="form-label">Срок постоплаты 1, дн:</label>
-                        <InputNumber @bind-Value="@model.PostPaymantPeriod1" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Срок постоплаты 2, дн:</label>
-                        <InputNumber @bind-Value="@model.PostPaymantPeriod2" class="form-control"></InputNumber>
-                    </div>
-                    <div>
-                        <label class="form-label">Срок постоплаты 3, дн:</label>
-                        <InputNumber @bind-Value="@model.PostPaymantPeriod3" class="form-control"></InputNumber>
-                    </div>
+		            <div>
+			            <label class="form-label">Срок постоплаты 1, дн:</label>
+			            <InputNumber @bind-Value="@model.PostPaymantPeriod1" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Срок постоплаты 2, дн:</label>
+			            <InputNumber @bind-Value="@model.PostPaymantPeriod2" class="form-control"></InputNumber>
+		            </div>
+		            <div>
+			            <label class="form-label">Срок постоплаты 3, дн:</label>
+			            <InputNumber @bind-Value="@model.PostPaymantPeriod3" class="form-control"></InputNumber>
+		            </div>
 
-                    <H5>Дополнительные условия</H5>
-                    <br/>
-                    <H6>Банковские условия</H6>
+		            <H5>Дополнительные условия</H5>
+		            <br/>
+		            <H6>Банковские условия</H6>
 
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" @bind="@model.BankGuarantee" />
-                        <label class="form-check-label">Банковская гарантия</label>
-                    </div>
+		            <div class="form-check">
+			            <input class="form-check-input" type="checkbox" @bind="@model.BankGuarantee" />
+			            <label class="form-check-label">Банковская гарантия</label>
+		            </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" @bind="@model.Accreditive" />
-                        <label class="form-check-label">Аккредитив</label>
-                    </div>
+		            <div class="form-check">
+			            <input class="form-check-input" type="checkbox" @bind="@model.Accreditive" />
+			            <label class="form-check-label">Аккредитив</label>
+		            </div>
 
-                    <div class="form-check">
-                        <label class="form-check-label">Таможенная пошлина</label>
-                        <input class="form-check-input" type="checkbox" id="customDutyCheckbox" @bind="@model.CustomDuty" />
-                    </div>
+		            <div class="form-check">
+			            <label class="form-check-label">Таможенная пошлина</label>
+			            <input class="form-check-input" type="checkbox" id="customDutyCheckbox" @bind="@model.CustomDuty" />
+		            </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" @bind="@model.CustomFee" />
-                        <label class="form-check-label">Таможенный сбор</label>
-                    </div>
+		            <div class="form-check">
+			            <input class="form-check-input" type="checkbox" @bind="@model.CustomFee" />
+			            <label class="form-check-label">Таможенный сбор</label>
+		            </div>
 
-                    <br/>
-                    <H6>Критерии надежности</H6>
+		            <br/>
+		            <H6>Критерии надежности</H6>
 
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" @bind="@model.MissingDeadlines" />
-                        <label class="form-check-label">Были нарушения сроков поставки</label>
-                    </div>
+		            <div class="form-check">
+			            <input class="form-check-input" type="checkbox" @bind="@model.MissingDeadlines" />
+			            <label class="form-check-label">Были нарушения сроков поставки</label>
+		            </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" @bind="@model.PoorQuality" />
-                        <label class="form-check-label">Были претензии к качеству товара/услуги</label>
-                    </div>
+		            <div class="form-check">
+			            <input class="form-check-input" type="checkbox" @bind="@model.PoorQuality" />
+			            <label class="form-check-label">Были претензии к качеству товара/услуги</label>
+		            </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" @bind="@model.NormsViolated" />
-                        <label class="form-check-label">Были нарушения внутренних норм</label>
-                    </div>
+		            <div class="form-check">
+			            <input class="form-check-input" type="checkbox" @bind="@model.NormsViolated" />
+			            <label class="form-check-label">Были нарушения внутренних норм</label>
+		            </div>
                     
-                    <br />
-                    <br />
-                    @if (Id == 0)
-                    {
-                        <button class="btn-info" type="submit">Добавить</button>
-                    }
-                    else
-                    {
-                        <button class="btn-info" type="submit">Обновить</button>
-                    }
-
-                    <button class="btn-warning" @onclick="Back">Отмена</button>
-
-                </EditForm>
+		            <br />
+		            <br />
+		            @if (Id == 0)
+		            {
+			            <button class="btn-info" type="submit">Добавить</button>
+		            }
+		            else
+		            {
+			            <button class="btn-info" type="submit">Обновить</button>
+		            }
+                    
+	            </EditForm>
+				
+	            <button class="btn-warning" @onclick="Back">Отмена</button>
             </div>
         </div>
     }
 }
 catch (Exception)
 {
-
     NavigationManager.NavigateTo("/error");
 }
 
@@ -201,17 +201,28 @@ catch (Exception)
 
     protected override async Task OnInitializedAsync()
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         try
         {
             if (Id != 0)
             {
                 title = "Изменение заявки";
 
-                proposal = await HttpClient.GetFromJsonAsync<Proposal>($"api/proposal/{Id}"); 
+                proposal = await ApiRequests.GetItemAsync<Proposal>($"api/proposal/{Id}", HttpClient, token);
+                //roposal = await HttpClient.GetFromJsonAsync<Proposal>($"api/proposal/{Id}"); 
             }
             else
             {
                 title = "Новая заявка";
+
+
 
                 proposal = new Proposal();
                 proposal.Agent = new Agent();
@@ -223,9 +234,10 @@ catch (Exception)
                 proposal.Tender = new Tender();
             }
 
-            tenders = await PagesHelper.GetAllListAsync<Tender>("api/tender/Search", HttpClient);
 
-            agents = await PagesHelper.GetAllListAsync<Agent>("api/agent/Search", HttpClient);
+            tenders = await ApiRequests.PostAllListAsync<Tender>("api/tender/Search", HttpClient, token);
+
+            agents = await ApiRequests.PostAllListAsync<Agent>("api/agent/Search", HttpClient, token);
 
             SetModelValues();
 
@@ -239,15 +251,26 @@ catch (Exception)
 
     private async Task HandleSubmit(ProposalViewModel model)
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         if (model.ProposalId == 0)
         {
-            await HttpClient.PostAsJsonAsync("api/proposal", model);
+	        await ApiRequests.PostItemAsync("api/proposal", HttpClient, token, model);
+
+            //await HttpClient.PostAsJsonAsync("api/proposal", model);
 
             Back();
         }
         else
         {
-            await HttpClient.PutAsJsonAsync("api/proposal", model);
+	        await ApiRequests.PutItemAsync("api/proposal", HttpClient, token, model);
+            //await HttpClient.PutAsJsonAsync("api/proposal", model);
             Back();
         }
     }

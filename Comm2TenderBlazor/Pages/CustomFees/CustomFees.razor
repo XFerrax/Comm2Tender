@@ -3,7 +3,7 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
-
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <PageTitle>Таможенные пошлины</PageTitle>
 
@@ -59,9 +59,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         try
         {
-            customFees = await PagesHelper.GetAllListAsync<CustomFeeDictionary>("api/customFeeDictionary/Search", HttpClient);
+            customFees = await ApiRequests.PostAllListAsync<CustomFeeDictionary>("api/customFeeDictionary/Search", HttpClient, token);
         }
         catch (Exception ex)
         {
@@ -72,32 +80,55 @@ else
 
     private async Task Search()
     {
-        customFees = await PagesHelper.SearchAsync<CustomFeeDictionary>(searchText, "api/customFeeDictionary/Search", HttpClient);
+        var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+        if (token == null)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
+        customFees = await ApiRequests.SearchAsync<CustomFeeDictionary>(searchText, "api/customFeeDictionary/Search", HttpClient, token);
     }
 
     private async Task Add()
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", 0);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
 
-        // Modal.Show<UserForm>("Новый пользователь", modalParameters);
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
 
         NavigationManager.NavigateTo("/custom_fee/0");
     }
 
     private async Task Update(CustomFeeDictionary model)
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", user.UserId);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
 
-        // Modal.Show<UserForm>(user.Name, modalParameters);
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
 
         NavigationManager.NavigateTo($"/custom_fee/{model.CustomFeeDictionaryId}");
     }
 
     private async Task Delete(int id)
     {
-        await HttpClient.DeleteAsync($"api/customFeeDictionary/delete_fee/{id}");
-        customFees = await PagesHelper.GetAllListAsync<CustomFeeDictionary>("api/customFeeDictionary/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+	    await ApiRequests.DeleteItemAsync($"api/customFeeDictionary/delete_fee/{id}", HttpClient, token);
+
+        customFees = await ApiRequests.PostAllListAsync<CustomFeeDictionary>("api/customFeeDictionary/Search", HttpClient, token);
     }
 }    

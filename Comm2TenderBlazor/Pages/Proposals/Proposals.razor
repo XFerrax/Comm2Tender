@@ -4,9 +4,9 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
-
-<PageTitle>Заявки</PageTitle>
+<PageTitle>@PageTitle</PageTitle>
 
 <h1>Заявки</h1>
 
@@ -68,9 +68,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+        if (string.IsNullOrEmpty(token))
+	    {
+            NavigationManager.NavigateTo("/login");
+            return;
+	    }
+
         try
         {
-            proposals = await PagesHelper.GetAllListAsync<Proposal>("api/proposal/Search", HttpClient);
+            proposals = await ApiRequests.PostAllListAsync<Proposal>("api/proposal/Search", HttpClient, token);
         }
         catch (Exception ex)
         {
@@ -81,32 +89,39 @@ else
 
     private async Task Search()
     {
-        proposals = await PagesHelper.SearchAsync<Proposal>(searchText, "api/proposal/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+        proposals = await ApiRequests.SearchAsync<Proposal>(searchText, "api/proposal/Search", HttpClient, token);
     }
 
     private async Task Add()
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", 0);
-
-        // Modal.Show<UserForm>("Новый пользователь", modalParameters);
         NavigationManager.NavigateTo("/proposal/0");
     }
 
     private async Task Update(Proposal model)
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", user.UserId);
-
-        // Modal.Show<UserForm>(user.Name, modalParameters);
-
         NavigationManager.NavigateTo($"/proposal/{model.ProposalId}");
     }
 
     private async Task Delete(int id)
     {
-        await HttpClient.DeleteAsync($"api/proposal/{id}");
-        proposals = await PagesHelper.GetAllListAsync<Proposal>("api/proposal/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+	    await ApiRequests.DeleteItemAsync($"api/proposal/{id}", HttpClient, token);
+
+        proposals = await ApiRequests.PostAllListAsync<Proposal>("api/proposal/Search", HttpClient, token);
     }
 
 }    

@@ -3,16 +3,12 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
-
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <PageTitle>Процентные ставки</PageTitle>
 
 <h1>Процентные ставки</h1>
 
-@* <div class="mb-3">
-    <input class="form-control mb-3" type="text" @bind="searchText" placeholder="Enter search query" />
-    <button class="btn btn-primary" @onclick="Search">Поиск</button>
-</div> *@
 
 @if (percents == null)
 {
@@ -47,7 +43,7 @@ else
                     <td>@percent.CustomDuty</td>
                     <td>@percent.Discount</td>
                     <td>
-                        <button class="btn btn-secondary" @onclick="() => Update(percent)">
+                        <button class="btn btn-secondary" @onclick="async () => await Update(percent)">
                             <span class="btn btn-secondary">Редактировать</span>
                         </button>
                         <button @onclick="() => Delete(percent.PercentsDictionaryId)">Удалить</button>
@@ -59,16 +55,23 @@ else
 }
 
 @code {
-    //[CascadingParameter] public IModalService Modal { get; set; }
 
     private List<PercentsDictionary> percents;
     private string searchText;
 
     protected override async Task OnInitializedAsync()
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         try
         {
-            percents = await PagesHelper.GetAllListAsync<PercentsDictionary>("api/percentsDictionary/Search", HttpClient);
+            percents = await ApiRequests.PostAllListAsync<PercentsDictionary>("api/percentsDictionary/Search", HttpClient, token);
         }
         catch (Exception ex)
         {
@@ -79,32 +82,39 @@ else
 
     private async Task Search()
     {
-        percents = await PagesHelper.SearchAsync<PercentsDictionary>(searchText, "api/percentsDictionary/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+        percents = await ApiRequests.SearchAsync<PercentsDictionary>(searchText, "api/percentsDictionary/Search", HttpClient, token);
     }
 
     private async Task Add()
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", 0);
-
-        // Modal.Show<UserForm>("Новый пользователь", modalParameters);
-
         NavigationManager.NavigateTo("/percent/0");
     }
 
     private async Task Update(PercentsDictionary model)
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", user.UserId);
-
-        // Modal.Show<UserForm>(user.Name, modalParameters);
-
         NavigationManager.NavigateTo($"/percent/{model.PercentsDictionaryId}");
     }
 
     private async Task Delete(int id)
     {
-        await HttpClient.DeleteAsync($"api/percentsDictionary/delete_percents/{id}");
-        percents = await PagesHelper.GetAllListAsync<PercentsDictionary>("api/percentsDictionary/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+	    await ApiRequests.DeleteItemAsync($"api/percentsDictionary/delete_percents/{id}", HttpClient, token);
+
+        percents = await ApiRequests.PostAllListAsync<PercentsDictionary>("api/percentsDictionary/Search", HttpClient, token);
     }
 }    

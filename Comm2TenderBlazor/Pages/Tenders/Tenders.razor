@@ -4,7 +4,7 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
-
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <PageTitle>Тендеры</PageTitle>
 
@@ -74,7 +74,15 @@ else
     {
         try
         {
-            tenders = await PagesHelper.GetAllListAsync<Tender>("api/tender/Search", HttpClient);
+	        var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+            if (token == null)
+	        {
+                NavigationManager.NavigateTo("/login");
+                return;
+	        }
+
+            tenders = await ApiRequests.PostAllListAsync<Tender>("api/tender/Search", HttpClient, token);
         }
         catch (Exception ex)
         {
@@ -85,32 +93,55 @@ else
 
     private async Task Search()
     {
-        tenders = await PagesHelper.SearchAsync<Tender>(searchText, "api/tender/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+        tenders = await ApiRequests.SearchAsync<Tender>(searchText, "api/tender/Search", HttpClient, token);
     }
 
     private async Task Add()
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", 0);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
 
-        // Modal.Show<UserForm>("Новый пользователь", modalParameters);
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         NavigationManager.NavigateTo("/tender/0");
     }
 
     private async Task Update(Tender model)
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", user.UserId);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
 
-        // Modal.Show<UserForm>(user.Name, modalParameters);
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
 
         NavigationManager.NavigateTo($"/tender/{model.TenderId}");
     }
 
     private async Task Delete(int id)
     {
-        await HttpClient.DeleteAsync($"api/tender/delete_tender/{id}");
-        tenders = await PagesHelper.GetAllListAsync<Tender>("api/tender/Search", HttpClient);
-    }
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
 
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+	    await ApiRequests.DeleteItemAsync($"api/tender/delete_tender/{id}", HttpClient, token);
+
+        tenders = await ApiRequests.PostAllListAsync<Tender>("api/tender/Search", HttpClient, token);
+    }
 }

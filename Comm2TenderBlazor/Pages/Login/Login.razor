@@ -1,0 +1,107 @@
+﻿@layout  LoginLayout
+@page "/login"
+@using System.Security.Cryptography
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntimeS
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+
+<style>
+    #login .container #login-row #login-column #login-box {
+        margin-top: 120px;
+        max-width: 600px;
+        height: 320px;
+        border: 1px solid #9C9C9C;
+        background-color: #EAEAEA;
+    }
+
+        #login .container #login-row #login-column #login-box #login-form {
+            padding: 20px;
+        }
+
+            #login .container #login-row #login-column #login-box #login-form #register-link {
+                margin-top: -85px;
+            }
+</style>
+<div id="login">
+    <h3 class="text-center text-white pt-5">Login form</h3>
+    <div class="container">
+	    <div id="login-row" class="row justify-content-center align-items-center">
+		    <div id="login-column" class="col-md-6">
+			    <div id="login-box" class="col-md-12">
+				    <form id="login-form" class="form" action="" method="post">
+					    <h3 class="text-center text-info">Login</h3>
+					    <EditForm Model="@loginRequest" OnValidSubmit="() => HandleSubmit(loginRequest)">
+						    <DataAnnotationsValidator />
+						    <ValidationSummary />
+						    <div >
+							    <label class="form-group">Логин:</label>
+							    <InputText @bind-Value="loginRequest.Login" class="form-control"></InputText> @* Коментарий *@
+						    </div>
+						    <div>
+							    <label class="form-group">Пароль:</label>
+								<InputText @bind-Value="loginRequest.Password" type="password" class="form-control"></InputText> @* Коментарий *@
+						    </div>
+
+						    <button class="btn-info" type="submit">Войти</button>
+
+					    </EditForm>
+				    </form>
+			    </div>
+		    </div>
+	    </div>
+    </div>
+
+	
+
+</div>
+
+
+@code {
+	private LoginRequest loginRequest;
+
+	protected override async Task OnInitializedAsync()
+	{
+		loginRequest = new LoginRequest();
+	}
+
+	private async Task HandleSubmit(LoginRequest loginRequest)
+	{
+
+		loginRequest.Password = GetPasswordHash(loginRequest.Password);
+
+		var loginResult = await HttpClient.PostAsJsonAsync($"api/auth/login", loginRequest);
+
+		if (!loginResult.IsSuccessStatusCode)
+		{
+			NavigationManager.NavigateTo("/login");
+			return;
+		}
+
+		var tokens = await loginResult.Content.ReadFromJsonAsync<LoginResponseTokens>();
+
+		if (tokens.AccessToken == null)
+		{
+			NavigationManager.NavigateTo("/login");
+			return;
+		}
+
+		await LocalStorage.SetItemAsync("AccessToken", tokens.AccessToken);
+
+		NavigationManager.NavigateTo("/");
+	}
+
+	private string GetPasswordHash(string password)
+	{
+		byte[] hash;
+		using (SHA512 shaM = SHA512.Create())
+		{
+			hash = shaM.ComputeHash(Encoding.UTF8.GetBytes(password));
+		}
+
+		 return BitConverter.ToString(hash).Replace("-", "");
+	}
+
+}

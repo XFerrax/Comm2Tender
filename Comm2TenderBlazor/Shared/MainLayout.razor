@@ -1,16 +1,36 @@
 ﻿@inherits LayoutComponentBase
 
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+
 <PageTitle></PageTitle>
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+	<div class="sidebar">
+		<NavMenu />
+	</div>
 
-    <main>
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+	<main>
+		<div class="top-row px-4">
+			
+			<button class="btn btn-secondary " @onclick="async () => await Logout()">
+				<span class="btn btn-secondary">Выйти</span>
+			</button>
+		</div>
+
+		<article class="content px-4">
+			@Body
+		</article>
+	</main>
 </div>
+
+@code
+{
+	private async Task Logout()
+	{
+		await LocalStorage.ClearAsync();
+		NavigationManager.NavigateTo("/login");
+	}
+
+}
 

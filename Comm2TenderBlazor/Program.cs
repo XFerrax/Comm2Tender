@@ -1,11 +1,16 @@
+
+using Blazored.LocalStorage;
+
 var builder = WebApplication.CreateBuilder(args);
 
+//var baseAddress = Environment.GetEnvironmentVariable("API_URL");
 var baseAddress = builder.Configuration["ApiUrl"];
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient();
+builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddScoped(sp =>
 {

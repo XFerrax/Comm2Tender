@@ -3,6 +3,7 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 @if (isLoading)
 {
@@ -12,50 +13,50 @@ else if (user != null && roles != null)
 {
      <div class="row">
         <div class="col">
-            <EditForm Model="@user" OnValidSubmit="() => HandleSubmit(user)">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+	        <EditForm Model="@user" OnValidSubmit="() => HandleSubmit(user)">
+		        <DataAnnotationsValidator />
+		        <ValidationSummary />
 
-                <div >
-                    <label class="form-label">ФИО:</label>
-                    <InputText @bind-Value="user.Name" class="form-control"></InputText>
-                </div>
-                <div>
-                    <label class="form-label">Email:</label>
-                    <InputText @bind-Value="user.Email" class="form-control" placeholder="Enter email" type="email"></InputText>
-                </div>
-                <div>
-                    <label class="form-label">Пароль:</label>
-                    <InputText @bind-Value="user.Password" class="form-control"></InputText>
-                </div>
-                <div>
-                    <label class="form-label">Роль:</label>
-                    <select class="form-select" @bind="@user.Role.RoleId">
-                        @if (roles != null)
-                        {
-                            @foreach (var role in roles)
-                            {
-                                <option value="@role.RoleId">@role.Name</option>
-                            }
-                        }
-                    </select>
-                </div>
-                <div>
-                    <label class="form-label">Активация учетной записи</label>
-                    <input type="checkbox" id="roleUser" @bind="user.IsActive" class="form-check-input">
-                </div>
+		        <div >
+			        <label class="form-label">ФИО:</label>
+			        <InputText @bind-Value="user.Name" class="form-control"></InputText>
+		        </div>
+		        <div>
+			        <label class="form-label">Email:</label>
+			        <InputText @bind-Value="user.Email" class="form-control" placeholder="Enter email" type="email"></InputText>
+		        </div>
+		        <div>
+			        <label class="form-label">Пароль:</label>
+			        <InputText @bind-Value="user.Password" class="form-control"></InputText>
+		        </div>
+		        <div>
+			        <label class="form-label">Роль:</label>
+			        <select class="form-select" @bind="@user.Role.RoleId">
+				        @if (roles != null)
+				        {
+					        @foreach (var role in roles)
+					        {
+						        <option value="@role.RoleId">@role.Name</option>
+					        }
+				        }
+			        </select>
+		        </div>
+		        <div>
+			        <label class="form-label">Активация учетной записи</label>
+			        <input type="checkbox" id="roleUser" @bind="user.IsActive" class="form-check-input">
+		        </div>
                 
-                @if (Id == 0)
-                {
-                    <button class="btn-info" type="submit">Добавить</button>
-                }
-                else
-                {
-                    <button class="btn-info" type="submit">Обновить</button>
-                }
-                
-                <button class="btn-warning" @onclick="Back">Отмена</button>
-            </EditForm>
+		        @if (Id == 0)
+		        {
+			        <button class="btn-info" type="submit">Добавить</button>
+		        }
+		        else
+		        {
+			        <button class="btn-info" type="submit">Обновить</button>
+		        }
+	        </EditForm>
+
+	        <button class="btn-warning" @onclick="this.Back">Отмена</button>
         </div>
     </div>  
 }
@@ -67,7 +68,7 @@ else if (user != null && roles != null)
     public int? Id { get; set; }
 
     private string title = "";
-
+    private bool firsRenderer = true;
     private User? user;
     private List<Role>? roles;
 
@@ -75,12 +76,20 @@ else if (user != null && roles != null)
 
     protected override async Task OnInitializedAsync()
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+        if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         try
         {
             if (Id != 0)
             {
 
-                user = await HttpClient.GetFromJsonAsync<User>($"api/user/get_user/{Id}");
+	            user = await ApiRequests.GetItemAsync<User>($"api/user/get_user/{Id}", HttpClient, token);
 
                 title = user.Name;
             }
@@ -95,8 +104,8 @@ else if (user != null && roles != null)
                 user.Role = new Role();
                 user.Role.Name = string.Empty;
             }
-
-            roles = await PagesHelper.GetAllListAsync<Role>("api/role/search", HttpClient);
+            
+            roles = await ApiRequests.PostAllListAsync<Role>("api/role/search", HttpClient, token);
 
             isLoading = false;
         }
@@ -108,21 +117,35 @@ else if (user != null && roles != null)
 
     private async Task HandleSubmit(User user)
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
         if (user.UserId == 0)
         {
-            await HttpClient.PostAsJsonAsync("api/user", user);
-            Back();
+	        if (token == null)
+	        {
+                NavigationManager.NavigateTo("/login");
+	        }
+
+            var success = await ApiRequests.PostItemAsync("api/user", HttpClient, token, user);
+
+            NavigationManager.NavigateTo("/users", forceLoad: true);
         }
         else
         {
-            await HttpClient.PutAsJsonAsync("api/user", user);
-            Back();
+	        if (token == null)
+	        {
+		        NavigationManager.NavigateTo("/login");
+	        }
+
+	        await ApiRequests.PutItemAsync("api/user", HttpClient, token, user);
+
+            NavigationManager.NavigateTo("/users", forceLoad: true);
         }
     }
 
     private void Back()
     {
-        NavigationManager.NavigateTo("/users");
+        NavigationManager.NavigateTo("/users", forceLoad: true);
     }
 
 }

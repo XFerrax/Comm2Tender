@@ -4,6 +4,7 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h1>@title</h1>
 
@@ -17,61 +18,61 @@
     {
          <div class="row">
             <div class="col">
-                <EditForm Model="@tender" OnValidSubmit="() => HandleSubmit(tender)">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    <div>
-                        <label class="form-label">COM номер:</label>
-                        <InputText @bind-Value="tender.Number" class="form-control"></InputText>
-                    </div>
-                    <div>
-                        <label class="form-label">Описание:</label>
-                        <InputText @bind-Value="tender.Discription" class="form-control"></InputText>
-                    </div>
-                    <div>
-                        <label class="form-label">Процентная ставка:</label>
-                        <select class="form-select" @bind="@tender.PercentsDictionary.PercentsDictionaryId">
-                            <option value=""></option>
-                            @if (percents != null)
-                            {
-                                @foreach (var percent in percents)
-                                {
-                                    <option value="@percent.PercentsDictionaryId">Ставка ЦБ:@percent.Credit %TMK: @percent.Tmk</option>
-                                }
-                            }
-                        </select>
-                    </div>
+	            <EditForm Model="@tender" OnValidSubmit="() => HandleSubmit(tender)">
+		            <DataAnnotationsValidator />
+		            <ValidationSummary />
+		            <div>
+			            <label class="form-label">COM номер:</label>
+			            <InputText @bind-Value="tender.Number" class="form-control"></InputText>
+		            </div>
+		            <div>
+			            <label class="form-label">Описание:</label>
+			            <InputText @bind-Value="tender.Discription" class="form-control"></InputText>
+		            </div>
+		            <div>
+			            <label class="form-label">Процентная ставка:</label>
+			            <select class="form-select" @bind="@tender.PercentsDictionary.PercentsDictionaryId">
+				            <option value=""></option>
+				            @if (percents != null)
+				            {
+					            @foreach (var percent in percents)
+					            {
+						            <option value="@percent.PercentsDictionaryId">Ставка ЦБ:@percent.RefinancingRate %TMK: @percent.Tmk</option>
+					            }
+				            }
+			            </select>
+		            </div>
 
-                    @if (Id != 0)
-                    { 
+		            @if (Id != 0)
+		            { 
                      
-                         <div>
-                            <label class="form-label">Выберите победителя:</label>
-                            <select class="form-select" @bind="@tender.WinnerProposalId">
-                                @if (proposals != null)
-                                {
-                                    @foreach (var proposal in proposals)
-                                    {
-                                        <option value="@proposal.ProposalId">Контрагент: @proposal.Agent.Name Стоимость 1 ед:@proposal.PositionPrice Количесто единиц: @proposal.CountPos</option>
-                                    }
-                                }
-                            </select>
-                        </div> 
-                    }
-                    <br />
-                    <br />
-                    @if (Id == 0)
-                    {
-                        <button class="btn-info" type="submit">Добавить</button>
-                    }
-                    else
-                    {
-                        <button class="btn-info" type="submit">Обновить</button>
-                    }
+			            <div>
+				            <label class="form-label">Выберите победителя:</label>
+				            <select class="form-select" @bind="@tender.WinnerProposalId">
+					            @if (proposals != null)
+					            {
+						            @foreach (var proposal in proposals)
+						            {
+							            <option value="@proposal.ProposalId">Контрагент: @proposal.Agent.Name Стоимость 1 ед:@proposal.PositionPrice Количесто единиц: @proposal.CountPos</option>
+						            }
+					            }
+				            </select>
+			            </div> 
+		            }
+		            <br />
+		            <br />
+		            @if (Id == 0)
+		            {
+			            <button class="btn-info" type="submit">Добавить</button>
+		            }
+		            else
+		            {
+			            <button class="btn-info" type="submit">Обновить</button>
+		            }
                     
-                     <button class="btn-warning" @onclick="Back">Отмена</button>
-
-                </EditForm>
+	            </EditForm>
+				
+	            <button class="btn-warning" @onclick="Back">Отмена</button>
             </div>
         </div> 
     }
@@ -93,24 +94,31 @@ catch (Exception)
     private Tender? tender;
     private List<Proposal>? proposals;
     private List<PercentsDictionary>? percents;
+ 
+
 
     private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (token == null)
+	    {
+            NavigationManager.NavigateTo("/login");
+            return;
+	    }
+
         try
         {
             if (Id != 0)
             {
-                tender = await HttpClient.GetFromJsonAsync<Tender>($"api/tender/get_tender/{Id}");
+	            tender = await ApiRequests.GetItemAsync<Tender>($"api/tender/get_tender/{Id}", HttpClient, token);
 
                 title = tender.Number;
 
-                var proposalsResponse = await HttpClient.GetAsync($"api/proposal/tender_proposals/{Id}");
-                var jsonProposalsContent = await proposalsResponse.Content.ReadAsStringAsync();
+                this.proposals = await ApiRequests.GetAllListAsync<Proposal>($"api/proposal/tender_proposals/{Id}", HttpClient, token);
 
-                var proposalsViewModel = JsonSerializer.Deserialize<ResponseViewModel<Proposal>>(jsonProposalsContent);
-                proposals = proposalsViewModel.Items;
             }
             else
             {
@@ -123,7 +131,7 @@ catch (Exception)
                 tender.PercentsDictionary = new PercentsDictionary();
             }
 
-            percents = await PagesHelper.GetAllListAsync<PercentsDictionary>("api/percentsDictionary/search", HttpClient);
+            percents = await ApiRequests.PostAllListAsync<PercentsDictionary>("api/percentsDictionary/search", HttpClient, token);
 
             isLoading = false;
         }
@@ -135,15 +143,32 @@ catch (Exception)
 
     private async Task HandleSubmit(Tender tender)
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         if (tender.TenderId == 0)
         {
-            await HttpClient.PostAsJsonAsync("api/tender", tender);
-            Back();
+            if (await ApiRequests.PostItemAsync("api/tender", HttpClient, token, tender))
+	        {
+                Back();
+                return;
+	        }
+
+            NavigationManager.NavigateTo("/error");
         }
         else
         {
-            await HttpClient.PutAsJsonAsync("api/tender", tender);
-            Back();
+            if (await ApiRequests.PutItemAsync("api/tender", HttpClient, token, tender))
+	        {
+                Back();
+                return;
+	        }
+            NavigationManager.NavigateTo("/error");
         }
     }
 
@@ -152,6 +177,11 @@ catch (Exception)
         NavigationManager.NavigateTo("/tenders");
     }
 
-    
+
+	private void ValueChanged(ChangeEventArgs e)
+	{
+		int selectedValue = Convert.ToInt32(e.Value);
+		tender.WinnerProposalId = selectedValue;
+	}
 
 }

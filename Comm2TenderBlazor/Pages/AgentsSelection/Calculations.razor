@@ -2,9 +2,13 @@
 
 @using ChartJs.Blazor.BarChart
 @using ChartJs.Blazor.Common
+@using System.Reflection.Metadata
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IJSRuntime JsRuntime
+
 
 <h1>Расчет</h1>
 
@@ -14,6 +18,12 @@
 }
 else
 {
+	@* <div>
+		<button @onclick="this.DownloadFile">
+			<span class="btn btn-secondary">Скачать отчет</span>
+		</button>
+	</div> *@
+
 	<div>
 		<table class="table">
 			<thead>
@@ -36,6 +46,11 @@ else
 					<td>@String.Format("{0:0.##}",calculation.ReliabilityAssessment)</td>
 					<td>@String.Format("{0:0.##}",calculation.IntegralAssessment)</td>
 					<td>@calculation.Note</td>
+					<td>
+						<button class="btn btn-secondary" @onclick="async () => await SetTenderWinnerAsync(calculation)">
+							<span class="btn btn-secondary">Выбрать победителя</span>
+						</button>
+					</td>
 				</tr>
 			}
 			</tbody>
@@ -71,7 +86,15 @@ else
     {
 	    try
 	    {
-		    var repsonseViewModel = await PagesHelper.GetItemsAsync<ResponseViewModel<Calculation>>($"api/Calculation/get_calc/{Id}", HttpClient);
+		    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+		    if (string.IsNullOrEmpty(token))
+		    {
+			    NavigationManager.NavigateTo("/login");
+			    return;
+		    }
+
+			var repsonseViewModel = await ApiRequests.GetItemAsync<ResponseViewModel<Calculation>>($"api/Calculation/get_calc/{Id}", HttpClient, token);
 		    calculations = repsonseViewModel.Items;
 
 			if (calculations.Count == 0)
@@ -80,6 +103,8 @@ else
 			}
 
 		    barConfig = CreateBarConfig(this.calculations);
+
+		    await JsRuntime.InvokeVoidAsync("import", "/FileSaver.js");
 
 	    }
 	    catch (Exception ex)
@@ -120,4 +145,108 @@ else
 		_barConfig.Data.Datasets.Add(dataset);
 		return _barConfig;
     }
+
+
+    private async Task SetTenderWinnerAsync(Calculation calculation)
+    {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+	    try
+	    {
+			var proposal = await ApiRequests.GetItemAsync<Proposal>($"api/proposal/{calculation.ProposalId}", HttpClient, token);
+
+		    if (proposal == null)
+		    {
+			    NavigationManager.NavigateTo("/selection");
+			    return;
+		    }
+
+			var tender = await ApiRequests.GetItemAsync<Tender>($"api/tender/get_tender/{proposal.Tender.TenderId}", HttpClient, token);
+
+
+			tender.WinnerProposalId = calculation.ProposalId;
+
+			var result = await ApiRequests.PutItemAsync("api/tender", HttpClient, token, tender);
+
+			NavigationManager.NavigateTo("/selection");
+	    }
+	    catch (Exception)
+	    {
+			NavigationManager.NavigateTo("/error");
+	    }
+
+    }
+
+    private async Task DownloadFile()
+    {
+		var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+		if (string.IsNullOrEmpty(token))
+		{
+			NavigationManager.NavigateTo("/login");
+			return;
+		}
+
+
+		var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"api/excel/file/{Id}");
+
+	    requestMessage.Headers.Authorization
+		    = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+	    var response = await HttpClient.SendAsync(requestMessage);
+
+
+	   // var response = await httpClient.GetAsync("https://your-api-url/api/excel?id=1"); // замените URL на фактический URL вашего API и укажите правильный идентификатор файла
+
+	    if (response.IsSuccessStatusCode)
+	    {
+		    await using (var content = await response.Content.ReadAsStreamAsync())
+		    {
+			    var fileName = GetFileNameFromHttpResponse(response);
+
+				using (var ms = new MemoryStream())
+			    {
+				    await content.CopyToAsync(ms);
+				    ms.Seek(0, SeekOrigin.Begin);
+
+				    await JsRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(ms.ToArray()));
+			    }
+		    }
+	    }
+	    else
+	    {
+			NavigationManager.NavigateTo("/selection");
+	    }
+    }
+
+    private string GetFileNameFromHttpResponse(HttpResponseMessage response)
+    {
+	    string contentDisposition = response.Content.Headers.ContentDisposition.ToString();
+	    string fileName = contentDisposition.Substring(contentDisposition.IndexOf("filename=") + 10).Replace("\"", "");
+	    return fileName;
+    }
+
+    public static async Task<T> GetItemAsync<T>(string path, HttpClient httpClient, string token)
+    {
+
+	    var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
+
+	    requestMessage.Headers.Authorization
+		    = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+	    var responce = await httpClient.SendAsync(requestMessage);
+
+	    var result = await responce.Content.ReadAsStringAsync();
+
+	    return JsonSerializer.Deserialize<T>(result);
+    }
 }
+
+
+

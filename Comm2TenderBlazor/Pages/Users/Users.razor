@@ -1,60 +1,68 @@
 ﻿@page "/users"
 @using Comm2TenderBlazor.Models.Dto
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@inject ILocalStorageService LocalStorage
 
 <PageTitle>Пользователи</PageTitle>
 
 <h1>Пользователи</h1>
 
+
 @if (users == null)
 {
-    <p><em>Loading...</em></p>
+	<p><em>Loading...</em></p>
 }
 else
 {
-    <div class="mb-3">
-        <input class="form-control mb-3" type="text" @bind="searchText" placeholder="Enter search query" />
-        <button class="btn btn-primary" @onclick="SearchUsers">Поиск</button>
-    </div>
-    
-    <button class="btn btn-primary" @onclick="AddUser">Добавить пользователя</button>
+	<div class="mb-3">
+		<input class="form-control mb-3" type="text" @bind="searchText" placeholder="Enter search query" />
+		<button class="btn btn-primary" @onclick="SearchUsers">Поиск</button>
+	</div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID Пользователя</th>
-                <th>ФИО</th>
-                <th>E-mail</th>
-                <th>Роль</th>
-                <th>Активация</th>
-                <th>Действия</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in users)
-            {
-                <tr>
-                    <td>@user.UserId</td>
-                    <td>@user.Name</td>
-                    <td>@user.Email</td>
-                    <td>@user.Role.Name</td>
-                    <td >@user.IsActive</td>
-                    <td>
-                        <button class="btn btn-secondary" @onclick="() => UpdateUser(user)">
-                            <span class="btn btn-secondary">Редактировать</span>
-                        </button>
-                        <button @onclick="() => DeleteUser(user.UserId)">Удалить</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+	<button class="btn btn-primary" @onclick="AddUser">Добавить пользователя</button>
+
+	<table class="table">
+		<thead>
+		<tr>
+			<th>ID Пользователя</th>
+			<th>ФИО</th>
+			<th>E-mail</th>
+			<th>Роль</th>
+			<th>Активация</th>
+			<th>Действия</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var user in users)
+		{
+			<tr>
+				<td>@user.UserId</td>
+				<td>@user.Name</td>
+				<td>@user.Email</td>
+				<td>@user.Role.Name</td>
+				<td >@user.IsActive</td>
+				<td>
+					<button class="btn btn-secondary" @onclick="() => UpdateUser(user)">
+						<span class="btn btn-secondary">Редактировать</span>
+					</button>
+					<button @onclick="() => DeleteUser(user.UserId)">Удалить</button>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
 }
 
+
+
+
 @code {
-    //[CascadingParameter] public IModalService Modal { get; set; }
+	private bool hasAccess; 
 
     private List<User> users;
     private string searchText;
@@ -65,42 +73,44 @@ else
     {
         try
         {
-            users = await PagesHelper.GetAllListAsync<User>("api/user/Search", HttpClient);
+	        var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+			if (string.IsNullOrEmpty(token))
+	        {
+				NavigationManager.NavigateTo("/login");
+				return;
+	        }
+
+            users = await ApiRequests.PostAllListAsync<User>("api/user/search", HttpClient, token);
         }
         catch (Exception ex)
         {
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/error");
         }
-
     }
 
     private async Task SearchUsers()
     {
-        users = await PagesHelper.SearchAsync<User>(searchText, "api/user/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+        users = await ApiRequests.SearchAsync<User>(searchText, "api/user/Search", HttpClient, token);
     }
 
     private async Task AddUser()
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", 0);
-
-        // Modal.Show<UserForm>("Новый пользователь", modalParameters);
         NavigationManager.NavigateTo("/user/0");
     }
 
     private async Task UpdateUser(User user)
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", user.UserId);
-
-        // Modal.Show<UserForm>(user.Name, modalParameters);
-
         NavigationManager.NavigateTo($"/user/{user.UserId}");
     }
 
     private async Task DeleteUser(int userId)
     {
-        await HttpClient.DeleteAsync($"api/user/delete_user/{userId}");
-        users = await PagesHelper.GetAllListAsync<User>("api/user/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    await ApiRequests.DeleteItemAsync($"api/user/delete_user/{userId}", HttpClient, token);
+
+        users = await ApiRequests.PostAllListAsync<User>("api/user/Search", HttpClient, token);
     }
 }
