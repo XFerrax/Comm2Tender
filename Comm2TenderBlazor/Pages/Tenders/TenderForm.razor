@@ -63,16 +63,16 @@
 		            <br />
 		            @if (Id == 0)
 		            {
-			            <button class="btn-info" type="submit">Добавить</button>
+			            <button class="btn btn-secondary" type="submit">Добавить</button>
 		            }
 		            else
 		            {
-			            <button class="btn-info" type="submit">Обновить</button>
+						<button class="btn btn-secondary" type="submit">Обновить</button>
 		            }
                     
 	            </EditForm>
-				
-	            <button class="btn-warning" @onclick="Back">Отмена</button>
+				<br/>
+	            <button class="btn btn-danger" @onclick="Back">Отмена</button>
             </div>
         </div> 
     }

@@ -1,5 +1,6 @@
 ﻿@page "/user/{id:int}"
 @using Comm2TenderBlazor.Models.Dto
+@using System.Security.Cryptography
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
@@ -22,12 +23,12 @@ else if (user != null && roles != null)
 			        <InputText @bind-Value="user.Name" class="form-control"></InputText>
 		        </div>
 		        <div>
-			        <label class="form-label">Email:</label>
-			        <InputText @bind-Value="user.Email" class="form-control" placeholder="Enter email" type="email"></InputText>
+			        <label class="form-label">СНИЛС:</label>
+			        <InputText @bind-Value="user.Email" class="form-control" ></InputText>
 		        </div>
 		        <div>
 			        <label class="form-label">Пароль:</label>
-			        <InputText @bind-Value="user.Password" class="form-control"></InputText>
+					<InputText @bind-Value="user.Password" class="form-control" type="password" ></InputText>
 		        </div>
 		        <div>
 			        <label class="form-label">Роль:</label>
@@ -48,15 +49,15 @@ else if (user != null && roles != null)
                 
 		        @if (Id == 0)
 		        {
-			        <button class="btn-info" type="submit">Добавить</button>
+			        <button class="btn btn-secondary" type="submit">Добавить</button>
 		        }
 		        else
 		        {
-			        <button class="btn-info" type="submit">Обновить</button>
+					<button class="btn btn-secondary" type="submit">Обновить</button>
 		        }
 	        </EditForm>
-
-	        <button class="btn-warning" @onclick="this.Back">Отмена</button>
+			<br/>
+	        <button class="btn btn-danger" @onclick="this.Back">Отмена</button>
         </div>
     </div>  
 }
@@ -119,12 +120,14 @@ else if (user != null && roles != null)
     {
 	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
 
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+	    }
+
         if (user.UserId == 0)
         {
-	        if (token == null)
-	        {
-                NavigationManager.NavigateTo("/login");
-	        }
+	        user.Password = GetPasswordHash(user.Password);
 
             var success = await ApiRequests.PostItemAsync("api/user", HttpClient, token, user);
 
@@ -132,6 +135,9 @@ else if (user != null && roles != null)
         }
         else
         {
+
+	        user.Password = GetPasswordHash(user.Password);
+
 	        if (token == null)
 	        {
 		        NavigationManager.NavigateTo("/login");
@@ -146,6 +152,17 @@ else if (user != null && roles != null)
     private void Back()
     {
         NavigationManager.NavigateTo("/users", forceLoad: true);
+    }
+
+    private string GetPasswordHash(string password)
+    {
+	    byte[] hash;
+	    using (SHA512 shaM = SHA512.Create())
+	    {
+		    hash = shaM.ComputeHash(Encoding.UTF8.GetBytes(password));
+	    }
+
+	    return BitConverter.ToString(hash).Replace("-", "");
     }
 
 }

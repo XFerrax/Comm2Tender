@@ -43,10 +43,8 @@ else
                     <td>@percent.CustomDuty</td>
                     <td>@percent.Discount</td>
                     <td>
-                        <button class="btn btn-secondary" @onclick="async () => await Update(percent)">
-                            <span class="btn btn-secondary">Редактировать</span>
-                        </button>
-                        <button @onclick="() => Delete(percent.PercentsDictionaryId)">Удалить</button>
+                        <button class="btn btn-secondary" @onclick="async () => await Update(percent)">Редактировать</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(percent.PercentsDictionaryId)">Удалить</button>
                     </td>
                 </tr>
             }

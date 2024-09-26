@@ -46,10 +46,8 @@ else
                     <td>@agent.OGRN</td>
                     <td>@agent.AgentRegistrationDate</td>
                     <td>
-                        <button class="btn btn-secondary" @onclick="() => Update(agent)">
-                            <span class="btn btn-secondary">Редактировать</span>
-                        </button>
-                        <button @onclick="() => Delete(agent.AgentId)">Удалить</button>
+                        <button class="btn btn-secondary" @onclick="() => Update(agent)">Редактировать</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(agent.AgentId)">Удалить</button>
                     </td>
                 </tr>
             }

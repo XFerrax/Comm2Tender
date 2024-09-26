@@ -47,10 +47,8 @@ else
                     <td>@proposal.DeliveryCost</td>
                     <td>@proposal.DeliveryTime</td>
                     <td>
-                        <button class="btn btn-secondary" @onclick="() => Update(proposal)">
-                            <span class="btn btn-secondary">Редактировать</span>
-                        </button>
-                        <button @onclick="() => Delete(proposal.ProposalId)">Удалить</button>
+                        <button class="btn btn-secondary" @onclick="() => Update(proposal)">Редактировать</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(proposal.ProposalId)">Удалить</button>
                     </td>
                 </tr>
             }

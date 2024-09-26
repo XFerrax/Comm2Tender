@@ -50,9 +50,7 @@ else
                     <td>@tender.Discription</td>
                     <td>@tender.WinnerProposal?.Agent.Name</td>
                     <td>
-                        <button class="btn btn-success" @onclick="() => Update(tender)">
-	                        Редактировать
-                        </button>
+                        <button class="btn btn-secondary" @onclick="() => Update(tender)">Редактировать</button>
                         <button class="btn btn-danger"  @onclick="() => Delete(tender.TenderId)">Удалить</button>
                     </td>
                 </tr>

@@ -40,10 +40,8 @@ else
                     <td>@customFee.MinAmount</td>
                     <td>@customFee.SummaryCustomFee</td>
                     <td>
-                        <button class="btn btn-secondary" @onclick="() => Update(customFee)">
-                            <span class="btn btn-secondary">Редактировать</span>
-                        </button>
-                        <button @onclick="() => Delete(customFee.CustomFeeDictionaryId)">Удалить</button>
+                        <button class="btn btn-secondary" @onclick="() => Update(customFee)">Редактировать</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(customFee.CustomFeeDictionaryId)">Удалить</button>
                     </td>
                 </tr>
             }

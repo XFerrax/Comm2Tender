@@ -47,10 +47,8 @@ else
 				<td>@user.Role.Name</td>
 				<td >@user.IsActive</td>
 				<td>
-					<button class="btn btn-secondary" @onclick="() => UpdateUser(user)">
-						<span class="btn btn-secondary">Редактировать</span>
-					</button>
-					<button @onclick="() => DeleteUser(user.UserId)">Удалить</button>
+					<button class="btn btn-secondary" @onclick="() => UpdateUser(user)">Редактировать</button>
+					<button class="btn btn-danger" @onclick="() => DeleteUser(user.UserId)">Удалить</button>
 				</td>
 			</tr>
 		}

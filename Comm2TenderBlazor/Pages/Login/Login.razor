@@ -32,7 +32,7 @@
 		    <div id="login-column" class="col-md-6">
 			    <div id="login-box" class="col-md-12">
 				    <form id="login-form" class="form" action="" method="post">
-					    <h3 class="text-center text-info">Login</h3>
+					    <h3 class="text-center text-info">Авторизация</h3>
 					    <EditForm Model="@loginRequest" OnValidSubmit="() => HandleSubmit(loginRequest)">
 						    <DataAnnotationsValidator />
 						    <ValidationSummary />
@@ -44,8 +44,11 @@
 							    <label class="form-group">Пароль:</label>
 								<InputText @bind-Value="loginRequest.Password" type="password" class="form-control"></InputText> @* Коментарий *@
 						    </div>
+							
+						    <br/>
+						    <br/>
 
-						    <button class="btn-info" type="submit">Войти</button>
+						    <button class="btn btn-primary" type="submit">Войти</button>
 
 					    </EditForm>
 				    </form>
@@ -76,7 +79,7 @@
 
 		if (!loginResult.IsSuccessStatusCode)
 		{
-			NavigationManager.NavigateTo("/login");
+			NavigationManager.NavigateTo("/login", true);
 			return;
 		}
 

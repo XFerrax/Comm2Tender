@@ -21,7 +21,7 @@ namespace Comm2TenderBlazor.Pages
 
         public void OnGet()
         {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+	        this.RedirectToPage("/index");
         }
     }
 }
