@@ -12,7 +12,7 @@ namespace Comm2Tender.Logic
         #region Excel
         void LoadExcelToDataBase(IFormFile excelFile);
 
-        (Stream fileStream, string contentType, string name) GetExcelReport(int id);
+        byte[] GetExcelReport(int id);
         #endregion Excel
     }
 }

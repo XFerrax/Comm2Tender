@@ -2,9 +2,13 @@
 
 @using ChartJs.Blazor.BarChart
 @using ChartJs.Blazor.Common
+@using System.Reflection.Metadata
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IJSRuntime JsRuntime
+
 
 <h1>Расчет</h1>
 
@@ -14,13 +18,13 @@
 }
 else
 {
+	 <div>
+		<button @onclick="this.DownloadFile">
+			<span class="btn btn-secondary">Скачать отчет</span>
+		</button>
+	</div> 
+
 	<div>
-		<div class="container">
-			<div class="mb-3">
-				<button class="btn btn-primary" @onclick="LoadReport">Поиск</button>
-			</div>
-		</div>
-		<button></button>
 		<table class="table">
 			<thead>
 			<tr>
@@ -38,10 +42,15 @@ else
 				<tr>
 					<td>@calculation.AgentName</td>
 					<td>@String.Format("{0:0}",calculation.PositionPrice)</td>
-					<td>@String.Format("{0:0.000}",calculation.EconomyEffect)</td>
-					<td>@String.Format("{0:0.000}",calculation.ReliabilityAssessment)</td>
-					<td>@String.Format("{0:0.000}",calculation.IntegralAssessment)</td>
+					<td>@String.Format("{0:0.##}",calculation.EconomyEffect)</td>
+					<td>@String.Format("{0:0.##}",calculation.ReliabilityAssessment)</td>
+					<td>@String.Format("{0:0.##}",calculation.IntegralAssessment)</td>
 					<td>@calculation.Note</td>
+					<td>
+						<button class="btn btn-secondary" @onclick="async () => await SetTenderWinnerAsync(calculation)">
+							<span class="btn btn-secondary">Выбрать победителя</span>
+						</button>
+					</td>
 				</tr>
 			}
 			</tbody>
@@ -75,29 +84,47 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            var repsonseViewModel = await PagesHelper.GetItemsAsync<ResponseViewModel<Calculation>>($"api/Calculation/get_calc/{Id}", HttpClient);
-            calculations = repsonseViewModel.Items;
+	    try
+	    {
+		    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
 
-            if (calculations.Count == 0)
-            {
-                throw new NullReferenceException();
-            }
+		    if (string.IsNullOrEmpty(token))
+		    {
+			    NavigationManager.NavigateTo("/login");
+			    return;
+		    }
 
-            barConfig = CreateBarConfig(this.calculations);
+			var repsonseViewModel = await ApiRequests.GetItemAsync<ResponseViewModel<Calculation>>($"api/Calculation/get_calc/{Id}", HttpClient, token);
+		    calculations = repsonseViewModel.Items;
 
-        }
-        catch (Exception ex)
-        {
-            NavigationManager.NavigateTo("/selection");
-        }
+			if (calculations.Count == 0)
+			{
+				return;
+
+			}
+
+			foreach (var calculation in calculations)
+			{
+				calculation.AgentName = EncodingHelper.ConvertAsciiToUtf8(calculation.AgentName);
+				calculation.Note = EncodingHelper.ConvertAsciiToUtf8(calculation.Note);
+			}
+
+		    barConfig = CreateBarConfig(this.calculations);
+
+		    await JsRuntime.InvokeVoidAsync("import", "/FileSaver.js");
+
+	    }
+	    catch (Exception ex)
+	    {
+			NavigationManager.NavigateTo("/selection");
+	    }
 
     }
 
     private BarConfig CreateBarConfig(IEnumerable<Calculation> calculations)
     {
-        var _barConfig = new BarConfig
+
+	    var _barConfig = new BarConfig
 	    {
 		    Options = new BarOptions()
 		    {
@@ -111,23 +138,109 @@ else
 	    };
 
 
-        foreach (var calculation in calculations)
-        {
-            _barConfig.Data.Labels.Add(calculation.AgentName);
-        }
+	    foreach (var calculation in calculations)
+	    {
+			_barConfig.Data.Labels.Add(calculation.AgentName);
+	    }
 
 
-        var integralAssessments = this.calculations.Select(x => x.IntegralAssessment).ToList();
+	    var integralAssessments = this.calculations.Select(x => x.IntegralAssessment).ToList();
 
-        var dataset = new BarDataset<decimal>(integralAssessments);
-        dataset.BackgroundColor = new IndexableOption<string>("#007bff");
+	    var dataset = new BarDataset<decimal>(integralAssessments);
+	    dataset.BackgroundColor = new IndexableOption<string>("#007bff");
 
 
-        _barConfig.Data.Datasets.Add(dataset);
-        return _barConfig;
+		_barConfig.Data.Datasets.Add(dataset);
+		return _barConfig;
     }
-    private void LoadReport(MouseEventArgs e)
+
+
+    private async Task SetTenderWinnerAsync(Calculation calculation)
     {
-        throw new NotImplementedException();
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+	    try
+	    {
+			var proposal = await ApiRequests.GetItemAsync<Proposal>($"api/proposal/{calculation.ProposalId}", HttpClient, token);
+
+		    if (proposal == null)
+		    {
+			    NavigationManager.NavigateTo("/selection");
+			    return;
+		    }
+
+			var tender = await ApiRequests.GetItemAsync<Tender>($"api/tender/get_tender/{proposal.Tender.TenderId}", HttpClient, token);
+
+
+			tender.WinnerProposalId = calculation.ProposalId;
+
+			var result = await ApiRequests.PutItemAsync("api/tender", HttpClient, token, tender);
+
+			NavigationManager.NavigateTo("/selection");
+	    }
+	    catch (Exception)
+	    {
+			NavigationManager.NavigateTo("/error");
+	    }
+
+    }
+
+    private async Task DownloadFile()
+    {
+		var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+		if (string.IsNullOrEmpty(token))
+		{
+			NavigationManager.NavigateTo("/login");
+			return;
+		}
+
+
+		var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"api/excel/{Id}");
+
+	    requestMessage.Headers.Authorization
+		    = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+	    var response = await HttpClient.SendAsync(requestMessage);
+
+
+	   // var response = await httpClient.GetAsync("https://your-api-url/api/excel?id=1"); // замените URL на фактический URL вашего API и укажите правильный идентификатор файла
+
+	    if (response.IsSuccessStatusCode)
+	    {
+		    var contentBytes = await response.Content.ReadAsByteArrayAsync();
+		    var fileName = $"{Id}.xls";
+
+		    await JsRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(contentBytes));
+	    }
+	    else
+	    {
+			NavigationManager.NavigateTo("/selection");
+	    }
+    }
+
+
+    public static async Task<T> GetItemAsync<T>(string path, HttpClient httpClient, string token)
+    {
+
+	    var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
+
+	    requestMessage.Headers.Authorization
+		    = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+	    var responce = await httpClient.SendAsync(requestMessage);
+
+	    var result = await responce.Content.ReadAsStringAsync();
+
+	    return JsonSerializer.Deserialize<T>(result);
     }
 }
+
+
+

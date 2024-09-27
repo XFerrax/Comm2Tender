@@ -34,12 +34,6 @@ public static class Program
             .AddJwtBearer(
                 options =>
                 {
-                    byte[] hash;
-                    using (SHA512 shaM = SHA512.Create())
-                    {
-                        hash = shaM.ComputeHash(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]));
-                    }
-
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -48,7 +42,7 @@ public static class Program
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(hash),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
                     };
                 }
             );
@@ -58,7 +52,7 @@ public static class Program
         builder.Services.AddCors(options =>
             options.AddPolicy(name: "FrontSite",
                         builder => builder
-                            .WithOrigins("http://localhost:5000")
+                            .WithOrigins("http://185.236.211.153:4001")
                             //.SetIsOriginAllowed(isOriginAllowed: _ => true)
                             .AllowAnyHeader()
                             .AllowAnyMethod()

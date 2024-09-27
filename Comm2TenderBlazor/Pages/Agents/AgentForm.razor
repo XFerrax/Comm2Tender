@@ -3,6 +3,7 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
 
 <h1>@title</h1>
 
@@ -14,43 +15,44 @@ else
 {
       <div class="row">
         <div class="col">
-            <EditForm Model="@agent" OnValidSubmit="() => HandleSubmit(agent)">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                 <div >
-                    <label class="form-label">Название:</label>
-                    <InputText @bind-Value="agent.Name" class="form-control"></InputText> @* Коментарий *@
-                </div>
-                  <div>
-                    <label class="form-label">ИНН:</label>
-                     <InputNumber @bind-Value="agent.INN" class="form-control"></InputNumber>
-                </div>
-                <div>
-                    <label class="form-label">КПП:</label>
-                     <InputNumber @bind-Value="agent.KPP" class="form-control"></InputNumber> 
-                </div>
-                <div>
-                    <label class="form-label">ОГРН:</label>
-                    <InputNumber @bind-Value="agent.OGRN" class="form-control"></InputNumber>
+	        <EditForm Model="@agent" OnValidSubmit="() => HandleSubmit(agent)">
+		        <DataAnnotationsValidator />
+		        <ValidationSummary />
+		        <div >
+			        <label class="form-label">Название:</label>
+			        <InputText @bind-Value="agent.Name" class="form-control"></InputText> @* Коментарий *@
+		        </div>
+		        <div>
+			        <label class="form-label">ИНН:</label>
+			        <InputNumber @bind-Value="agent.INN" class="form-control"></InputNumber>
+		        </div>
+		        <div>
+			        <label class="form-label">КПП:</label>
+			        <InputNumber @bind-Value="agent.KPP" class="form-control"></InputNumber> 
+		        </div>
+		        <div>
+			        <label class="form-label">ОГРН:</label>
+			        <InputNumber @bind-Value="agent.OGRN" class="form-control"></InputNumber>
                     
-                </div>
-                <div>
-                    <label class="form-label">Дата регистрации:</label>
-                    <InputDate @bind-Value="agent.AgentRegistrationDate" class="form-control "></InputDate>
+		        </div>
+		        <div>
+			        <label class="form-label">Дата регистрации:</label>
+			        <InputDate @bind-Value="agent.AgentRegistrationDate" class="form-control "></InputDate>
 
-                </div>
+		        </div>
                 
-                @if (Id == 0)
-                {
-                    <button class="btn-info" type="submit">Добавить</button>
-                }
-                else
-                {
-                    <button class="btn-info" type="submit">Обновить</button>
-                }
-                
-                <button class="btn-warning" @onclick="Back">Отмена</button>
-            </EditForm>
+		        @if (Id == 0)
+		        {
+			        <button class="btn btn-secondary" type="submit">Добавить</button>
+		        }
+		        else
+		        {
+			        <button class="btn btn-secondary" type="submit">Обновить</button>
+		        }
+
+	        </EditForm>
+            <br/>
+            <button class="btn btn-danger" @onclick="Back">Отмена</button>
         </div>
     </div>   
 }
@@ -69,11 +71,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         try
         {
             if (Id != 0)
             {
-                agent = await HttpClient.GetFromJsonAsync<Agent>($"api/agent/get_agent/{Id}");
+	            agent = await ApiRequests.GetItemAsync<Agent>($"api/agent/get_agent/{Id}", HttpClient, token);
+	            agent.Name = EncodingHelper.ConvertAsciiToUtf8(agent.Name);
 
                 title = agent.Name;
             }
@@ -96,14 +107,26 @@ else
 
     private async Task HandleSubmit(Agent agent)
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         if (agent.AgentId == 0)
         {
-            await HttpClient.PostAsJsonAsync("api/agent", agent);
+	        await ApiRequests.PostItemAsync("api/agent", HttpClient, token, agent);
+
+            //await HttpClient.PostAsJsonAsync("api/agent", agent);
             Back();
         }
         else
         {
-            await HttpClient.PutAsJsonAsync("api/agent", agent);
+	        await ApiRequests.PutItemAsync("api/agent", HttpClient, token, agent);
+
+            //await HttpClient.PutAsJsonAsync("api/agent", agent);
             Back();
         }
     }

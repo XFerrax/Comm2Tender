@@ -1,0 +1,14 @@
+﻿body {
+}
+
+.nav-menu a {
+    color: red; /* Цвет текста ссылок */
+}
+
+    .nav-menu a:hover {
+        color: blue; /* Цвет текста ссылок при наведении курсора */
+    }
+
+.nav-menu .active {
+    color: green; /* Цвет текста активного элемента меню */
+}

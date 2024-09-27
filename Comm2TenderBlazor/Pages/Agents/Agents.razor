@@ -1,10 +1,9 @@
 ﻿@page "/agents"
-@using Comm2TenderBlazor.Models.Dto
 
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
-
+@inject ILocalStorageService LocalStorage
 
 <PageTitle>Контрагенты</PageTitle>
 
@@ -41,16 +40,14 @@ else
             {
                 <tr>
                     <td>@agent.AgentId</td>
-                    <td>@agent.Name</td>
+                    <td>@agent.Name.</td>
                     <td>@agent.INN</td>
                     <td>@agent.KPP</td>
                     <td>@agent.OGRN</td>
                     <td>@agent.AgentRegistrationDate</td>
                     <td>
-                        <button class="btn btn-secondary" @onclick="() => Update(agent)">
-                            <span class="btn btn-secondary">Редактировать</span>
-                        </button>
-                        <button @onclick="() => Delete(agent.AgentId)">Удалить</button>
+                        <button class="btn btn-secondary" @onclick="() => Update(agent)">Редактировать</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(agent.AgentId)">Удалить</button>
                     </td>
                 </tr>
             }
@@ -59,7 +56,6 @@ else
 }
 
 @code {
-    //[CascadingParameter] public IModalService Modal { get; set; }
 
     private List<Agent> agents;
     private string searchText;
@@ -70,7 +66,15 @@ else
     {
         try
         {
-            agents = await PagesHelper.GetAllListAsync<Agent>("api/agent/Search", HttpClient);
+	        var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+            if (string.IsNullOrEmpty(token))
+	        {
+                NavigationManager.NavigateTo("/login");
+                return;
+	        }
+
+            agents = await ApiRequests.PostAllListAsync<Agent>("api/agent/Search", HttpClient, token);
         }
         catch (Exception ex)
         {
@@ -81,31 +85,44 @@ else
 
     private async Task Search()
     {
-        agents = await PagesHelper.SearchAsync<Agent>(searchText, "api/agent/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+        agents = await ApiRequests.SearchAsync<Agent>(searchText, "api/agent/Search", HttpClient, token);
+
+        foreach (var agent in agents)
+        {
+	        agent.Name = EncodingHelper.ConvertAsciiToUtf8(agent.Name);
+        }
     }
 
     private async Task Add()
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", 0);
-
-        // Modal.Show<UserForm>("Новый пользователь", modalParameters);
         NavigationManager.NavigateTo("/agent/0");
     }
 
     private async Task Update(Agent agent)
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", user.UserId);
-
-        // Modal.Show<UserForm>(user.Name, modalParameters);
 
         NavigationManager.NavigateTo($"/agent/{agent.AgentId}");
     }
 
     private async Task Delete(int id)
     {
-        await HttpClient.DeleteAsync($"api/agent/delete_agent/{id}");
-        agents = await PagesHelper.GetAllListAsync<Agent>("api/agent/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+	    await ApiRequests.DeleteItemAsync($"api/agent/delete_agent/{id}", HttpClient, token);
+        agents = await ApiRequests.PostAllListAsync<Agent>("api/agent/Search", HttpClient, token);
     }
 }    

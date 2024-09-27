@@ -3,6 +3,7 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
 
 <h1>@title</h1>
 
@@ -14,29 +15,30 @@ else
 {
     <div class="row">
         <div class="col">
-            <EditForm Model="@customFee" OnValidSubmit="() => HandleSubmit(customFee)">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <div>
-                    <label class="form-label">Минимальный порог:</label>
-                    <InputNumber @bind-Value="customFee.MinAmount" class="form-control"></InputNumber>
-                </div>
-                <div>
-                    <label class="form-label">Пошлина:</label>
-                    <InputNumber @bind-Value="customFee.SummaryCustomFee" class="form-control"></InputNumber>
-                </div>
+	        <EditForm Model="@customFee" OnValidSubmit="() => HandleSubmit(customFee)">
+		        <DataAnnotationsValidator />
+		        <ValidationSummary />
+		        <div>
+			        <label class="form-label">Минимальный порог:</label>
+			        <InputNumber @bind-Value="customFee.MinAmount" class="form-control"></InputNumber>
+		        </div>
+		        <div>
+			        <label class="form-label">Пошлина:</label>
+			        <InputNumber @bind-Value="customFee.SummaryCustomFee" class="form-control"></InputNumber>
+		        </div>
 
-                @if (Id == 0)
-                {
-                    <button class="btn-info" type="submit">Добавить</button>
-                }
-                else
-                {
-                    <button class="btn-info" type="submit">Обновить</button>
-                }
+		        @if (Id == 0)
+		        {
+					<button class="btn btn-secondary" type="submit">Добавить</button>
+		        }
+		        else
+		        {
+					<button class="btn btn-secondary" type="submit">Обновить</button>
+		        }
 
-                <button class="btn-warning" @onclick="Back">Отмена</button>
-            </EditForm>
+	        </EditForm>
+	        <br/>
+			<button class="btn btn-danger" @onclick="Back">Отмена</button>
         </div>
     </div>
 }
@@ -55,11 +57,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
         try
         {
             if (Id != 0)
             {
-                customFee = await HttpClient.GetFromJsonAsync<CustomFeeDictionary>($"api/customFeeDictionary/get_fee/{Id}");
+	            customFee = await ApiRequests.GetItemAsync<CustomFeeDictionary>($"api/customFeeDictionary/get_fee/{Id}", HttpClient, token);
+
 
                 title = "Изменение пошлины";
             }
@@ -80,16 +91,25 @@ else
 
     private async Task HandleSubmit(CustomFeeDictionary fee)
     {
-        if (fee.CustomFeeDictionaryId == 0)
-        {
-            await HttpClient.PostAsJsonAsync("api/customFeeDictionary", fee);
-            Back();
-        }
-        else
-        {
-            await HttpClient.PutAsJsonAsync("api/customFeeDictionary", fee);
-            Back();
-        }
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (token == null)
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+	    if (fee.CustomFeeDictionaryId == 0)
+	    {
+		    await ApiRequests.PostItemAsync("api/customFeeDictionary", this.HttpClient, token, fee);
+		    this.NavigationManager.NavigateTo("/custom_fees");
+	    }
+	    else
+	    {
+		    await ApiRequests.PutItemAsync("api/customFeeDictionary", this.HttpClient, token, fee);
+
+		    this.NavigationManager.NavigateTo("/custom_fees");
+	    }
     }
 
     private void Back()

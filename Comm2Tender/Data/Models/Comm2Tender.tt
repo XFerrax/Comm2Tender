@@ -11,7 +11,7 @@
 	PluralizeDataContextPropertyNames   = false;
 	SingularizeDataContextPropertyNames = false;
 
-	LoadPostgreSQLMetadata("localhost", "5432", "Comm2Tender", "SZ2DIBVe", "sus4+8&ihyipUTR");
+	LoadPostgreSQLMetadata("173.12.10.63", "5432", "Comm2Tender", "postgres", "jollyBo@t21");
 
 	GenerateModel();
 #>

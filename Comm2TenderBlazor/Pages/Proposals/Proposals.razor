@@ -4,9 +4,9 @@
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
-
-<PageTitle>Заявки</PageTitle>
+<PageTitle>@PageTitle</PageTitle>
 
 <h1>Заявки</h1>
 
@@ -43,14 +43,12 @@ else
                     <td>@proposal.Tender.Number</td>
                     <td>@proposal.Agent.Name</td>
                     <td>@proposal.CountPos</td>
-                    <td>@String.Format("{0:0.000}",proposal.PositionPrice)</td>
-                    <td>@String.Format("{0:0.000}",proposal.DeliveryCost)</td>
+                    <td>@proposal.PositionPrice</td>
+                    <td>@proposal.DeliveryCost</td>
                     <td>@proposal.DeliveryTime</td>
                     <td>
-                        <button class="btn btn-secondary" @onclick="() => Update(proposal)">
-                            <span class="btn btn-secondary">Редактировать</span>
-                        </button>
-                        <button @onclick="() => Delete(proposal.ProposalId)">Удалить</button>
+                        <button class="btn btn-secondary" @onclick="() => Update(proposal)">Редактировать</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(proposal.ProposalId)">Удалить</button>
                     </td>
                 </tr>
             }
@@ -68,9 +66,23 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+        if (string.IsNullOrEmpty(token))
+	    {
+            NavigationManager.NavigateTo("/login");
+            return;
+	    }
+
         try
         {
-            proposals = await PagesHelper.GetAllListAsync<Proposal>("api/proposal/Search", HttpClient);
+            proposals = await ApiRequests.PostAllListAsync<Proposal>("api/proposal/Search", HttpClient, token);
+
+            foreach (var proposal in proposals)
+            {
+	            proposal.Tender.Number = EncodingHelper.ConvertAsciiToUtf8(proposal.Tender.Number);
+                proposal.Agent.Name = EncodingHelper.ConvertAsciiToUtf8(proposal.Agent.Name);
+            }
         }
         catch (Exception ex)
         {
@@ -81,32 +93,39 @@ else
 
     private async Task Search()
     {
-        proposals = await PagesHelper.SearchAsync<Proposal>(searchText, "api/proposal/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+        proposals = await ApiRequests.SearchAsync<Proposal>(searchText, "api/proposal/Search", HttpClient, token);
     }
 
     private async Task Add()
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", 0);
-
-        // Modal.Show<UserForm>("Новый пользователь", modalParameters);
         NavigationManager.NavigateTo("/proposal/0");
     }
 
     private async Task Update(Proposal model)
     {
-        // var modalParameters = new ModalParameters();
-        // modalParameters.Add("Id", user.UserId);
-
-        // Modal.Show<UserForm>(user.Name, modalParameters);
-
         NavigationManager.NavigateTo($"/proposal/{model.ProposalId}");
     }
 
     private async Task Delete(int id)
     {
-        await HttpClient.DeleteAsync($"api/proposal/{id}");
-        proposals = await PagesHelper.GetAllListAsync<Proposal>("api/proposal/Search", HttpClient);
+	    var token = await LocalStorage.GetItemAsync<string>("AccessToken");
+
+	    if (string.IsNullOrEmpty(token))
+	    {
+		    NavigationManager.NavigateTo("/login");
+		    return;
+	    }
+
+	    await ApiRequests.DeleteItemAsync($"api/proposal/{id}", HttpClient, token);
+
+        proposals = await ApiRequests.PostAllListAsync<Proposal>("api/proposal/Search", HttpClient, token);
     }
 
 }    

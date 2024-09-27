@@ -79,7 +79,7 @@ namespace Comm2Tender.Logic
             return excelFileTenders;
         }
 
-        public (Stream fileStream, string contentType, string name) GetExcelReport(int id)
+        public byte[] GetExcelReport(int id)
         {
             var file = new XLWorkbook();
             var sheet = file.Worksheets.Add("Лист 1");
@@ -95,23 +95,24 @@ namespace Comm2Tender.Logic
 
             var listResponse = Calculate(id);
             var listData = (List<Calculation>)listResponse.Items;
-            listData
-                .ForEach(a => 
-                    {
-                        numrow++;
-                        sheet.Cells("A" + numrow).Value = a.AgentName;
-                        sheet.Cells("B" + numrow).Value = a.PositionPrice;
-                        sheet.Cells("C" + numrow).Value = a.EconomyEffect;
-                        sheet.Cells("D" + numrow).Value = a.ReliabilityAssessment;
-                        sheet.Cells("E" + numrow).Value = a.IntegralAssessment;
-                        sheet.Cells("F" + numrow).Value = a.Note;
-                    });
+            listData.ForEach(a =>
+            {
+                numrow++;
+                sheet.Cells("A" + numrow).Value = a.AgentName;
+                sheet.Cells("B" + numrow).Value = a.PositionPrice;
+                sheet.Cells("C" + numrow).Value = a.EconomyEffect;
+                sheet.Cells("D" + numrow).Value = a.ReliabilityAssessment;
+                sheet.Cells("E" + numrow).Value = a.IntegralAssessment;
+                sheet.Cells("F" + numrow).Value = a.Note;
+            });
+
             var tender = GetTender(id);
-            var stream = new MemoryStream();
-            file.SaveAs(stream);
-            return (stream, 
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
-                tender.Number + ".xlsx");
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                file.SaveAs(memoryStream);
+                return memoryStream.ToArray();
+            }
         }
 
         private string GetCellValue(IXLCell cell)

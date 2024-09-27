@@ -45,12 +45,14 @@ namespace Comm2Tender.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id:int}")]
         public ActionResult Get(int id)
         {
-            (Stream fileStream, string contentType, string name) = LogicService.GetExcelReport(id);
+            var reportBytes = LogicService.GetExcelReport(id);
 
-            return File(fileStream, contentType, name);
+            var file = File(reportBytes, "application/", $"{id}.xls");
+
+            return file;
         }
     }
 }

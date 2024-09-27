@@ -15,7 +15,7 @@ namespace Comm2Tender.Logic.Models.Dto
         public decimal OGRN { get; set; }
         public decimal INN { get; set; }
         public decimal KPP { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public static implicit operator Agent(Data.Agent a)
         {

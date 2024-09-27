@@ -19,8 +19,8 @@ namespace Comm2Tender.Data
 {
 	/// <summary>
 	/// Database       : Comm2Tender
-	/// Data Source    : tcp://localhost:5432
-	/// Server Version : 15.8
+	/// Data Source    : tcp://173.12.10.63:5432
+	/// Server Version : 15.8 (Debian 15.8-0+deb12u1)
 	/// </summary>
 	public partial class Comm2TenderDB : LinqToDB.Data.DataConnection
 	{
@@ -216,7 +216,7 @@ namespace Comm2Tender.Data
 		[Column,     NotNull    ] public string Discription          { get; set; } // text
 		[Column,     NotNull    ] public int    PercentsDictionaryId { get; set; } // integer
 		[Column,        Nullable] public int?   WinnerProposalId     { get; set; } // integer
-		[Column,        Nullable] public string DiscriptionFeedBack  { get; set; } // text
+		[Column,        Nullable] public string DiscriptionFeedback  { get; set; } // text
 		[Column,        Nullable] public int?   Score                { get; set; } // integer
 
 		#region Associations
