@@ -90,7 +90,7 @@ else
 
 		    if (string.IsNullOrEmpty(token))
 		    {
-			    NavigationManager.NavigateTo("/login");
+			    NavigationManager.NavigateTo("/login", true);
 			    return;
 		    }
 
@@ -99,8 +99,8 @@ else
 
 			if (calculations.Count == 0)
 			{
+				NavigationManager.NavigateTo("/selection", true);
 				return;
-
 			}
 
 			foreach (var calculation in calculations)
@@ -116,7 +116,7 @@ else
 	    }
 	    catch (Exception ex)
 	    {
-			NavigationManager.NavigateTo("/selection");
+			NavigationManager.NavigateTo("/selection", true);
 	    }
 
     }
@@ -137,6 +137,7 @@ else
 		    }
 	    };
 
+		
 
 	    foreach (var calculation in calculations)
 	    {
@@ -145,6 +146,7 @@ else
 
 
 	    var integralAssessments = this.calculations.Select(x => x.IntegralAssessment).ToList();
+		
 
 	    var dataset = new BarDataset<decimal>(integralAssessments);
 	    dataset.BackgroundColor = new IndexableOption<string>("#007bff");
@@ -186,7 +188,7 @@ else
 	    }
 	    catch (Exception)
 	    {
-			NavigationManager.NavigateTo("/error");
+			NavigationManager.NavigateTo("/selection");
 	    }
 
     }

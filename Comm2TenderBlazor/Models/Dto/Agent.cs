@@ -16,5 +16,8 @@
         public decimal INN { get; set; }
         [JsonPropertyName("kpp")]
         public decimal KPP { get; set; }
-    }
+
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+	}
 }

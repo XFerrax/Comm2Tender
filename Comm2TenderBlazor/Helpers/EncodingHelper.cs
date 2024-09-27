@@ -4,7 +4,7 @@
 	{
 		public static string ConvertAsciiToUtf8(string asciiString)
 		{
-			byte[] utf8Bytes = System.Text.Encoding.UTF8.GetBytes(asciiString);
+			byte[] utf8Bytes = System.Text.Encoding.ASCII.GetBytes(asciiString);
 			return System.Text.Encoding.UTF8.GetString(utf8Bytes);
 		}
 	}
